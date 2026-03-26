@@ -1,14 +1,20 @@
 # BallR Backend Handoff — For Replit
 **From:** Claude (Backend / Supabase)
 **To:** Replit (Mobile App / Frontend)
-**Date:** 2026-03-26
-**Status:** Backend LIVE & ready to consume
+**Date:** 2026-03-26 (Updated: v2 with Crews + Leagues)
+**Status:** Backend LIVE & ready to consume — **API v2.0**
 
 ---
 
 ## TL;DR
 
-I built a **complete Supabase backend** with **100 realistic fake users**, **253 games** (3 months of simulated activity), friendships, chat messages, peer ratings, ELO history, leaderboard scores, notifications — everything the BallR app needs. The data is **live and queryable right now**.
+I built a **complete Supabase backend** with:
+- **100 realistic fake users**, **253 games** (3 months of simulated activity)
+- Friendships, chat messages, peer ratings, ELO history, leaderboard scores, notifications
+- **10 Crews** (Closed Communities with Dual ELO) — NEW
+- **5 Leagues** (with Stripe payment simulation, organizer dashboards) — NEW
+
+Everything is **live and queryable right now**.
 
 Your job: **Replace mock.ts imports with API calls or Supabase client queries.**
 
@@ -438,29 +444,169 @@ supabase.channel('game-chat')
 
 ---
 
-## 8. Quick Test — Verify It Works
+## 8. NEW: Crews Feature (Closed Communities)
 
-Paste this in your browser or run in terminal:
+### Data
+| Table | Rows | Description |
+|-------|------|-------------|
+| `crews` | 10 | 8 Bangkok + 2 Bali crews |
+| `crew_members` | ~60 | Members with roles + crew-specific ELO |
+| `crew_games` | ~80 | Games linked to crews |
+| `crew_invites` | 0 | Ready for invite flow |
+| `crew_elo_history` | 0 | Ready for crew ELO tracking |
+| `crew_seasons` | 0 | Ready for seasonal competitions |
+| `crew_challenges` | 0 | Ready for inter-crew challenges |
+
+### Sample Crews
+| Name | Members | City | Type |
+|------|---------|------|------|
+| Sukhumvit FC | 2 | Bangkok | Private, competitive |
+| Digital Nomad Kickabout | 7 | Bangkok | Public, casual |
+| Bangkok Titans | 5 | Bangkok | Private, elite (min ELO 1200) |
+| Sunday League BKK | 10 | Bangkok | Public, all levels |
+| Canggu Ballers | 5 | Bali | Public, mixed |
+
+### Crews API Endpoints
+| Endpoint | Description |
+|----------|-------------|
+| `GET /crews` | List all crews (`?city_id=...&public=true`) |
+| `GET /crews/:id` | Single crew with creator info |
+| `GET /crews/:id/members` | Members sorted by crew ELO |
+| `GET /crews/:id/games` | Crew's games with venue info |
+| `GET /crews/:id/leaderboard` | Crew-internal rankings |
+| `GET /crews/join?code=SUKH-abc123` | Look up crew by invite code |
+| `GET /players/:id/crews` | Player's crews |
+
+### `crews` table columns
+```
+id, name, description, logo_url, primary_color, city_id, created_by,
+is_private, max_members, member_count, game_count, avg_elo,
+invite_code, invite_expires_at, created_at
+```
+
+### `crew_members` table columns
+```
+crew_id, player_id, role ('owner'|'admin'|'member'),
+crew_elo, crew_games_played, crew_wins, crew_losses, crew_draws,
+status ('active'|'inactive'), joined_at
+```
+
+### Dual ELO Concept
+- Each player has a **global ELO** (`players.elo_rating`) AND a **crew ELO** (`crew_members.crew_elo`)
+- Crew games update BOTH: global ELO via `elo_history`, crew ELO via `crew_elo_history`
+- The leaderboard tab should show both: "Global" and per-crew rankings
+
+---
+
+## 9. NEW: BallR League Feature
+
+### Data
+| Table | Rows | Description |
+|-------|------|-------------|
+| `leagues` | 5 | Active leagues with full config |
+| `league_organizers` | ~8 | Organizers with revenue share |
+| `league_members` | ~130 | Members with league-specific ELO |
+| `league_games` | ~75 | Games linked to leagues with round numbers |
+| `league_payments` | ~500+ | Simulated Stripe payments |
+| `league_elo_history` | 0 | Ready for league ELO tracking |
+
+### Sample Leagues
+| Name | Players | Games | Fee | Organizer |
+|------|---------|-------|-----|-----------|
+| Bangkok Premier League | 20 | 12 | 7.5% | Chad Pratt |
+| Chill Kicks Bangkok | 29 | 21 | 5% | Freya Park |
+| Bali Beach Football League | 21 | 13 | 5% | Amir Bilousov |
+| Thonglor After Dark | 29 | 19 | 7.5% | Bella Schmidt |
+| Women's Football Bangkok | 28 | 9 | 5% | Gio Larsson |
+
+### Leagues API Endpoints
+| Endpoint | Description |
+|----------|-------------|
+| `GET /leagues` | Discover leagues (`?city_id=...&featured=true`) |
+| `GET /leagues/:id` | Single league with organizer + venue |
+| `GET /leagues/:id/members` | Members sorted by league ELO |
+| `GET /leagues/:id/leaderboard` | League rankings |
+| `GET /leagues/:id/games` | League schedule with round numbers |
+| `GET /leagues/:id/dashboard` | Organizer dashboard (revenue, stats) |
+| `GET /leagues/:id/payments` | Payment history |
+| `GET /players/:id/leagues` | Player's leagues |
+
+### `leagues` table columns
+```
+id, name, description, logo_url, cover_image_url,
+city_id, location_name, latitude, longitude,
+organizer_id, stripe_account_id, stripe_onboarded, booking_fee_percent,
+format, skill_level, max_teams, current_teams,
+game_day, default_time, default_venue_id, price_per_player, currency,
+total_games, total_players, total_revenue, avg_elo,
+status, is_featured, is_public, created_at
+```
+
+### `league_payments` table columns
+```
+id, league_id, game_id, player_id,
+amount, currency, platform_fee, organizer_payout,
+stripe_payment_intent_id, status, created_at
+```
+
+### Revenue Model
+- `booking_fee_percent` (5–10%) is the BallR platform cut
+- `platform_fee` = amount × booking_fee_percent / 100
+- `organizer_payout` = amount − platform_fee
+- All payments have simulated Stripe payment intent IDs (`pi_demo_...`)
+- Dashboard endpoint calculates totals automatically
+
+---
+
+## 10. Quick Test — Verify It Works
 
 ```bash
-# Health check
+# Health check (now shows v2.0.0 with features list)
 curl https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/health
 
-# Get top 5 players
+# Core
 curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/players?limit=5&city=Bangkok"
-
-# Get upcoming games
 curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/games?status=upcoming&limit=3"
-
-# Get leaderboard
 curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/leaderboard?type=baller&city=Bangkok"
+
+# Crews
+curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/crews"
+curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/crews?public=true"
+
+# Leagues
+curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/leagues"
+curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/leagues?featured=true"
+
+# Stats (now includes crews + leagues counts)
+curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/stats"
 ```
 
 All endpoints return JSON. No auth headers needed.
 
 ---
 
-## 9. Questions? Issues?
+## 11. Implementation Priority for Replit
+
+### Phase 1: Replace Mock Data (1-2 days)
+1. Install Supabase client, add credentials
+2. Replace mock imports in Home, Leaderboard, Profile, Game Detail screens
+3. Add loading states and error handling
+
+### Phase 2: Crews UI (2-3 days)
+1. Add "Crews" tab or section in the app
+2. Crew detail screen with members, games, leaderboard
+3. Join-by-invite flow (QR code / share link)
+4. Crew game creation with "Crew Only" toggle
+
+### Phase 3: Leagues UI (3-4 days)
+1. League discovery screen (map + list view)
+2. League detail with schedule, standings, member list
+3. Organizer dashboard (revenue, player stats)
+4. Payment flow UI (Stripe checkout — backend will handle actual Stripe)
+
+---
+
+## 12. Questions? Issues?
 
 If something doesn't match the TypeScript types in `mock.ts`, let me know the exact field name and I'll adjust the database column or add a transformation in the Edge Function.
 
