@@ -1,8 +1,8 @@
 # BallR Backend Handoff — For Replit
 **From:** Claude (Backend / Supabase)
 **To:** Replit (Mobile App / Frontend)
-**Date:** 2026-03-26 (Updated: v2 with Crews + Leagues)
-**Status:** Backend LIVE & ready to consume — **API v2.0**
+**Date:** 2026-03-27 (Updated: v3 with Venue Cards + King of the Field)
+**Status:** Backend LIVE & ready to consume — **API v3.0**
 
 ---
 
@@ -558,16 +558,99 @@ stripe_payment_intent_id, status, created_at
 
 ---
 
-## 10. Quick Test — Verify It Works
+## 10. NEW: Venue Cards + King of the Field 👑
+
+### Concept
+Each venue gets a **rich detail card** showing:
+- Cover image, description, address, amenities, surface type
+- Star rating (1-5) from player reviews
+- **King of the Field** — the player with the most wins at that venue
+- Top 3 players leaderboard per venue
+- Upcoming and recent games at that venue
+- Player ratings/reviews
+
+### Data
+| Table | Rows | Description |
+|-------|------|-------------|
+| `venue_kings` | ~400+ | Per-player per-venue win/loss stats |
+| `venue_ratings` | ~200 | Player ratings + comments for venues |
+
+### Sample Kings of the Field
+| Venue | King | Wins | Win Rate |
+|-------|------|------|----------|
+| Pitch Arena Sukhumvit | Kai Andersen | 17 | 51.5% |
+| Benjakitti Park Field 1 | Jake O'Brien | 17 | — |
+| Bangkok Football Club | Kai Andersen | 15 | — |
+| Seminyak Football Club | Boris Doyle | 15 | — |
+| Flick Football K-Village | Maya Chen | 13 | — |
+
+### Venue API Endpoints
+| Endpoint | Description |
+|----------|-------------|
+| `GET /venues` | All venues with king info + city |
+| `GET /venues/:id` | **Full venue card**: description, king, top 3, upcoming games, recent games |
+| `GET /venues/:id/kings` | King of the Field leaderboard (all players ranked by wins) |
+| `GET /venues/:id/games` | Games at venue (`?status=upcoming` or `completed`) |
+| `GET /venues/:id/ratings` | Player ratings/reviews for venue |
+| `GET /games?venue_id=...` | Filter games by venue |
+
+### Venue Card Response Shape (`GET /venues/:id`)
+```json
+{
+  "id": "...",
+  "name": "Pitch Arena Sukhumvit",
+  "description": "Premium turf facility on Sukhumvit Soi 11...",
+  "cover_image_url": "https://...",
+  "surface_type": "turf",
+  "amenities": ["changing_rooms", "showers", "parking", "lights", "bar"],
+  "rating": 4.8,
+  "total_ratings": 67,
+  "total_games": 41,
+  "avg_players_per_game": 12.3,
+  "city": { "name": "Bangkok", ... },
+  "king": { "id": "...", "name": "Kai Andersen", ... },
+
+  "king_of_the_field": {
+    "player": { "id": "...", "name": "Kai Andersen", "elo_rating": 1200, ... },
+    "wins": 17, "losses": 14, "draws": 2, "win_rate": 0.515
+  },
+  "top_3_players": [ ... ],
+  "upcoming_games": [ ... ],
+  "recent_games": [ ... ]
+}
+```
+
+### `venue_kings` table columns
+```
+venue_id, player_id, games_played, wins, losses, draws,
+win_rate, last_played, is_king, created_at
+```
+
+### UI Suggestions for Replit
+1. **Venue Card**: Full-width card with cover image, name overlay, rating stars
+2. **King Badge**: Crown emoji/icon next to king's name with win count
+3. **Venue Leaderboard**: Table with rank, player avatar, name, wins, win rate
+4. **Venue Detail Screen**: Tabs for "Games" / "Leaderboard" / "Reviews"
+5. **Map Integration**: Venues on map with pin showing king's avatar
+
+---
+
+## 11. Quick Test — Verify It Works
 
 ```bash
-# Health check (now shows v2.0.0 with features list)
+# Health check (v3.0.0 with all features)
 curl https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/health
 
 # Core
 curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/players?limit=5&city=Bangkok"
 curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/games?status=upcoming&limit=3"
 curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/leaderboard?type=baller&city=Bangkok"
+
+# Venue Cards + King of the Field
+curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/venues"
+curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/venues/{venue_id}"
+curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/venues/{venue_id}/kings"
+curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/venues/{venue_id}/ratings"
 
 # Crews
 curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/crews"
@@ -577,7 +660,7 @@ curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/crews?publ
 curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/leagues"
 curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/leagues?featured=true"
 
-# Stats (now includes crews + leagues counts)
+# Stats
 curl "https://hjybaxcryvtydktktmis.supabase.co/functions/v1/ballr-api/stats"
 ```
 
