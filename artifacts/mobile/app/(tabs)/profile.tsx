@@ -108,7 +108,7 @@ function EloRangeVisual({
         <Text style={styles.eloRangeYouText}>
           {aboveAvg ? "▲" : "▼"} {currentElo} ELO · {aboveAvg ? "Above" : "Below"} average
         </Text>
-        <Text style={styles.eloRangePercent}>Top {topPct}% of players</Text>
+        <Text style={styles.eloRangePercent}>Your ELO is better than {percentile}% of players</Text>
       </View>
     </View>
   );

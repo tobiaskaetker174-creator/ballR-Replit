@@ -34,6 +34,27 @@ export interface Player {
   whatsapp?: string;
   favoriteTeam?: string;
   favoritePlayer?: string;
+  fairnessScore: number;
+}
+
+export type EloBadgeTierName = "platinum" | "gold" | "silver" | "bronze";
+
+export interface EloBadgeTier {
+  tier: EloBadgeTierName;
+  ringColor: string;
+  icon: string;
+}
+
+export function getEloBadgeTier(player: Player, allPlayers: Player[]): EloBadgeTier | null {
+  const sorted = [...allPlayers].sort((a, b) => b.eloRating - a.eloRating);
+  const rank = sorted.findIndex((p) => p.id === player.id);
+  if (rank < 0) return null;
+  const percentile = (rank + 1) / sorted.length;
+  if (percentile <= 0.01) return { tier: "platinum", ringColor: "#E8A93A", icon: "crown" };
+  if (percentile <= 0.10) return { tier: "gold", ringColor: "#E8A93A", icon: "star" };
+  if (percentile <= 0.20) return { tier: "silver", ringColor: "#C0C0C0", icon: "shield" };
+  if (percentile <= 0.30) return { tier: "bronze", ringColor: "#C4834A", icon: "medal" };
+  return null;
 }
 
 export interface Rival {
@@ -58,6 +79,13 @@ export interface ProfileReview {
   createdAt: string;
 }
 
+export interface VenueStats {
+  totalGamesPlayed: number;
+  mostActiveDay: string;
+  topPlayers: { name: string; winRate: number }[];
+  bestPerformer: { name: string; winRate: number };
+}
+
 export interface Venue {
   id: string;
   name: string;
@@ -67,6 +95,7 @@ export interface Venue {
   amenities: string[];
   lat: number;
   lng: number;
+  imageUrl?: string;
 }
 
 export interface Booking {
@@ -179,6 +208,7 @@ const VENUES: Venue[] = [
     amenities: ["changing_rooms", "showers", "parking", "lights"],
     lat: 13.722,
     lng: 100.565,
+    imageUrl: "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=800",
   },
   {
     id: "v2",
@@ -189,6 +219,7 @@ const VENUES: Venue[] = [
     amenities: ["parking", "lights"],
     lat: 13.731,
     lng: 100.541,
+    imageUrl: "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800",
   },
   {
     id: "v3",
@@ -199,6 +230,7 @@ const VENUES: Venue[] = [
     amenities: ["changing_rooms", "showers", "parking", "lights", "bar"],
     lat: 13.741,
     lng: 100.553,
+    imageUrl: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800",
   },
   {
     id: "v4",
@@ -209,6 +241,7 @@ const VENUES: Venue[] = [
     amenities: ["changing_rooms", "parking", "lights"],
     lat: 13.716,
     lng: 100.585,
+    imageUrl: "https://images.unsplash.com/photo-1459865264687-595d652de67e?w=800",
   },
   {
     id: "v5",
@@ -219,6 +252,7 @@ const VENUES: Venue[] = [
     amenities: ["changing_rooms", "showers"],
     lat: -8.687,
     lng: 115.165,
+    imageUrl: "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=800",
   },
 ];
 
@@ -248,6 +282,7 @@ export const PLAYERS: Player[] = [
     instagram: "maya.kicks",
     favoriteTeam: "Liverpool FC",
     favoritePlayer: "Trent Alexander-Arnold",
+    fairnessScore: 78,
   },
   {
     id: "p1",
@@ -275,6 +310,7 @@ export const PLAYERS: Player[] = [
     whatsapp: "+380991234567",
     favoriteTeam: "Manchester City",
     favoritePlayer: "Kevin De Bruyne",
+    fairnessScore: 82,
   },
   {
     id: "p2",
@@ -301,6 +337,7 @@ export const PLAYERS: Player[] = [
     instagram: "mattwangbkk",
     favoriteTeam: "Arsenal",
     favoritePlayer: "Bukayo Saka",
+    fairnessScore: 85,
   },
   {
     id: "p3",
@@ -320,6 +357,7 @@ export const PLAYERS: Player[] = [
     bio: "Always looking for a high-energy match after work.",
     basedIn: "Bangkok",
     memberSince: "Jun 2025",
+    fairnessScore: 68,
   },
   {
     id: "p4",
@@ -339,6 +377,7 @@ export const PLAYERS: Player[] = [
     bio: "Love the game, love the community.",
     basedIn: "Bangkok",
     memberSince: "Aug 2025",
+    fairnessScore: 88,
   },
   {
     id: "p5",
@@ -358,6 +397,7 @@ export const PLAYERS: Player[] = [
     bio: "Goalkeeper or center back. Solid defender.",
     basedIn: "Bangkok",
     memberSince: "May 2025",
+    fairnessScore: 80,
   },
   {
     id: "p6",
@@ -377,6 +417,7 @@ export const PLAYERS: Player[] = [
     bio: "Dublin lad. Here for the football and the post-match stories.",
     basedIn: "Bangkok",
     memberSince: "Sep 2025",
+    fairnessScore: 71,
   },
   {
     id: "p7",
@@ -396,6 +437,7 @@ export const PLAYERS: Player[] = [
     bio: "Thai player with good technical skills.",
     basedIn: "Bangkok",
     memberSince: "Jul 2025",
+    fairnessScore: 75,
   },
   {
     id: "p8",
@@ -415,6 +457,7 @@ export const PLAYERS: Player[] = [
     bio: "Bonjour! Looking for fun games in Bangkok.",
     basedIn: "Bangkok",
     memberSince: "Oct 2025",
+    fairnessScore: 91,
   },
   {
     id: "p9",
@@ -434,6 +477,7 @@ export const PLAYERS: Player[] = [
     bio: "Disciplined and technical. Prefer organized games.",
     basedIn: "Bangkok",
     memberSince: "Nov 2025",
+    fairnessScore: 95,
   },
   {
     id: "p10",
@@ -453,6 +497,7 @@ export const PLAYERS: Player[] = [
     bio: "Still learning but loving every game.",
     basedIn: "Bangkok",
     memberSince: "Dec 2025",
+    fairnessScore: 73,
   },
 ];
 
@@ -891,6 +936,67 @@ export function getSurfaceIcon(surface: SurfaceType): string {
     case "indoor": return "Indoor";
   }
 }
+
+export function getFairnessScore(player: Player): number {
+  const reliabilityNorm = player.reliabilityScore;
+  const sportsmanshipNorm = (player.avgSportsmanshipRating / 5) * 100;
+  const noShowPenalty = player.noShowCount * 10;
+  return Math.max(0, Math.min(100, Math.round(
+    reliabilityNorm * 0.4 + sportsmanshipNorm * 0.4 - noShowPenalty * 0.2
+  )));
+}
+
+export const VENUE_STATS: Record<string, VenueStats> = {
+  v1: {
+    totalGamesPlayed: 47,
+    mostActiveDay: "Saturday",
+    topPlayers: [
+      { name: "Amir Bilousov", winRate: 78 },
+      { name: "Matt Wang", winRate: 65 },
+      { name: "Kassim K.", winRate: 61 },
+    ],
+    bestPerformer: { name: "Amir Bilousov", winRate: 78 },
+  },
+  v2: {
+    totalGamesPlayed: 32,
+    mostActiveDay: "Sunday",
+    topPlayers: [
+      { name: "Chad Pratt", winRate: 70 },
+      { name: "Ying P.", winRate: 64 },
+      { name: "Ronan K.", winRate: 58 },
+    ],
+    bestPerformer: { name: "Chad Pratt", winRate: 70 },
+  },
+  v3: {
+    totalGamesPlayed: 55,
+    mostActiveDay: "Friday",
+    topPlayers: [
+      { name: "Matt Wang", winRate: 72 },
+      { name: "Siraseth N.", winRate: 60 },
+      { name: "Manon V.", winRate: 57 },
+    ],
+    bestPerformer: { name: "Matt Wang", winRate: 72 },
+  },
+  v4: {
+    totalGamesPlayed: 28,
+    mostActiveDay: "Saturday",
+    topPlayers: [
+      { name: "Tanaka R.", winRate: 68 },
+      { name: "Chris P.", winRate: 55 },
+      { name: "Maya", winRate: 50 },
+    ],
+    bestPerformer: { name: "Tanaka R.", winRate: 68 },
+  },
+  v5: {
+    totalGamesPlayed: 19,
+    mostActiveDay: "Sunday",
+    topPlayers: [
+      { name: "Ying P.", winRate: 66 },
+      { name: "Kassim K.", winRate: 59 },
+    ],
+    bestPerformer: { name: "Ying P.", winRate: 66 },
+  },
+};
 
 export function formatTimestamp(isoString: string): string {
   const date = new Date(isoString);

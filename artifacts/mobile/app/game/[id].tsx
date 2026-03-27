@@ -20,6 +20,7 @@ import {
   ALL_GAMES,
   MY_GAMES_IDS,
   PLAYERS,
+  VENUE_STATS,
   formatGameTime,
   formatPrice,
   getSkillColor,
@@ -42,7 +43,7 @@ function PaymentModal({
   onSuccess,
 }: {
   visible: boolean;
-  game: ReturnType<typeof GAMES["find"]>;
+  game: ReturnType<typeof ALL_GAMES["find"]>;
   onClose: () => void;
   onSuccess: () => void;
 }) {
@@ -281,6 +282,9 @@ export default function GameDetailScreen() {
                 <Text style={styles.inGameEloYou}>You {myElo}</Text>
                 <Text style={styles.inGameEloMax}>Highest {maxElo}</Text>
               </View>
+              <Text style={styles.inGameEloPercentile}>
+                Your ELO is better than {Math.round((bookingPlayers.filter((p) => p.eloRating < myElo).length / bookingPlayers.length) * 100)}% of players
+              </Text>
             </View>
           );
         })()}
@@ -467,6 +471,46 @@ export default function GameDetailScreen() {
             })}
           </View>
         </View>
+
+        {/* Venue Statistics (Fix 8) */}
+        {VENUE_STATS[game.venue.id] && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>VENUE STATISTICS</Text>
+            <View style={styles.venueStatsCard}>
+              <View style={styles.venueStatsRow}>
+                <View style={styles.venueStatCell}>
+                  <Ionicons name="football-outline" size={16} color={Colors.accent} />
+                  <Text style={styles.venueStatValue}>{VENUE_STATS[game.venue.id].totalGamesPlayed}</Text>
+                  <Text style={styles.venueStatLabel}>Games Played</Text>
+                </View>
+                <View style={styles.venueStatSep} />
+                <View style={styles.venueStatCell}>
+                  <Ionicons name="calendar-outline" size={16} color={Colors.accent} />
+                  <Text style={styles.venueStatValue}>{VENUE_STATS[game.venue.id].mostActiveDay}</Text>
+                  <Text style={styles.venueStatLabel}>Most Active</Text>
+                </View>
+                <View style={styles.venueStatSep} />
+                <View style={styles.venueStatCell}>
+                  <Ionicons name="trophy-outline" size={16} color={Colors.amber} />
+                  <Text style={styles.venueStatValue}>{VENUE_STATS[game.venue.id].bestPerformer.winRate}%</Text>
+                  <Text style={styles.venueStatLabel}>Best WR</Text>
+                </View>
+              </View>
+              <View style={styles.venueTopPlayersSection}>
+                <Text style={styles.venueTopPlayersTitle}>Top Players at This Venue</Text>
+                {VENUE_STATS[game.venue.id].topPlayers.map((tp, i) => (
+                  <View key={i} style={styles.venueTopPlayerRow}>
+                    <Text style={[styles.venueTopPlayerRank, { color: i === 0 ? Colors.amber : Colors.muted }]}>
+                      {i + 1}.
+                    </Text>
+                    <Text style={styles.venueTopPlayerName}>{tp.name}</Text>
+                    <Text style={styles.venueTopPlayerWr}>{tp.winRate}% WR</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          </View>
+        )}
 
         {isJoined && (
           <View style={styles.section}>
@@ -1296,6 +1340,26 @@ const styles = StyleSheet.create({
   inGameEloMin: { fontFamily: "Inter_400Regular", fontSize: 10, color: Colors.muted },
   inGameEloYou: { fontFamily: "Inter_700Bold", fontSize: 10, color: Colors.accent },
   inGameEloMax: { fontFamily: "Inter_400Regular", fontSize: 10, color: Colors.muted },
+  inGameEloPercentile: { fontFamily: "Inter_500Medium", fontSize: 11, color: Colors.accent, textAlign: "center", marginTop: 4 },
+  venueStatsCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 14,
+    padding: 14,
+    gap: 12,
+    borderWidth: 1,
+    borderColor: Colors.separator,
+  },
+  venueStatsRow: { flexDirection: "row", alignItems: "center" },
+  venueStatCell: { flex: 1, alignItems: "center", gap: 4 },
+  venueStatValue: { fontFamily: "Inter_700Bold", fontSize: 16, color: Colors.text },
+  venueStatLabel: { fontFamily: "Inter_500Medium", fontSize: 9, color: Colors.muted, letterSpacing: 0.5 },
+  venueStatSep: { width: 1, height: 36, backgroundColor: Colors.separator },
+  venueTopPlayersSection: { gap: 6 },
+  venueTopPlayersTitle: { fontFamily: "Inter_600SemiBold", fontSize: 11, color: Colors.muted, letterSpacing: 0.5 },
+  venueTopPlayerRow: { flexDirection: "row", alignItems: "center", gap: 8, paddingVertical: 3 },
+  venueTopPlayerRank: { fontFamily: "Inter_700Bold", fontSize: 12, width: 20 },
+  venueTopPlayerName: { flex: 1, fontFamily: "Inter_500Medium", fontSize: 13, color: Colors.text },
+  venueTopPlayerWr: { fontFamily: "Inter_600SemiBold", fontSize: 12, color: Colors.accent },
   aiBalancePill: {
     backgroundColor: `${Colors.accent}22`,
     borderRadius: 999,

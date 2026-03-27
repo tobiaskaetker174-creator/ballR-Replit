@@ -20,6 +20,7 @@ import {
   getReliabilityLabel,
   formatTimestamp,
   isEloPublic,
+  getEloPercentile,
 } from "@/constants/mock";
 
 export default function PlayerProfileScreen() {
@@ -32,8 +33,39 @@ export default function PlayerProfileScreen() {
 
   if (!player) {
     return (
-      <View style={[styles.container, { paddingTop: topPadding, alignItems: "center", justifyContent: "center" }]}>
-        <Text style={{ fontFamily: "Inter_400Regular", color: Colors.muted }}>Player not found</Text>
+      <View style={[styles.container, { paddingTop: topPadding }]}>
+        <View style={styles.navBar}>
+          <Pressable style={styles.navBtn} onPress={() => router.back()}>
+            <Ionicons name="arrow-back" size={20} color={Colors.text} />
+          </Pressable>
+          <Text style={styles.navTitle}>PLAYER PROFILE</Text>
+          <View style={styles.navBtn} />
+        </View>
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 16, paddingHorizontal: 32 }}>
+          <Ionicons name="person-outline" size={48} color={Colors.muted} />
+          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 18, color: Colors.text, textAlign: "center" }}>
+            Player Not Found
+          </Text>
+          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: Colors.muted, textAlign: "center" }}>
+            This player profile does not exist or may have been removed.
+          </Text>
+          <Pressable
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 8,
+              backgroundColor: Colors.primary,
+              paddingHorizontal: 20,
+              paddingVertical: 12,
+              borderRadius: 12,
+              marginTop: 8,
+            }}
+            onPress={() => router.back()}
+          >
+            <Ionicons name="arrow-back" size={16} color={Colors.text} />
+            <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: Colors.text }}>Go Back</Text>
+          </Pressable>
+        </View>
       </View>
     );
   }
@@ -105,11 +137,16 @@ export default function PlayerProfileScreen() {
           )}
 
           {eloPublicForPlayer ? (
-            <View style={[styles.eloChip, { backgroundColor: `${eloTier.color}22` }]}>
-              <Text style={[styles.eloChipText, { color: eloTier.color }]}>
-                {player.eloRating} ELO · {eloTier.tier} {eloTier.label}
+            <>
+              <View style={[styles.eloChip, { backgroundColor: `${eloTier.color}22` }]}>
+                <Text style={[styles.eloChipText, { color: eloTier.color }]}>
+                  {player.eloRating} ELO · {eloTier.tier} {eloTier.label}
+                </Text>
+              </View>
+              <Text style={{ fontFamily: "Inter_400Regular", fontSize: 11, color: Colors.muted }}>
+                Your ELO is better than {Math.round(getEloPercentile(player, PLAYERS) * 100)}% of players
               </Text>
-            </View>
+            </>
           ) : (
             <View style={[styles.eloChip, { backgroundColor: Colors.overlay, flexDirection: "row", alignItems: "center", gap: 5 }]}>
               <Ionicons name="lock-closed" size={11} color={Colors.muted} />
