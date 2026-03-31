@@ -300,8 +300,6 @@ export default function GameDetailScreen() {
           const maxElo = Math.max(...allElos);
           const range = maxElo - minElo || 1;
           const myPct = Math.max(0, Math.min(1, (myElo - minElo) / range));
-          const amIIn = bookingPlayers.some((p) => p.id === "p0");
-          if (!amIIn) return null;
           return (
             <View style={styles.inGameEloCard}>
               <Text style={styles.inGameEloTitle}>YOUR ELO IN THIS GAME</Text>

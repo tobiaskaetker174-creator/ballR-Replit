@@ -263,7 +263,7 @@ export const PLAYERS: Player[] = [
     id: "p0",
     name: "Maya",
     nationality: "Thai",
-    eloRating: 820,
+    eloRating: 1250,
     eloCalibrated: true,
     gamesPlayed: 12,
     gamesWon: 4,
@@ -854,16 +854,16 @@ export const NOTIFICATIONS: Notification[] = [
 ];
 
 export const ELO_HISTORY: EloHistoryEntry[] = [
-  { gameId: "gc1", venueName: "Benjakitti Park", eloBefore: 800, eloAfter: 820, change: 20, reason: "win", date: daysAgo(3) },
-  { gameId: "h2", venueName: "Pitch Arena 2", eloBefore: 780, eloAfter: 800, change: 20, reason: "win", date: daysAgo(10) },
-  { gameId: "h3", venueName: "Lumpini Park", eloBefore: 800, eloAfter: 780, change: -20, reason: "loss", date: daysAgo(14) },
-  { gameId: "h4", venueName: "Flick K-Village", eloBefore: 820, eloAfter: 800, change: -20, reason: "loss", date: daysAgo(21) },
-  { gameId: "h5", venueName: "Benjakitti Park", eloBefore: 840, eloAfter: 820, change: -20, reason: "loss", date: daysAgo(28) },
-  { gameId: "h6", venueName: "Pitch Arena 2", eloBefore: 820, eloAfter: 840, change: 20, reason: "win", date: daysAgo(35) },
-  { gameId: "h7", venueName: "Lumpini Park", eloBefore: 850, eloAfter: 820, change: -30, reason: "no_show", date: daysAgo(42) },
-  { gameId: "h8", venueName: "Benjakitti Park", eloBefore: 830, eloAfter: 850, change: 20, reason: "win", date: daysAgo(49) },
-  { gameId: "h9", venueName: "Flick K-Village", eloBefore: 840, eloAfter: 830, change: -10, reason: "draw", date: daysAgo(56) },
-  { gameId: "h10", venueName: "Benjakitti Park", eloBefore: 860, eloAfter: 840, change: -20, reason: "loss", date: daysAgo(63) },
+  { gameId: "gc1", venueName: "Benjakitti Park", eloBefore: 1230, eloAfter: 1250, change: 20, reason: "win", date: daysAgo(3) },
+  { gameId: "h2", venueName: "Pitch Arena 2", eloBefore: 1210, eloAfter: 1230, change: 20, reason: "win", date: daysAgo(10) },
+  { gameId: "h3", venueName: "Lumpini Park", eloBefore: 1230, eloAfter: 1210, change: -20, reason: "loss", date: daysAgo(14) },
+  { gameId: "h4", venueName: "Flick K-Village", eloBefore: 1250, eloAfter: 1230, change: -20, reason: "loss", date: daysAgo(21) },
+  { gameId: "h5", venueName: "Benjakitti Park", eloBefore: 1270, eloAfter: 1250, change: -20, reason: "loss", date: daysAgo(28) },
+  { gameId: "h6", venueName: "Pitch Arena 2", eloBefore: 1250, eloAfter: 1270, change: 20, reason: "win", date: daysAgo(35) },
+  { gameId: "h7", venueName: "Lumpini Park", eloBefore: 1280, eloAfter: 1250, change: -30, reason: "no_show", date: daysAgo(42) },
+  { gameId: "h8", venueName: "Benjakitti Park", eloBefore: 1260, eloAfter: 1280, change: 20, reason: "win", date: daysAgo(49) },
+  { gameId: "h9", venueName: "Flick K-Village", eloBefore: 1270, eloAfter: 1260, change: -10, reason: "draw", date: daysAgo(56) },
+  { gameId: "h10", venueName: "Benjakitti Park", eloBefore: 1290, eloAfter: 1270, change: -20, reason: "loss", date: daysAgo(63) },
 ];
 
 export const PENDING_RATINGS: PeerRating[] = [
