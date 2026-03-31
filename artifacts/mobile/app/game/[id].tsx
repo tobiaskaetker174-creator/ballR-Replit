@@ -285,17 +285,17 @@ export default function GameDetailScreen() {
           const maxElo = Math.max(...allElos);
           const range = maxElo - minElo || 1;
           const myPct = Math.max(0, Math.min(1, (myElo - minElo) / range));
+          const markerPct = Math.max(2, Math.min(94, myPct * 100));
           return (
             <View style={styles.inGameEloCard}>
               <Text style={styles.inGameEloTitle}>YOUR ELO IN THIS GAME</Text>
               <View style={styles.inGameEloBarOuter}>
-                <View style={styles.inGameEloBarFill} />
-                <View style={[styles.inGameEloMarker, { left: `${Math.max(0, Math.min(94, myPct * 100))}%` as `${number}%` }]} />
+                <View style={[styles.inGameEloBarActive, { width: `${markerPct}%` as `${number}%` }]} />
+                <View style={[styles.inGameEloBarInactive, { left: `${markerPct}%` as `${number}%`, width: `${100 - markerPct}%` as `${number}%` }]} />
+                <View style={[styles.inGameEloMarker, { left: `${markerPct}%` as `${number}%` }]} />
               </View>
-              <View style={styles.inGameEloLabels}>
-                <Text style={styles.inGameEloMin}>Lowest {minElo}</Text>
+              <View style={[styles.inGameEloYouLabel, { left: `${markerPct}%` as `${number}%` }]}>
                 <Text style={styles.inGameEloYou}>You {myElo}</Text>
-                <Text style={styles.inGameEloMax}>Highest {maxElo}</Text>
               </View>
               <Text style={styles.inGameEloPercentile}>
                 Your ELO is better than {Math.round((bookingPlayers.filter((p) => p.eloRating < myElo).length / bookingPlayers.length) * 100)}% of players
@@ -1332,14 +1332,22 @@ const styles = StyleSheet.create({
     position: "relative",
     overflow: "visible",
   },
-  inGameEloBarFill: {
+  inGameEloBarActive: {
     position: "absolute",
     left: 0,
     top: 0,
     bottom: 0,
-    width: "100%",
-    backgroundColor: `${Colors.accent}33`,
-    borderRadius: 999,
+    backgroundColor: Colors.accent,
+    borderTopLeftRadius: 999,
+    borderBottomLeftRadius: 999,
+  },
+  inGameEloBarInactive: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    backgroundColor: `${Colors.accent}22`,
+    borderTopRightRadius: 999,
+    borderBottomRightRadius: 999,
   },
   inGameEloMarker: {
     position: "absolute",
@@ -1350,11 +1358,14 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.accent,
     borderWidth: 2,
     borderColor: Colors.base,
+    marginLeft: -8,
   },
-  inGameEloLabels: { flexDirection: "row", justifyContent: "space-between" },
-  inGameEloMin: { fontFamily: "Inter_400Regular", fontSize: 10, color: Colors.muted },
+  inGameEloYouLabel: {
+    position: "relative",
+    marginTop: 4,
+    marginLeft: -16,
+  },
   inGameEloYou: { fontFamily: "Inter_700Bold", fontSize: 10, color: Colors.accent },
-  inGameEloMax: { fontFamily: "Inter_400Regular", fontSize: 10, color: Colors.muted },
   inGameEloPercentile: { fontFamily: "Inter_500Medium", fontSize: 11, color: Colors.accent, textAlign: "center", marginTop: 4 },
   venueStatsCard: {
     backgroundColor: Colors.surface,
