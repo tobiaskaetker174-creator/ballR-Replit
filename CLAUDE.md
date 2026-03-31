@@ -56,8 +56,8 @@ Built with **Expo React Native** inside a **pnpm monorepo** on Replit.
 
 ### Key constants
 - **`constants/mock.ts`** — all mock data: `PLAYERS` (11), `GAMES`, `COMPLETED_GAMES`, `ALL_GAMES`, `CHAT_MESSAGES`, `NOTIFICATIONS`, `ELO_HISTORY`, `PENDING_RATINGS`, `PROFILE_REVIEWS`, `MY_GAMES_IDS`, `VENUES_LIST`
-- Current user: `PLAYERS[0]` (Maya, ELO 820, `eloCalibrated: true`)
-- `MY_GAMES_IDS = new Set(["g1", "g3"])`
+- Current user: `PLAYERS[0]` (Maya, ELO 1250, `eloCalibrated: true`)
+- `MY_GAMES_IDS = new Set(["g1", "g3", "g6"])`
 - `ELO_PRIVACY_PERCENTILE = 0.30`, `CALIBRATION_GAMES = 5`
 
 ### Auth context (`context/AuthContext.tsx`)
@@ -122,6 +122,6 @@ pnpm run typecheck
 
 ## ELO system
 - Range: 0–2000, Avg = 1200
-- Tiers: Rookie (0–799), Amateur (800–999), Semi-Pro (1000–1199), Pro (1200–1499), Elite (1500+)
+- Tiers: Bronze (0–999), Silver (1000–1499), Gold (1500+)
 - Users below `CALIBRATION_GAMES` games show a calibration progress bar instead of ELO
 - ELO is hidden from other players below `ELO_PRIVACY_PERCENTILE` (30th percentile)

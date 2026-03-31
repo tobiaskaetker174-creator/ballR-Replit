@@ -14,7 +14,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Path, Stop } from "react-native-svg";
+import Svg, { Circle, Defs, Line, LinearGradient as SvgLinearGradient, Polygon, Rect, Stop } from "react-native-svg";
 import Colors from "@/constants/colors";
 import {
   GAMES,
@@ -193,14 +193,19 @@ export default function DiscoverScreen() {
               <View style={styles.logoRow}>
                 <Svg width={22} height={22} viewBox="0 0 32 32">
                   <Defs>
-                    <SvgLinearGradient id="idx-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                      <Stop offset="0%" stopColor="#A1D494" />
-                      <Stop offset="100%" stopColor="#2D5A27" />
+                    <SvgLinearGradient id="idx-grad" x1="16" y1="2" x2="16" y2="30" gradientUnits="userSpaceOnUse">
+                      <Stop offset="0%" stopColor="#B8D8AB" />
+                      <Stop offset="100%" stopColor="#8FC07C" />
                     </SvgLinearGradient>
                   </Defs>
-                  <Circle cx="16" cy="16" r="15" fill="url(#idx-grad)" />
-                  <Path d="M16 1 A15 15 0 0 1 31 16 L16 16 Z" fill="#2D5A27" fillOpacity="0.6" />
-                  <Circle cx="16" cy="16" r="4" fill="#141312" fillOpacity="0.5" />
+                  <Rect x="1" y="1" width="30" height="30" rx="7" fill="url(#idx-grad)" />
+                  <Circle cx="16" cy="15" r="8.5" fill="none" stroke="#2A3525" strokeWidth="1.5" />
+                  <Polygon points="16,10 19.8,12.8 18.3,17.4 13.7,17.4 12.2,12.8" fill="#2A3525" />
+                  <Line x1="16" y1="10" x2="16" y2="6.5" stroke="#2A3525" strokeWidth="1.4" />
+                  <Line x1="19.8" y1="12.8" x2="23.8" y2="11.5" stroke="#2A3525" strokeWidth="1.4" />
+                  <Line x1="18.3" y1="17.4" x2="20.7" y2="21.2" stroke="#2A3525" strokeWidth="1.4" />
+                  <Line x1="13.7" y1="17.4" x2="11.3" y2="21.2" stroke="#2A3525" strokeWidth="1.4" />
+                  <Line x1="12.2" y1="12.8" x2="8.2" y2="11.5" stroke="#2A3525" strokeWidth="1.4" />
                 </Svg>
                 <Text style={styles.logoText}>BALLR</Text>
               </View>
