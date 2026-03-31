@@ -198,7 +198,7 @@ export default function GameDetailScreen() {
       >
         <View style={styles.heroContainer}>
           <Image
-            source={require("../../assets/images/venue_pitch.jpg")}
+            source={game.venue.imageUrl ? { uri: game.venue.imageUrl } : require("../../assets/images/venue_pitch.jpg")}
             style={styles.heroImage}
             resizeMode="cover"
           />

@@ -890,12 +890,9 @@ export function getSkillLabel(level: SkillLevel): string {
 }
 
 export function getEloLabel(elo: number): { label: string; tier: string; color: string } {
-  if (elo < 700) return { label: "Novice", tier: "⚽", color: "#8C8782" };
-  if (elo < 900) return { label: "Beginner", tier: "🌱", color: "#A1D494" };
-  if (elo < 1100) return { label: "Recreational", tier: "⚡", color: "#4ABFB0" };
-  if (elo < 1300) return { label: "Competitive", tier: "🔥", color: "#E8A93A" };
-  if (elo < 1500) return { label: "Expert", tier: "💎", color: "#5B8FE8" };
-  return { label: "Elite", tier: "👑", color: "#E05252" };
+  if (elo < 1000) return { label: "Bronze", tier: "🥉", color: "#C4834A" };
+  if (elo < 1500) return { label: "Silver", tier: "🥈", color: "#C0C0C0" };
+  return { label: "Gold", tier: "🥇", color: "#E8A93A" };
 }
 
 export function getReliabilityColor(score: number): string {
@@ -913,11 +910,12 @@ export function getReliabilityLabel(score: number): string {
 export const ELO_PRIVACY_PERCENTILE = 0.30;
 export const CALIBRATION_GAMES = 5;
 
-export function getEloPercentile(player: Player, allPlayers: Player[]): number {
-  const sorted = [...allPlayers].sort((a, b) => a.eloRating - b.eloRating);
-  const rank = sorted.findIndex((p) => p.id === player.id);
-  if (rank < 0) return 0;
-  return sorted.length > 1 ? rank / (sorted.length - 1) : 1;
+export function getEloPercentile(player: Player, _allPlayers: Player[]): number {
+  // Use the full ELO range (0–2000) for a stable percentile that doesn't
+  // fluctuate with a small player pool.  Clamp to [0, 1].
+  const ELO_MIN = 0;
+  const ELO_MAX = 2000;
+  return Math.max(0, Math.min(1, player.eloRating / (ELO_MAX - ELO_MIN)));
 }
 
 export function isEloPublic(player: Player, allPlayers: Player[]): boolean {

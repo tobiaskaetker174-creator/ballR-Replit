@@ -60,7 +60,7 @@ export default function AnalyticsScreen() {
           <Ionicons name="arrow-back" size={20} color={Colors.text} />
         </Pressable>
         <Text style={styles.navTitle}>MY ANALYTICS</Text>
-        <View style={styles.navBtn} />
+        <View style={{ width: 36 }} />
       </View>
 
       <ScrollView

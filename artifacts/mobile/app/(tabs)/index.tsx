@@ -14,6 +14,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Path, Stop } from "react-native-svg";
 import Colors from "@/constants/colors";
 import {
   GAMES,
@@ -185,7 +186,20 @@ export default function DiscoverScreen() {
                 )}
               </View>
 
-              <Text style={styles.logoText}>BALLR</Text>
+              <View style={styles.logoRow}>
+                <Svg width={22} height={22} viewBox="0 0 32 32">
+                  <Defs>
+                    <SvgLinearGradient id="idx-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                      <Stop offset="0%" stopColor="#A1D494" />
+                      <Stop offset="100%" stopColor="#2D5A27" />
+                    </SvgLinearGradient>
+                  </Defs>
+                  <Circle cx="16" cy="16" r="15" fill="url(#idx-grad)" />
+                  <Path d="M16 1 A15 15 0 0 1 31 16 L16 16 Z" fill="#2D5A27" fillOpacity="0.6" />
+                  <Circle cx="16" cy="16" r="4" fill="#141312" fillOpacity="0.5" />
+                </Svg>
+                <Text style={styles.logoText}>BALLR</Text>
+              </View>
 
               <Pressable style={styles.bellBtn} onPress={() => router.push("/notifications")}>
                 <Ionicons name="notifications-outline" size={20} color={Colors.muted} />
@@ -204,7 +218,7 @@ export default function DiscoverScreen() {
                 onPress={() => router.push({ pathname: "/game/[id]", params: { id: featuredGame.id } })}
               >
                 <Image
-                  source={require("../../assets/images/featured_pitch.jpg")}
+                  source={featuredGame.venue.imageUrl ? { uri: featuredGame.venue.imageUrl } : require("../../assets/images/featured_pitch.jpg")}
                   style={styles.featuredImage}
                   resizeMode="cover"
                 />
@@ -399,8 +413,14 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: Colors.accent,
   },
-  logoText: {
+  logoRow: {
     flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  logoText: {
     fontFamily: "Inter_700Bold",
     fontSize: 18,
     color: Colors.text,

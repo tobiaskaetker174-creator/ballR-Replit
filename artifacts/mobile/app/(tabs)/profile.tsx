@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/constants/colors";
+import type { Position } from "@/constants/mock";
 import {
   PLAYERS,
   ELO_HISTORY,
@@ -124,7 +125,7 @@ export default function ProfileScreen() {
   const [showEloInfo, setShowEloInfo] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [editBio, setEditBio] = useState(ME.bio ?? "");
-  const [editPositions, setEditPositions] = useState<string[]>([...ME.preferredPositions]);
+  const [editPositions, setEditPositions] = useState<Position[]>([...ME.preferredPositions]);
   const unreadCount = NOTIFICATIONS.filter((n) => !n.read).length;
 
   const eloPublic = isEloPublic(ME, PLAYERS);

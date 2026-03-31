@@ -51,7 +51,7 @@ export default function AdminPanelScreen() {
             <Text style={styles.adminBadgeText}>Admin Access</Text>
           </View>
         </View>
-        <View style={styles.navBtn} />
+        <View style={{ width: 36 }} />
       </View>
 
       <View style={styles.tabRow}>

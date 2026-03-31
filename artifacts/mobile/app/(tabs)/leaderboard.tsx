@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/constants/colors";
-import { POTM_ENTRIES, PotmEntry, PLAYERS, isEloPublic, getFairnessScore, Player } from "@/constants/mock";
+import { POTM_ENTRIES, PotmEntry, PLAYERS, isEloPublic, getFairnessScore, Player, getEloLabel } from "@/constants/mock";
 
 const CITIES = ["Bangkok", "Bali"];
 
@@ -126,7 +126,7 @@ function RankRow({ entry, isCurrentUser, scoreLabel }: { entry: PotmEntry; isCur
           {isEloPublic(entry.player, PLAYERS) ? `${entry.player.eloRating} elo · ` : ""}{entry.gamesPlayed} games · {entry.wins}W
         </Text>
       </View>
-      <Text style={styles.rankElo}>{isEloPublic(entry.player, PLAYERS) ? entry.player.eloRating : "\u2014"}</Text>
+      <Text style={styles.rankElo}>{isEloPublic(entry.player, PLAYERS) ? entry.player.eloRating : getEloLabel(entry.player.eloRating).label}</Text>
       <Text style={[styles.rankScore, { color: Colors.accent }]}>{scoreLabel ?? entry.potmScore}</Text>
     </Pressable>
   );

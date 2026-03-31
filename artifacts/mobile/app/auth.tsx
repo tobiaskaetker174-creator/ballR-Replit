@@ -14,6 +14,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Svg, { Circle, Defs, LinearGradient, Path, Stop } from "react-native-svg";
 import Colors from "@/constants/colors";
 import { useAuth } from "@/context/AuthContext";
 
@@ -70,9 +71,17 @@ export default function AuthScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.logo}>
-          <View style={styles.logoBall}>
-            <Text style={styles.logoBallIcon}>⚽</Text>
-          </View>
+          <Svg width={64} height={64} viewBox="0 0 32 32" style={{ marginBottom: 8 }}>
+            <Defs>
+              <LinearGradient id="ballr-app-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                <Stop offset="0%" stopColor="#A1D494" />
+                <Stop offset="100%" stopColor="#2D5A27" />
+              </LinearGradient>
+            </Defs>
+            <Circle cx="16" cy="16" r="15" fill="url(#ballr-app-grad)" />
+            <Path d="M16 1 A15 15 0 0 1 31 16 L16 16 Z" fill="#2D5A27" fillOpacity="0.6" />
+            <Circle cx="16" cy="16" r="4" fill="#141312" fillOpacity="0.5" />
+          </Svg>
           <Text style={styles.logoText}>BALLR</Text>
           <Text style={styles.logoSub}>Pickup football, perfected.</Text>
         </View>
@@ -208,20 +217,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 32,
     gap: 6,
-  },
-  logoBall: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: Colors.primary,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 6,
-    borderWidth: 2,
-    borderColor: Colors.accent,
-  },
-  logoBallIcon: {
-    fontSize: 32,
   },
   logoText: {
     fontFamily: "Inter_700Bold",
