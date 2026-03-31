@@ -1,4 +1,4 @@
-import { Ionicons, Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React, { useState } from "react";
@@ -54,6 +54,8 @@ function ChipSelect<T extends string | number>({
               key={String(opt)}
               style={[styles.chip, active && { backgroundColor: `${color}33`, borderColor: color }]}
               onPress={() => { Haptics.selectionAsync(); onSelect(opt); }}
+              accessibilityLabel={`${renderLabel(opt)}${active ? ", selected" : ""}`}
+              accessibilityRole="button"
             >
               <Text style={[styles.chipText, active && { color }]}>{renderLabel(opt)}</Text>
             </Pressable>
@@ -111,7 +113,7 @@ export default function CreateGameScreen() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View style={styles.header}>
-        <Pressable style={styles.backBtn} onPress={() => router.back()}>
+        <Pressable style={styles.backBtn} onPress={() => router.back()} accessibilityLabel="Go back" accessibilityRole="button">
           <Ionicons name="arrow-back" size={20} color={Colors.text} />
         </Pressable>
         <Text style={styles.headerTitle}>Create Game</Text>
@@ -139,6 +141,8 @@ export default function CreateGameScreen() {
                 key={v.id}
                 style={[styles.venueRow, venueId === v.id && styles.venueRowActive]}
                 onPress={() => { Haptics.selectionAsync(); setVenueId(v.id); }}
+                accessibilityLabel={`${v.name}${venueId === v.id ? ", selected" : ""}`}
+                accessibilityRole="button"
               >
                 <View style={styles.venueInfo}>
                   <Text style={styles.venueName}>{v.name}</Text>
@@ -227,6 +231,8 @@ export default function CreateGameScreen() {
                 key={v}
                 style={[styles.reliabilityChip, minReliability === v && styles.reliabilityChipActive]}
                 onPress={() => { Haptics.selectionAsync(); setMinReliability(v); }}
+                accessibilityLabel={`Minimum reliability ${v === 0 ? "any" : `${v}%`}${minReliability === v ? ", selected" : ""}`}
+                accessibilityRole="button"
               >
                 <Text style={[styles.reliabilityChipText, minReliability === v && styles.reliabilityChipTextActive]}>
                   {v === 0 ? "Any" : `${v}%+`}
@@ -286,6 +292,8 @@ export default function CreateGameScreen() {
           style={({ pressed }) => [styles.createBtn, submitting && { opacity: 0.7 }, pressed && { opacity: 0.85 }]}
           onPress={handleCreate}
           disabled={submitting}
+          accessibilityLabel={submitting ? "Posting game" : "Post game"}
+          accessibilityRole="button"
         >
           {submitting ? (
             <Text style={styles.createBtnText}>Posting Game...</Text>

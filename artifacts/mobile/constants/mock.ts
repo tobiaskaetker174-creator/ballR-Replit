@@ -667,7 +667,14 @@ export const GAMES: Game[] = [
     avgElo: 1100,
     registrationCutoff: daysFromNow(1, 15),
     description: "Bali beach football. Bring sunscreen!",
-    bookings: [],
+    bookings: [
+      { id: "b40", gameId: "g5", player: PLAYERS[4], teamAssignment: "none", paymentStatus: "paid" },
+      { id: "b41", gameId: "g5", player: PLAYERS[6], teamAssignment: "none", paymentStatus: "paid" },
+      { id: "b42", gameId: "g5", player: PLAYERS[7], teamAssignment: "none", paymentStatus: "paid" },
+      { id: "b43", gameId: "g5", player: PLAYERS[8], teamAssignment: "none", paymentStatus: "paid" },
+      { id: "b44", gameId: "g5", player: PLAYERS[9], teamAssignment: "none", paymentStatus: "pending" },
+      { id: "b45", gameId: "g5", player: PLAYERS[10], teamAssignment: "none", paymentStatus: "paid" },
+    ],
   },
   {
     id: "g6",
@@ -686,8 +693,12 @@ export const GAMES: Game[] = [
     maxElo: 1500,
     avgElo: 1100,
     registrationCutoff: daysFromNow(3, 17),
-    description: "Weekend mixed game. Skill level welcome.",
-    bookings: [],
+    description: "Weekend mixed game. All skill levels welcome.",
+    bookings: [
+      { id: "b46", gameId: "g6", player: PLAYERS[5], teamAssignment: "none", paymentStatus: "paid" },
+      { id: "b47", gameId: "g6", player: PLAYERS[3], teamAssignment: "none", paymentStatus: "paid" },
+      { id: "b48", gameId: "g6", player: PLAYERS[0], teamAssignment: "none", paymentStatus: "pending" },
+    ],
   },
 ];
 
@@ -863,7 +874,7 @@ export const PENDING_RATINGS: PeerRating[] = [
 
 export const VENUES_LIST = VENUES;
 
-export const MY_GAMES_IDS = new Set(["g1", "g3"]);
+export const MY_GAMES_IDS = new Set(["g1", "g3", "g6"]);
 
 export function formatGameTime(isoString: string): string {
   const gameDate = new Date(isoString);
