@@ -271,21 +271,6 @@ export default function GameDetailScreen() {
         </View>
 
         <View style={styles.eloStrip}>
-          <View style={styles.eloStripRow}>
-            <Text style={styles.eloStripLabel}>ELO RANGE</Text>
-            <Text style={styles.eloStripNum}>⚡ {game.minElo}–{game.maxElo} · Avg {game.avgElo}</Text>
-          </View>
-          <View style={styles.fillTrack}>
-            <View
-              style={[
-                styles.fillFill,
-                {
-                  width: `${Math.min(fillPct, 100)}%` as `${number}%`,
-                  backgroundColor: fillPct >= 100 ? Colors.red : fillPct > 80 ? Colors.amber : Colors.accent,
-                },
-              ]}
-            />
-          </View>
           <Text style={styles.eloStripCount}>
             {game.maxPlayers - game.currentPlayers} spots remaining · Cutoff 2h before kick-off
           </Text>
