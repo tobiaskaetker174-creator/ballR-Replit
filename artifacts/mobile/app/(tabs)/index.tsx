@@ -98,7 +98,11 @@ function CompactGameCard({ game }: { game: Game }) {
         </View>
         <View style={styles.compactRight}>
           <Text style={styles.compactPrice}>{formatPrice(game.pricePerPlayer, game.cityId)}</Text>
-          {isFull && (
+          {isFull ? (
+            <View style={[styles.openBadge, { backgroundColor: `${Colors.red}22` }]}>
+              <Text style={[styles.openBadgeText, { color: Colors.red }]}>Full</Text>
+            </View>
+          ) : (
             <View style={styles.openBadge}>
               <Text style={styles.openBadgeText}>Open</Text>
             </View>
@@ -117,7 +121,7 @@ function CompactGameCard({ game }: { game: Game }) {
           <Text style={styles.compactStatText}>{game.currentPlayers}/{game.maxPlayers}</Text>
         </View>
         <View style={styles.compactStatDot} />
-        <Text style={styles.compactStatText}>{formatPrice(game.pricePerPlayer, game.cityId)}</Text>
+        <Text style={styles.compactStatText}>{game.durationMinutes}min</Text>
       </View>
 
       <Pressable

@@ -103,7 +103,7 @@ function GameCard({ game, isJoined, isCompleted }: { game: Game; isJoined: boole
                 style={[
                   styles.fillFill,
                   {
-                    width: `${Math.min(fillPct * 100, 100)}%` as any,
+                    width: `${Math.min(fillPct * 100, 100)}%` as `${number}%`,
                     backgroundColor: fillColor,
                   },
                 ]}

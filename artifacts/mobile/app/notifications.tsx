@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
   notifTime: {
     fontFamily: "Inter_400Regular",
     fontSize: 10,
-    color: Colors.overlay,
+    color: Colors.muted,
     marginTop: 2,
   },
   sep: { height: 8 },

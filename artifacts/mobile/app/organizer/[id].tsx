@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/constants/colors";
-import { GAMES, formatGameTime, getSkillColor } from "@/constants/mock";
+import { ALL_GAMES, formatGameTime, getSkillColor } from "@/constants/mock";
 
 type WinTeam = "blue" | "red" | "draw" | null;
 
@@ -23,7 +23,7 @@ export default function OrganizerPanelScreen() {
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 20 : insets.bottom;
 
-  const game = GAMES.find((g) => g.id === id);
+  const game = ALL_GAMES.find((g) => g.id === id);
   const [winner, setWinner] = useState<WinTeam>(null);
   const [noShows, setNoShows] = useState<Set<string>>(new Set());
   const [completing, setCompleting] = useState(false);
@@ -87,7 +87,7 @@ export default function OrganizerPanelScreen() {
           </Text>
           {noShows.size > 0 && (
             <Text style={styles.doneSub}>
-              {noShows.size} no-show{noShows.size > 1 ? "s" : ""} marked · -50 Elo each
+              {noShows.size} no-show{noShows.size > 1 ? "s" : ""} marked · -30 Elo each
             </Text>
           )}
           <Pressable style={styles.doneBtn} onPress={() => router.replace("/(tabs)/my-games")}>

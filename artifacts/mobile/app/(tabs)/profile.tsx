@@ -94,13 +94,13 @@ function EloRangeVisual({
       </View>
 
       <View style={styles.eloRangeBarOuter}>
-        <View style={[styles.eloRangeBarFill, { width: `${pct * 100}%` as any }]} />
-        <View style={[styles.eloAvgLine, { left: `${avgPct * 100}%` as any }]} />
-        <View style={[styles.eloRangeMarker, { left: `${Math.max(0, Math.min(96, pct * 100))}%` as any }]} />
+        <View style={[styles.eloRangeBarFill, { width: `${pct * 100}%` as `${number}%` }]} />
+        <View style={[styles.eloAvgLine, { left: `${avgPct * 100}%` as `${number}%` }]} />
+        <View style={[styles.eloRangeMarker, { left: `${Math.max(0, Math.min(96, pct * 100))}%` as `${number}%` }]} />
       </View>
 
       <View style={styles.eloRangeLabels}>
-        <View style={[styles.eloAvgLabelBox, { left: `${avgPct * 100}%` as any }]}>
+        <View style={[styles.eloAvgLabelBox, { left: `${avgPct * 100}%` as `${number}%` }]}>
           <Text style={styles.eloAvgLabelText}>Avg {AVG_ELO}</Text>
         </View>
       </View>
@@ -247,7 +247,7 @@ export default function ProfileScreen() {
             Play {calibrationGamesLeft} more game{calibrationGamesLeft !== 1 ? "s" : ""} to unlock your full rating profile.
           </Text>
           <View style={styles.calibrationTrack}>
-            <View style={[styles.calibrationFill, { width: `${(ME.gamesPlayed / CALIBRATION_GAMES) * 100}%` as any }]} />
+            <View style={[styles.calibrationFill, { width: `${(ME.gamesPlayed / CALIBRATION_GAMES) * 100}%` as `${number}%` }]} />
           </View>
           <Text style={styles.calibrationCount}>{ME.gamesPlayed}/{CALIBRATION_GAMES} games</Text>
         </View>

@@ -198,8 +198,8 @@ export default function AnalyticsScreen() {
                 </View>
 
                 <View style={styles.rivalBarOuter}>
-                  <View style={[styles.rivalBarFill, { flex: rivalWinRate / 100 as any, backgroundColor: rivalWinRate >= 50 ? Colors.accent : Colors.red }]} />
-                  <View style={[styles.rivalBarFill, { flex: (100 - rivalWinRate) / 100 as any, backgroundColor: Colors.overlay }]} />
+                  <View style={[styles.rivalBarFill, { flex: rivalWinRate / 100, backgroundColor: rivalWinRate >= 50 ? Colors.accent : Colors.red }]} />
+                  <View style={[styles.rivalBarFill, { flex: (100 - rivalWinRate) / 100, backgroundColor: Colors.overlay }]} />
                 </View>
                 {rivalData && (
                   <Text style={styles.rivalTrend}>

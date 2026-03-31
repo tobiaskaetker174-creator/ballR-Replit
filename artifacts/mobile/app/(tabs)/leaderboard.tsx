@@ -321,7 +321,7 @@ export default function LeaderboardScreen() {
 
             {/* Biggest ELO Gainers This Month */}
             <View style={[styles.listHeader, { marginTop: 28 }]}>
-              <Text style={styles.listHeaderText}>GR\u00D6SSTE ELO GAINER DIESEN MONAT</Text>
+              <Text style={styles.listHeaderText}>BIGGEST ELO GAINERS THIS MONTH</Text>
               <View style={styles.listHeaderDivider} />
               <Text style={styles.listHeaderRight}>+ELO</Text>
             </View>

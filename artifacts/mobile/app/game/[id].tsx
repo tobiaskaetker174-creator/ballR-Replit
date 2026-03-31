@@ -248,7 +248,7 @@ export default function GameDetailScreen() {
               style={[
                 styles.fillFill,
                 {
-                  width: `${Math.min(fillPct, 100)}%` as any,
+                  width: `${Math.min(fillPct, 100)}%` as `${number}%`,
                   backgroundColor: fillPct >= 100 ? Colors.red : fillPct > 80 ? Colors.amber : Colors.accent,
                 },
               ]}
@@ -1383,7 +1383,7 @@ const styles = StyleSheet.create({
   },
   pitchCenterLine: {
     position: "absolute",
-    left: "50%" as any,
+    left: "50%" as `${number}%`,
     top: 0,
     bottom: 0,
     width: 1,
@@ -1391,8 +1391,8 @@ const styles = StyleSheet.create({
   },
   pitchCenterCircle: {
     position: "absolute",
-    left: "50%" as any,
-    top: "50%" as any,
+    left: "50%" as `${number}%`,
+    top: "50%" as `${number}%`,
     width: 40,
     height: 40,
     borderRadius: 20,

@@ -14,12 +14,12 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/constants/colors";
-import { CHAT_MESSAGES, ChatMessage, GAMES, formatTimestamp } from "@/constants/mock";
+import { CHAT_MESSAGES, ChatMessage, ALL_GAMES, formatTimestamp } from "@/constants/mock";
 
 export default function ChatScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
-  const game = GAMES.find((g) => g.id === id);
+  const game = ALL_GAMES.find((g) => g.id === id);
   const flatRef = useRef<FlatList>(null);
 
   const topPadding = Platform.OS === "web" ? 67 : insets.top;

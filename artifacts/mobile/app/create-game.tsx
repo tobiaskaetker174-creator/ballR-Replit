@@ -27,7 +27,7 @@ const PLAYER_COUNTS = [8, 10, 12, 14, 16];
 const DURATIONS = [60, 90, 120];
 const CUTOFFS = [1, 2, 4, 6, 12, 24];
 
-function ChipSelect<T extends string>({
+function ChipSelect<T extends string | number>({
   label,
   options,
   value,
@@ -51,7 +51,7 @@ function ChipSelect<T extends string>({
           const color = renderColor ? renderColor(opt) : Colors.accent;
           return (
             <Pressable
-              key={opt}
+              key={String(opt)}
               style={[styles.chip, active && { backgroundColor: `${color}33`, borderColor: color }]}
               onPress={() => { Haptics.selectionAsync(); onSelect(opt); }}
             >
@@ -125,7 +125,7 @@ export default function CreateGameScreen() {
       >
         <ChipSelect
           label="CITY"
-          options={CITIES.map((c) => c.id) as any}
+          options={CITIES.map((c) => c.id)}
           value={city}
           onSelect={(v) => { setCity(v); setVenueId(VENUES_LIST.find((vn) => vn.cityId === v)?.id ?? "v1"); }}
           renderLabel={(v) => CITIES.find((c) => c.id === v)?.label ?? v}
@@ -181,17 +181,17 @@ export default function CreateGameScreen() {
 
         <ChipSelect
           label="DURATION"
-          options={DURATIONS as any}
-          value={duration as any}
-          onSelect={(v) => setDuration(Number(v))}
+          options={DURATIONS}
+          value={duration}
+          onSelect={(v) => setDuration(v)}
           renderLabel={(v) => `${v} min`}
         />
 
         <ChipSelect
           label="MAX PLAYERS"
-          options={PLAYER_COUNTS as any}
-          value={maxPlayers as any}
-          onSelect={(v) => setMaxPlayers(Number(v))}
+          options={PLAYER_COUNTS}
+          value={maxPlayers}
+          onSelect={(v) => setMaxPlayers(v)}
           renderLabel={(v) => `${v} players`}
         />
 
@@ -238,9 +238,9 @@ export default function CreateGameScreen() {
 
         <ChipSelect
           label="REGISTRATION CUTOFF"
-          options={CUTOFFS as any}
-          value={cutoffHours as any}
-          onSelect={(v) => setCutoffHours(Number(v))}
+          options={CUTOFFS}
+          value={cutoffHours}
+          onSelect={(v) => setCutoffHours(v)}
           renderLabel={(v) => `${v}h before`}
         />
 
