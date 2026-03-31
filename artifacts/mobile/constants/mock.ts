@@ -1,3 +1,5 @@
+import Colors from "./colors";
+
 export type SkillLevel = "beginner" | "intermediate" | "advanced" | "mixed";
 export type GameStatus = "upcoming" | "full" | "in_progress" | "completed" | "canceled";
 export type SurfaceType = "grass" | "turf" | "indoor";
@@ -50,10 +52,10 @@ export function getEloBadgeTier(player: Player, allPlayers: Player[]): EloBadgeT
   const rank = sorted.findIndex((p) => p.id === player.id);
   if (rank < 0) return null;
   const percentile = (rank + 1) / sorted.length;
-  if (percentile <= 0.01) return { tier: "platinum", ringColor: "#E8A93A", icon: "crown" };
-  if (percentile <= 0.10) return { tier: "gold", ringColor: "#E8A93A", icon: "star" };
-  if (percentile <= 0.20) return { tier: "silver", ringColor: "#C0C0C0", icon: "shield" };
-  if (percentile <= 0.30) return { tier: "bronze", ringColor: "#C4834A", icon: "medal" };
+  if (percentile <= 0.01) return { tier: "platinum", ringColor: Colors.amber, icon: "crown" };
+  if (percentile <= 0.10) return { tier: "gold", ringColor: Colors.amber, icon: "star" };
+  if (percentile <= 0.20) return { tier: "silver", ringColor: Colors.muted, icon: "shield" };
+  if (percentile <= 0.30) return { tier: "bronze", ringColor: Colors.bronze, icon: "medal" };
   return null;
 }
 
@@ -894,10 +896,10 @@ export function formatGameTime(isoString: string): string {
 
 export function getSkillColor(level: SkillLevel): string {
   switch (level) {
-    case "beginner": return "#A1D494";
-    case "intermediate": return "#4ABFB0";
-    case "advanced": return "#E8A93A";
-    case "mixed": return "#9B6FD4";
+    case "beginner": return Colors.accent;
+    case "intermediate": return Colors.teal;
+    case "advanced": return Colors.amber;
+    case "mixed": return Colors.purple;
   }
 }
 
@@ -911,15 +913,15 @@ export function getSkillLabel(level: SkillLevel): string {
 }
 
 export function getEloLabel(elo: number): { label: string; tier: string; color: string } {
-  if (elo < 1000) return { label: "Bronze", tier: "🥉", color: "#C4834A" };
-  if (elo < 1500) return { label: "Silver", tier: "🥈", color: "#C0C0C0" };
-  return { label: "Gold", tier: "🥇", color: "#E8A93A" };
+  if (elo < 1000) return { label: "Bronze", tier: "🥉", color: Colors.bronze };
+  if (elo < 1500) return { label: "Silver", tier: "🥈", color: Colors.muted };
+  return { label: "Gold", tier: "🥇", color: Colors.amber };
 }
 
 export function getReliabilityColor(score: number): string {
-  if (score >= 90) return "#A1D494";
-  if (score >= 70) return "#E8A93A";
-  return "#E05252";
+  if (score >= 90) return Colors.accent;
+  if (score >= 70) return Colors.amber;
+  return Colors.red;
 }
 
 export function getReliabilityLabel(score: number): string {

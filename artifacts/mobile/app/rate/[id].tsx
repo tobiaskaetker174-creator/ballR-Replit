@@ -184,12 +184,25 @@ export default function RateScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.list, { paddingBottom: bottomPadding + 100 }]}
       >
-        {ratings.map((r) => (
-          <PlayerCard key={r.id} rating={r} onUpdate={updateRating} />
-        ))}
+        {ratings.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Ionicons name="people-outline" size={48} color={Colors.muted} />
+            <Text style={styles.emptyTitle}>No Teammates to Rate</Text>
+            <Text style={styles.emptySub}>
+              There are no pending ratings for this game.
+            </Text>
+            <Pressable style={styles.emptyBtn} onPress={() => router.back()}>
+              <Text style={styles.emptyBtnText}>Go Back</Text>
+            </Pressable>
+          </View>
+        ) : (
+          ratings.map((r) => (
+            <PlayerCard key={r.id} rating={r} onUpdate={updateRating} />
+          ))
+        )}
       </ScrollView>
 
-      <View style={[styles.footer, { paddingBottom: Math.max(bottomPadding, 12) + 8 }]}>
+      {ratings.length > 0 && <View style={[styles.footer, { paddingBottom: Math.max(bottomPadding, 12) + 8 }]}>
         <View style={styles.progressRow}>
           {ratings.map((r) => (
             <View
@@ -219,7 +232,7 @@ export default function RateScreen() {
           </Text>
           {!submitting && <Ionicons name="checkmark-circle" size={18} color={Colors.text} />}
         </Pressable>
-      </View>
+      </View>}
     </View>
   );
 }
@@ -409,6 +422,35 @@ const styles = StyleSheet.create({
   doneBtnText: {
     fontFamily: "Inter_700Bold",
     fontSize: 15,
+    color: Colors.text,
+  },
+  emptyState: {
+    alignItems: "center",
+    paddingTop: 60,
+    gap: 12,
+    paddingHorizontal: 32,
+  },
+  emptyTitle: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 18,
+    color: Colors.text,
+  },
+  emptySub: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 13,
+    color: Colors.muted,
+    textAlign: "center",
+  },
+  emptyBtn: {
+    backgroundColor: Colors.primary,
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 28,
+    marginTop: 8,
+  },
+  emptyBtnText: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 13,
     color: Colors.text,
   },
 });

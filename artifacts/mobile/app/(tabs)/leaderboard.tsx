@@ -19,7 +19,7 @@ const CITIES = ["Bangkok", "Bali"];
 function PodiumBlock({ entry, rank }: { entry: PotmEntry; rank: number }) {
   const isFirst = rank === 1;
   const isSecond = rank === 2;
-  const podiumColor = isFirst ? Colors.amber : isSecond ? Colors.muted : "#C4834A";
+  const podiumColor = isFirst ? Colors.amber : isSecond ? Colors.muted : Colors.bronze;
   const blockH = isFirst ? 80 : isSecond ? 55 : 44;
   const avatarSize = isFirst ? 60 : 46;
 
@@ -89,7 +89,7 @@ function PodiumBlock({ entry, rank }: { entry: PotmEntry; rank: number }) {
 }
 
 function RankRow({ entry, isCurrentUser, scoreLabel }: { entry: PotmEntry; isCurrentUser?: boolean; scoreLabel?: string }) {
-  const topColors = [Colors.amber, Colors.muted, "#C4834A"];
+  const topColors = [Colors.amber, Colors.muted, Colors.bronze];
   const rankColor = entry.rank <= 3 ? topColors[entry.rank - 1] : Colors.muted;
   const medal = entry.rank === 1 ? "🥇" : entry.rank === 2 ? "🥈" : entry.rank === 3 ? "🥉" : null;
 
@@ -142,7 +142,7 @@ function FairnessPlayerRow({ player, rank, score }: { player: Player; rank: numb
   const avatarColors = [Colors.primary, Colors.blue, Colors.teal, Colors.purple, Colors.amber];
   const avatarBg = avatarColors[rank % avatarColors.length];
   const medal = rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : null;
-  const topColors = [Colors.amber, Colors.muted, "#C4834A"];
+  const topColors = [Colors.amber, Colors.muted, Colors.bronze];
   const rankColor = rank <= 3 ? topColors[rank - 1] : Colors.muted;
 
   return (
@@ -511,12 +511,12 @@ export default function LeaderboardScreen() {
         {/* ===== TOR DES MONATS VIEW ===== */}
         {category === "gotm" && (
           <>
-            <View style={{ alignItems: "center", paddingVertical: 40, gap: 12, paddingHorizontal: 32 }}>
+            <View style={styles.gotmEmpty}>
               <Ionicons name="football-outline" size={48} color={Colors.muted} />
-              <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 16, color: Colors.text, textAlign: "center" }}>
+              <Text style={styles.gotmEmptyTitle}>
                 Tor des Monats
               </Text>
-              <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: Colors.muted, textAlign: "center", lineHeight: 20 }}>
+              <Text style={styles.gotmEmptyDesc}>
                 Goal of the Month voting will open soon. Submit your best goals from this month's matches!
               </Text>
             </View>
@@ -688,4 +688,23 @@ const styles = StyleSheet.create({
   rankSub: { fontFamily: "Inter_400Regular", fontSize: 10, color: Colors.muted },
   rankElo: { fontFamily: "Inter_600SemiBold", fontSize: 12, color: Colors.text, minWidth: 35, textAlign: "right" },
   rankScore: { fontFamily: "Inter_700Bold", fontSize: 13, minWidth: 30, textAlign: "right" },
+  gotmEmpty: {
+    alignItems: "center",
+    paddingVertical: 40,
+    gap: 12,
+    paddingHorizontal: 32,
+  },
+  gotmEmptyTitle: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 16,
+    color: Colors.text,
+    textAlign: "center",
+  },
+  gotmEmptyDesc: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 13,
+    color: Colors.muted,
+    textAlign: "center",
+    lineHeight: 20,
+  },
 });

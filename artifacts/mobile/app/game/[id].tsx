@@ -158,8 +158,40 @@ export default function GameDetailScreen() {
   if (!game) {
     return (
       <View style={[styles.container, { paddingTop: topPadding }]}>
+        <View style={styles.navBar}>
+          <Pressable
+            onPress={() => router.back()}
+            style={({ pressed }) => [styles.navBtn, pressed && { opacity: 0.7 }]}
+          >
+            <Ionicons name="arrow-back" size={20} color={Colors.text} />
+          </Pressable>
+          <Text style={styles.navTitle}>BALLR</Text>
+          <View style={styles.navBtn} />
+        </View>
         <View style={styles.notFound}>
-          <Text style={styles.notFoundText}>Game not found</Text>
+          <Ionicons name="football-outline" size={48} color={Colors.muted} />
+          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 18, color: Colors.text, textAlign: "center" }}>
+            Game Not Found
+          </Text>
+          <Text style={styles.notFoundText}>
+            This game does not exist or may have been removed.
+          </Text>
+          <Pressable
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 8,
+              backgroundColor: Colors.primary,
+              paddingHorizontal: 20,
+              paddingVertical: 12,
+              borderRadius: 12,
+              marginTop: 8,
+            }}
+            onPress={() => router.back()}
+          >
+            <Ionicons name="arrow-back" size={16} color={Colors.text} />
+            <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: Colors.text }}>Go Back</Text>
+          </Pressable>
         </View>
       </View>
     );
@@ -810,8 +842,8 @@ const styles = StyleSheet.create({
     letterSpacing: 3,
   },
   scroll: { flex: 1 },
-  notFound: { flex: 1, alignItems: "center", justifyContent: "center" },
-  notFoundText: { fontFamily: "Inter_600SemiBold", fontSize: 16, color: Colors.muted },
+  notFound: { flex: 1, alignItems: "center", justifyContent: "center", gap: 16, paddingHorizontal: 32 },
+  notFoundText: { fontFamily: "Inter_400Regular", fontSize: 13, color: Colors.muted, textAlign: "center" },
   heroContainer: {
     marginHorizontal: 16,
     borderRadius: 16,
@@ -1371,14 +1403,14 @@ const styles = StyleSheet.create({
   aiBalancePillText: { fontFamily: "Inter_700Bold", fontSize: 11, color: Colors.accent },
   pitchContainer: { marginBottom: 12 },
   pitchField: {
-    backgroundColor: "#1a4a1a",
+    backgroundColor: Colors.primary,
     borderRadius: 10,
     height: 150,
     flexDirection: "row",
     alignItems: "center",
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: "#2d6a2d",
+    borderColor: `${Colors.accent}44`,
     position: "relative",
   },
   pitchCenterLine: {

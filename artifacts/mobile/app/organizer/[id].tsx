@@ -32,10 +32,40 @@ export default function OrganizerPanelScreen() {
   if (!game) {
     return (
       <View style={[styles.container, { paddingTop: topPadding }]}>
-        <Pressable style={[styles.backBtn, { margin: 16 }]} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={20} color={Colors.text} />
-        </Pressable>
-        <Text style={{ color: Colors.muted, textAlign: "center" }}>Game not found</Text>
+        <View style={styles.header}>
+          <Pressable style={styles.backBtn} onPress={() => router.back()}>
+            <Ionicons name="arrow-back" size={20} color={Colors.text} />
+          </Pressable>
+          <View style={styles.headerCenter}>
+            <Text style={styles.headerTitle}>Organizer Panel</Text>
+          </View>
+          <View style={{ width: 36 }} />
+        </View>
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 16, paddingHorizontal: 32 }}>
+          <Ionicons name="football-outline" size={48} color={Colors.muted} />
+          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 18, color: Colors.text, textAlign: "center" }}>
+            Game Not Found
+          </Text>
+          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: Colors.muted, textAlign: "center" }}>
+            This game does not exist or may have been removed.
+          </Text>
+          <Pressable
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 8,
+              backgroundColor: Colors.primary,
+              paddingHorizontal: 20,
+              paddingVertical: 12,
+              borderRadius: 12,
+              marginTop: 8,
+            }}
+            onPress={() => router.back()}
+          >
+            <Ionicons name="arrow-back" size={16} color={Colors.text} />
+            <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: Colors.text }}>Go Back</Text>
+          </Pressable>
+        </View>
       </View>
     );
   }

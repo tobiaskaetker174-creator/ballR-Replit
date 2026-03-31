@@ -368,7 +368,12 @@ export default function DiscoverScreen() {
         ListEmptyComponent={
           <View style={styles.emptyState}>
             <Ionicons name="football-outline" size={40} color={Colors.muted} />
-            <Text style={styles.emptyText}>No games available</Text>
+            <Text style={styles.emptyText}>No games found</Text>
+            <Text style={styles.emptySubText}>
+              {activeFilterCount > 0
+                ? "Try adjusting your filters to see more games"
+                : "Check back soon for new games in your area"}
+            </Text>
           </View>
         }
       />
@@ -575,9 +580,9 @@ const styles = StyleSheet.create({
     color: Colors.text,
   },
   filterToggleBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: Colors.surface,
     alignItems: "center",
     justifyContent: "center",
@@ -775,9 +780,16 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   emptyText: {
-    fontFamily: "Inter_500Medium",
-    fontSize: 14,
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 16,
+    color: Colors.text,
+  },
+  emptySubText: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 13,
     color: Colors.muted,
+    textAlign: "center",
+    paddingHorizontal: 30,
   },
   fab: {
     position: "absolute",

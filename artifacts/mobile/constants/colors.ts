@@ -13,6 +13,7 @@ const Colors = {
   purple: "#9B6FD4",
   teal: "#4ABFB0",
   white: "#FFFFFF",
+  bronze: "#C4834A",
 };
 
 export default Colors;
