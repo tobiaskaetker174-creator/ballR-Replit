@@ -25,11 +25,11 @@ import {
 const ME = PLAYERS[0];
 
 function StatCard({ icon, label, value, sub, color }: {
-  icon: string; label: string; value: string; sub?: string; color?: string;
+  icon: keyof typeof Ionicons.glyphMap; label: string; value: string; sub?: string; color?: string;
 }) {
   return (
     <View style={styles.statCard}>
-      <Ionicons name={icon as any} size={20} color={color ?? Colors.accent} />
+      <Ionicons name={icon} size={20} color={color ?? Colors.accent} />
       <Text style={[styles.statCardValue, color ? { color } : {}]}>{value}</Text>
       {sub && <Text style={styles.statCardSub}>{sub}</Text>}
       <Text style={styles.statCardLabel}>{label}</Text>

@@ -48,7 +48,7 @@ function PlayerCard({
   onUpdate,
 }: {
   rating: PeerRating;
-  onUpdate: (id: string, field: "skillRating" | "sportsmanshipRating" | "comment", value: any) => void;
+  onUpdate: (id: string, field: "skillRating" | "sportsmanshipRating" | "comment", value: number | string) => void;
 }) {
   const initials = rating.ratedPlayer.name
     .split(" ")
@@ -117,11 +117,13 @@ export default function RateScreen() {
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 20 : insets.bottom;
 
-  const [ratings, setRatings] = useState<PeerRating[]>(PENDING_RATINGS);
+  const [ratings, setRatings] = useState<PeerRating[]>(
+    PENDING_RATINGS.filter((r) => r.gameId === id)
+  );
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
 
-  const updateRating = (ratingId: string, field: "skillRating" | "sportsmanshipRating" | "comment", value: any) => {
+  const updateRating = (ratingId: string, field: "skillRating" | "sportsmanshipRating" | "comment", value: number | string) => {
     setRatings((prev) =>
       prev.map((r) => (r.id === ratingId ? { ...r, [field]: value } : r))
     );

@@ -42,7 +42,7 @@ const SKILL_FILTERS: { id: SkillLevel | "all"; label: string }[] = [
 ];
 
 type DateFilter = "all" | "today" | "tomorrow" | "weekend" | "week";
-const DATE_FILTERS: { id: DateFilter; label: string; icon: string }[] = [
+const DATE_FILTERS: { id: DateFilter; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
   { id: "all", label: "Any Date", icon: "calendar-outline" },
   { id: "today", label: "Today", icon: "today-outline" },
   { id: "tomorrow", label: "Tomorrow", icon: "arrow-forward-circle-outline" },
@@ -309,7 +309,7 @@ export default function DiscoverScreen() {
                         onPress={() => { Haptics.selectionAsync(); setSelectedDate(df.id); }}
                       >
                         <Ionicons
-                          name={df.icon as any}
+                          name={df.icon}
                           size={12}
                           color={selectedDate === df.id ? Colors.text : Colors.muted}
                         />

@@ -28,7 +28,7 @@ import {
 } from "@/constants/mock";
 import { useAuth } from "@/context/AuthContext";
 
-const AMENITY_ICONS: Record<string, { icon: string; label: string }> = {
+const AMENITY_ICONS: Record<string, { icon: keyof typeof Ionicons.glyphMap; label: string }> = {
   changing_rooms: { icon: "shirt-outline", label: "Changing Rooms" },
   showers: { icon: "water-outline", label: "Showers" },
   parking: { icon: "car-outline", label: "Parking" },
@@ -464,7 +464,7 @@ export default function GameDetailScreen() {
               if (!info) return null;
               return (
                 <View key={a} style={styles.amenityChip}>
-                  <Ionicons name={info.icon as any} size={14} color={Colors.accent} />
+                  <Ionicons name={info.icon} size={14} color={Colors.accent} />
                   <Text style={styles.amenityText}>{info.label}</Text>
                 </View>
               );

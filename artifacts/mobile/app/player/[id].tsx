@@ -494,7 +494,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: Colors.text,
     minHeight: 80,
-    textAlignVertical: "top" as any,
+    textAlignVertical: "top" as const,
   },
   reviewFormBottom: {
     flexDirection: "row",
@@ -517,7 +517,7 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_400Regular",
     fontSize: 10,
     color: Colors.muted,
-    textAlign: "center" as any,
+    textAlign: "center" as const,
     lineHeight: 14,
   },
   reviewSentCard: {

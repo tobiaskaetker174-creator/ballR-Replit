@@ -56,17 +56,17 @@ export default function AdminPanelScreen() {
 
       <View style={styles.tabRow}>
         {([
-          { id: "venues", label: "Venues", icon: "football-outline" },
-          { id: "reports", label: "Reports", icon: "flag-outline" },
-          { id: "users", label: "Users", icon: "people-outline" },
-        ] as { id: AdminTab; label: string; icon: string }[]).map((t) => (
+          { id: "venues" as AdminTab, label: "Venues", icon: "football-outline" as const },
+          { id: "reports" as AdminTab, label: "Reports", icon: "flag-outline" as const },
+          { id: "users" as AdminTab, label: "Users", icon: "people-outline" as const },
+        ]).map((t) => (
           <Pressable
             key={t.id}
             style={[styles.tab, tab === t.id && styles.tabActive]}
             onPress={() => setTab(t.id)}
           >
             <Ionicons
-              name={t.icon as any}
+              name={t.icon}
               size={14}
               color={tab === t.id ? Colors.accent : Colors.muted}
             />
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
     borderWidth: 1,
-    borderStyle: "dashed" as any,
+    borderStyle: "dashed" as const,
     borderColor: `${Colors.accent}44`,
   },
   uploadTitle: { fontFamily: "Inter_600SemiBold", fontSize: 13, color: Colors.text },

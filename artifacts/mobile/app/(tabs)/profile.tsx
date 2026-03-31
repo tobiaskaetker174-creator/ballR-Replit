@@ -522,18 +522,18 @@ export default function ProfileScreen() {
               <Ionicons name="close" size={20} color={Colors.muted} />
             </Pressable>
           </View>
-          {[
-            { icon: "flash-outline", label: "Starting ELO", value: "All new players begin at 1000 ELO." },
-            { icon: "football-outline", label: "Calibration", value: `First ${CALIBRATION_GAMES} games are your calibration period. Play matches to unlock your public rating.` },
-            { icon: "trending-up-outline", label: "Win vs stronger team", value: "+15 to +32 ELO depending on team strength gap." },
-            { icon: "trending-down-outline", label: "Loss vs weaker team", value: "-15 to -32 ELO depending on team strength gap." },
-            { icon: "remove-outline", label: "Win vs equal team", value: "+20 ELO. Draw vs equal team: ±0 ELO." },
-            { icon: "close-circle-outline", label: "No-show penalty", value: "-30 ELO per missed game." },
-            { icon: "lock-closed-outline", label: "Privacy", value: "ELO is public only if you rank above the bottom 30% of all players. Below that, only you can see your score." },
-          ].map((row, i) => (
+          {([
+            { icon: "flash-outline" as const, label: "Starting ELO", value: "All new players begin at 1000 ELO." },
+            { icon: "football-outline" as const, label: "Calibration", value: `First ${CALIBRATION_GAMES} games are your calibration period. Play matches to unlock your public rating.` },
+            { icon: "trending-up-outline" as const, label: "Win vs stronger team", value: "+15 to +32 ELO depending on team strength gap." },
+            { icon: "trending-down-outline" as const, label: "Loss vs weaker team", value: "-15 to -32 ELO depending on team strength gap." },
+            { icon: "remove-outline" as const, label: "Win vs equal team", value: "+20 ELO. Draw vs equal team: ±0 ELO." },
+            { icon: "close-circle-outline" as const, label: "No-show penalty", value: "-30 ELO per missed game." },
+            { icon: "lock-closed-outline" as const, label: "Privacy", value: "ELO is public only if you rank above the bottom 30% of all players. Below that, only you can see your score." },
+          ]).map((row, i) => (
             <View key={i} style={styles.eloModalRow}>
               <View style={styles.eloModalRowIcon}>
-                <Ionicons name={row.icon as any} size={16} color={Colors.accent} />
+                <Ionicons name={row.icon} size={16} color={Colors.accent} />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.eloModalRowLabel}>{row.label}</Text>

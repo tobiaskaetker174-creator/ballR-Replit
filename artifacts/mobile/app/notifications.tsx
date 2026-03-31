@@ -13,7 +13,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/constants/colors";
 import { NOTIFICATIONS, Notification, NotificationType, formatTimestamp } from "@/constants/mock";
 
-function getNotifIcon(type: NotificationType): { name: string; color: string; bg: string } {
+function getNotifIcon(type: NotificationType): { name: keyof typeof Ionicons.glyphMap; color: string; bg: string } {
   switch (type) {
     case "game_confirmed": return { name: "checkmark-circle", color: Colors.accent, bg: `${Colors.primary}33` };
     case "teams_ready": return { name: "people", color: Colors.blue, bg: `${Colors.blue}22` };
@@ -44,7 +44,7 @@ function NotifRow({ item, onRead }: { item: Notification; onRead: (id: string) =
       }}
     >
       <View style={[styles.notifIcon, { backgroundColor: iconInfo.bg }]}>
-        <Ionicons name={iconInfo.name as any} size={20} color={iconInfo.color} />
+        <Ionicons name={iconInfo.name} size={20} color={iconInfo.color} />
       </View>
       <View style={styles.notifContent}>
         <View style={styles.notifTitleRow}>

@@ -15,11 +15,11 @@ import Colors from "@/constants/colors";
 import { PLAYERS } from "@/constants/mock";
 
 const REPORT_REASONS = [
-  { id: "disrespect", label: "Disrespectful behavior", icon: "hand-left-outline" },
-  { id: "rule_violation", label: "Rule violation", icon: "warning-outline" },
-  { id: "language", label: "Inappropriate language", icon: "chatbubble-ellipses-outline" },
-  { id: "no_show", label: "No-show / ghosting", icon: "calendar-outline" },
-  { id: "other", label: "Other", icon: "ellipsis-horizontal-outline" },
+  { id: "disrespect", label: "Disrespectful behavior", icon: "hand-left-outline" as const },
+  { id: "rule_violation", label: "Rule violation", icon: "warning-outline" as const },
+  { id: "language", label: "Inappropriate language", icon: "chatbubble-ellipses-outline" as const },
+  { id: "no_show", label: "No-show / ghosting", icon: "calendar-outline" as const },
+  { id: "other", label: "Other", icon: "ellipsis-horizontal-outline" as const },
 ];
 
 export default function ReportPlayerScreen() {
@@ -118,7 +118,7 @@ export default function ReportPlayerScreen() {
               onPress={() => setSelectedReason(reason.id)}
             >
               <Ionicons
-                name={reason.icon as any}
+                name={reason.icon}
                 size={16}
                 color={selectedReason === reason.id ? Colors.accent : Colors.muted}
               />
