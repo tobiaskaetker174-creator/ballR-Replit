@@ -7,6 +7,8 @@ const { pipeline } = require("stream/promises");
 let metroProcess = null;
 
 const projectRoot = path.resolve(__dirname, "..");
+const DEFAULT_DEPLOYMENT_DOMAIN = "ballr-final.vercel.app";
+const PNPM_COMMAND = process.platform === "win32" ? "pnpm.cmd" : "pnpm";
 
 function findWorkspaceRoot(startDir) {
   let dir = startDir;
@@ -67,10 +69,10 @@ function getDeploymentDomain() {
     return stripProtocol(process.env.EXPO_PUBLIC_DOMAIN);
   }
 
-  console.error(
-    "ERROR: No deployment domain found. Set REPLIT_INTERNAL_APP_DOMAIN, REPLIT_DEV_DOMAIN, or EXPO_PUBLIC_DOMAIN",
+  console.warn(
+    `No deployment domain found. Falling back to ${DEFAULT_DEPLOYMENT_DOMAIN} for static build output.`,
   );
-  process.exit(1);
+  return DEFAULT_DEPLOYMENT_DOMAIN;
 }
 
 function prepareDirectories(timestamp) {
@@ -139,15 +141,18 @@ async function startMetro(expoPublicDomain, expoPublicReplId) {
   const env = {
     ...process.env,
     EXPO_PUBLIC_DOMAIN: expoPublicDomain,
-    EXPO_PUBLIC_REPL_ID: expoPublicReplId,
+    NODE_OPTIONS: [process.env.NODE_OPTIONS, "--max-old-space-size=4096"]
+      .filter(Boolean)
+      .join(" "),
   };
 
   if (expoPublicReplId) {
+    env.EXPO_PUBLIC_REPL_ID = expoPublicReplId;
     console.log(`Setting EXPO_PUBLIC_REPL_ID=${expoPublicReplId}`);
   }
 
   metroProcess = spawn(
-    "pnpm",
+    PNPM_COMMAND,
     [
       "exec",
       "expo",
@@ -155,10 +160,13 @@ async function startMetro(expoPublicDomain, expoPublicReplId) {
       "--no-dev",
       "--minify",
       "--localhost",
+      "--max-workers",
+      "1",
     ],
     {
       stdio: ["ignore", "pipe", "pipe"],
       detached: false,
+      shell: process.platform === "win32",
       cwd: projectRoot,
       env,
     },
