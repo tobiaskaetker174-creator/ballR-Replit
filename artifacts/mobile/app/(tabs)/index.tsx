@@ -57,23 +57,6 @@ const ELO_FILTERS: { id: EloFilter; label: string; range: [number, number] }[] =
   { id: "competitive", label: "Comp (1200+)", range: [1200, 9999] },
 ];
 
-const MARKETPLACE_ACTIONS = [
-  {
-    id: "create",
-    title: "Create your league",
-    description: "Launch a public city league or keep it invite-only for your own crew.",
-    icon: "sparkles-outline" as const,
-    route: "/create-league",
-  },
-  {
-    id: "join",
-    title: "Join with code",
-    description: "Use an invite code from a captain, company league, or private organizer.",
-    icon: "key-outline" as const,
-    route: "/join-league",
-  },
-];
-
 function isDateMatch(gameTime: string, filter: DateFilter): boolean {
   const now = new Date();
   const game = new Date(gameTime);
@@ -214,37 +197,8 @@ export default function DiscoverScreen() {
               </Pressable>
             </View>
 
-            <View style={styles.marketplaceSection}>
-              <View style={styles.marketplaceIntro}>
-                <Text style={styles.marketplaceEyebrow}>LEAGUE MARKETPLACE</Text>
-                <Text style={styles.marketplaceTitle}>Create one, join one, or discover what is public in your city.</Text>
-                <Text style={styles.marketplaceBody}>
-                  BallR now supports public leagues, private crews, company groups, and recurring organizers in one shared system.
-                </Text>
-              </View>
-
-              <View style={styles.marketplaceActionRow}>
-                {MARKETPLACE_ACTIONS.map((action) => (
-                  <Pressable
-                    key={action.id}
-                    style={({ pressed }) => [styles.marketplaceActionCard, pressed && { opacity: 0.92 }]}
-                    onPress={() => {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                      router.push(action.route as any);
-                    }}
-                  >
-                    <View style={styles.marketplaceActionIcon}>
-                      <Ionicons name={action.icon} size={18} color={Colors.accent} />
-                    </View>
-                    <Text style={styles.marketplaceActionTitle}>{action.title}</Text>
-                    <Text style={styles.marketplaceActionDescription}>{action.description}</Text>
-                  </Pressable>
-                ))}
-              </View>
-            </View>
-
             <View style={styles.featuredSection}>
-              <Text style={styles.featuredLabel}>FEATURED PUBLIC LEAGUE</Text>
+              <Text style={styles.featuredLabel}>FEATURED PITCH</Text>
               <Pressable
                 style={styles.featuredCard}
                 onPress={() => router.push({ pathname: "/game/[id]", params: { id: featuredGame.id } })}
@@ -261,7 +215,7 @@ export default function DiscoverScreen() {
                 <View style={styles.featuredOverlay}>
                   <View style={styles.featuredOverlayTop}>
                     <View style={styles.featuredGameBadge}>
-                        <Text style={styles.featuredGameBadgeText}>OPEN MATCH</Text>
+                      <Text style={styles.featuredGameBadgeText}>GAME DETAILS</Text>
                     </View>
                   </View>
                   <View style={styles.featuredOverlayBottom}>
@@ -385,7 +339,7 @@ export default function DiscoverScreen() {
 
             <View style={styles.upcomingHeader}>
               <Text style={styles.upcomingTitle}>
-                {filteredGames.length > 0 ? `${filteredGames.length} OPEN MATCHES` : "OPEN MATCHES"}
+                {filteredGames.length > 0 ? `${filteredGames.length} GAMES FOUND` : "UPCOMING GAMES"}
               </Text>
               <Pressable onPress={() => { setSelectedDate("all"); setSelectedElo("all"); setSelectedSkill("all"); setSelectedCity("all"); }}>
                 <Text style={styles.seeAll}>RESET</Text>
@@ -396,7 +350,7 @@ export default function DiscoverScreen() {
         ListEmptyComponent={
           <View style={styles.emptyState}>
             <Ionicons name="football-outline" size={40} color={Colors.muted} />
-            <Text style={styles.emptyText}>No open matches for these filters</Text>
+            <Text style={styles.emptyText}>No games available</Text>
           </View>
         }
       />
@@ -405,10 +359,10 @@ export default function DiscoverScreen() {
         style={[styles.fab, { bottom: bottomPadding + 72 }]}
         onPress={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          router.push("/create-league");
+          router.push("/create-game");
         }}
       >
-        <Ionicons name="shield-outline" size={24} color={Colors.text} />
+        <Ionicons name="add" size={26} color={Colors.text} />
       </Pressable>
     </View>
   );
@@ -476,73 +430,6 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_700Bold",
     fontSize: 9,
     color: Colors.text,
-  },
-  marketplaceSection: {
-    paddingHorizontal: 16,
-    marginBottom: 18,
-    gap: 12,
-  },
-  marketplaceIntro: {
-    backgroundColor: Colors.surface,
-    borderRadius: 18,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: `${Colors.accent}22`,
-  },
-  marketplaceEyebrow: {
-    fontFamily: "Inter_700Bold",
-    fontSize: 10,
-    color: Colors.accent,
-    letterSpacing: 1.8,
-  },
-  marketplaceTitle: {
-    fontFamily: "Inter_700Bold",
-    fontSize: 20,
-    lineHeight: 26,
-    color: Colors.text,
-    marginTop: 10,
-  },
-  marketplaceBody: {
-    fontFamily: "Inter_400Regular",
-    fontSize: 13,
-    lineHeight: 20,
-    color: Colors.muted,
-    marginTop: 8,
-  },
-  marketplaceActionRow: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  marketplaceActionCard: {
-    flex: 1,
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: Colors.separator,
-    minHeight: 144,
-  },
-  marketplaceActionIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: `${Colors.accent}15`,
-    marginBottom: 12,
-  },
-  marketplaceActionTitle: {
-    fontFamily: "Inter_700Bold",
-    fontSize: 14,
-    lineHeight: 18,
-    color: Colors.text,
-  },
-  marketplaceActionDescription: {
-    fontFamily: "Inter_400Regular",
-    fontSize: 12,
-    lineHeight: 18,
-    color: Colors.muted,
-    marginTop: 8,
   },
   featuredSection: {
     paddingHorizontal: 16,

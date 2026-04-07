@@ -20,7 +20,7 @@ function NativeTabLayout() {
         <Label>Discover</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="my-games">
-        <Icon sf={{ default: "calendar", selected: "calendar" }} />
+        <Icon sf={{ default: "calendar", selected: "calendar.fill" }} />
         <Label>My Games</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="leaderboard">
