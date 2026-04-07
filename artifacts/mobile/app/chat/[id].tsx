@@ -15,18 +15,21 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/constants/colors";
-import { CHAT_MESSAGES, ChatMessage, GAMES, formatTimestamp } from "@/constants/mock";
+import { CHAT_MESSAGES, ChatMessage, GAMES, PLAYERS, formatTimestamp } from "@/constants/mock";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ChatScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
+  const { user } = useAuth();
   const game = GAMES.find((g) => g.id === id);
   const flatRef = useRef<FlatList>(null);
+  const currentUser = user ?? PLAYERS.find((player) => player.isCurrentUser) ?? PLAYERS[0];
 
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 20 : insets.bottom;
-  const isDesktopWeb = Platform.OS === "web" && width >= 1180;
+  const isDesktopWeb = Platform.OS === "web" && width >= 1024;
   const desktopWidth = Math.min(width - 40, 960);
 
   const initial = CHAT_MESSAGES[id ?? ""] ?? [];
@@ -39,8 +42,8 @@ export default function ChatScreen() {
     const msg: ChatMessage = {
       id: `m_${Date.now()}`,
       gameId: id ?? "",
-      senderId: "p0",
-      senderName: "Maya",
+      senderId: currentUser.id,
+      senderName: currentUser.name,
       text: text.trim(),
       timestamp: new Date().toISOString(),
     };
@@ -55,7 +58,7 @@ export default function ChatScreen() {
   const avatarColors = [Colors.primary, Colors.blue, Colors.teal, Colors.purple, Colors.amber];
 
   function MessageRow({ msg, prevMsg }: { msg: ChatMessage; prevMsg?: ChatMessage }) {
-    const isMe = msg.senderId === "p0";
+    const isMe = msg.senderId === currentUser.id;
     const isSystem = msg.isSystem;
     const showName = !isMe && !isSystem && prevMsg?.senderId !== msg.senderId;
     const avatarBg = avatarColors[Math.abs(msg.senderId.charCodeAt(1) || 0) % avatarColors.length];

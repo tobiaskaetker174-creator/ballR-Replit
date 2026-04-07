@@ -7,6 +7,7 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -60,7 +61,10 @@ function NotifRow({ item, onRead }: { item: Notification; onRead: (id: string) =
 
 export default function NotificationsScreen() {
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
+  const isDesktopWeb = Platform.OS === "web" && width >= 1024;
+  const desktopWidth = Math.min(width - 40, 900);
   const [notifs, setNotifs] = useState(NOTIFICATIONS);
 
   const unreadCount = notifs.filter((n) => !n.read).length;
@@ -70,6 +74,13 @@ export default function NotificationsScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: topPadding }]}>
+      {isDesktopWeb ? (
+        <>
+          <View pointerEvents="none" style={styles.desktopGlowPrimary} />
+          <View pointerEvents="none" style={styles.desktopGlowSecondary} />
+        </>
+      ) : null}
+      <View style={isDesktopWeb ? [styles.desktopShell, { maxWidth: desktopWidth }] : undefined}>
       <View style={styles.header}>
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={20} color={Colors.text} />
@@ -90,6 +101,7 @@ export default function NotificationsScreen() {
       )}
 
       <FlatList
+        style={isDesktopWeb ? styles.desktopList : undefined}
         data={notifs}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <NotifRow item={item} onRead={markRead} />}
@@ -103,12 +115,39 @@ export default function NotificationsScreen() {
         }
         ItemSeparatorComponent={() => <View style={styles.sep} />}
       />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.base },
+  desktopShell: {
+    width: "100%",
+    alignSelf: "center",
+    flex: 1,
+  },
+  desktopList: {
+    width: "100%",
+  },
+  desktopGlowPrimary: {
+    position: "absolute",
+    top: 120,
+    left: -120,
+    width: 320,
+    height: 320,
+    borderRadius: 160,
+    backgroundColor: "rgba(45, 90, 39, 0.14)",
+  },
+  desktopGlowSecondary: {
+    position: "absolute",
+    bottom: 120,
+    right: -120,
+    width: 280,
+    height: 280,
+    borderRadius: 140,
+    backgroundColor: "rgba(91, 143, 232, 0.08)",
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -159,6 +198,16 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     padding: 14,
     gap: 12,
+    ...(Platform.OS === "web"
+      ? {
+          borderWidth: 1,
+          borderColor: Colors.separator,
+          shadowColor: Colors.base,
+          shadowOpacity: 0.12,
+          shadowRadius: 12,
+          shadowOffset: { width: 0, height: 8 },
+        }
+      : {}),
   },
   notifRowUnread: {
     borderWidth: 1,

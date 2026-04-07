@@ -30,7 +30,7 @@ export default function PlayerProfileScreen() {
   const { width } = useWindowDimensions();
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 34 : insets.bottom;
-  const isDesktopWeb = Platform.OS === "web" && width >= 1180;
+  const isDesktopWeb = Platform.OS === "web" && width >= 1024;
   const desktopWidth = Math.min(width - 40, 980);
 
   const player = PLAYERS.find((p) => p.id === id);

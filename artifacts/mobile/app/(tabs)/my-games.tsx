@@ -15,6 +15,7 @@ import Colors from "@/constants/colors";
 import {
   GAMES,
   COMPLETED_GAMES,
+  MY_GAME_IDS,
   NOTIFICATIONS,
   Game,
   formatGameTime,
@@ -23,8 +24,6 @@ import {
   getSkillLabel,
 } from "@/constants/mock";
 import { useAuth } from "@/context/AuthContext";
-
-const MY_GAME_IDS = ["g1", "g3"];
 const TABS = ["Upcoming", "Completed"];
 
 function RatingPromptCard({ game }: { game: Game }) {
@@ -151,7 +150,7 @@ export default function MyGamesScreen() {
   const [activeTab, setActiveTab] = useState(0);
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 34 : insets.bottom;
-  const isDesktopWeb = Platform.OS === "web" && width >= 1180;
+  const isDesktopWeb = Platform.OS === "web" && width >= 1024;
   const desktopWidth = Math.min(width - 40, 1040);
 
   const unreadCount = NOTIFICATIONS.filter((n) => !n.read).length;

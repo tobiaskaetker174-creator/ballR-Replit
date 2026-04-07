@@ -122,7 +122,7 @@ export default function ProfileScreen() {
   const { user, isLoggedIn, logout, updateProfile } = useAuth();
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 34 : insets.bottom;
-  const isDesktopWeb = Platform.OS === "web" && width >= 1180;
+  const isDesktopWeb = Platform.OS === "web" && width >= 1024;
   const desktopWidth = Math.min(width - 40, 980);
   const ME = user ?? PLAYERS[0];
   const [showReviews, setShowReviews] = useState(false);
@@ -138,8 +138,8 @@ export default function ProfileScreen() {
   const reliabilityLabel = getReliabilityLabel(ME.reliabilityScore);
   const calibrationGamesLeft = Math.max(0, CALIBRATION_GAMES - ME.gamesPlayed);
   const winRate = ME.gamesPlayed > 0 ? Math.round((ME.gamesWon / ME.gamesPlayed) * 100) : 0;
-  const acceptedReviews = PROFILE_REVIEWS.filter((r) => r.status === "accepted");
-  const pendingReviews = PROFILE_REVIEWS.filter((r) => r.status === "pending");
+  const acceptedReviews = PROFILE_REVIEWS.filter((r) => r.subjectId === ME.id && r.status === "accepted");
+  const pendingReviews = PROFILE_REVIEWS.filter((r) => r.subjectId === ME.id && r.status === "pending");
 
   return (
     <>

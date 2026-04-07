@@ -31,6 +31,11 @@ const CITIES = [
   { id: "all", label: "All" },
   { id: "bangkok", label: "Bangkok" },
   { id: "bali", label: "Bali" },
+  { id: "berlin", label: "Berlin" },
+  { id: "lisbon", label: "Lisbon" },
+  { id: "london", label: "London" },
+  { id: "barcelona", label: "Barcelona" },
+  { id: "tokyo", label: "Tokyo" },
 ];
 
 const SKILL_FILTERS: { id: SkillLevel | "all"; label: string }[] = [
@@ -115,7 +120,7 @@ function CompactGameCard({ game }: { game: Game }) {
         </View>
         <View style={styles.compactRight}>
           <Text style={styles.compactPrice}>{formatPrice(game.pricePerPlayer, game.cityId)}</Text>
-          {isFull && (
+          {!isFull && (
             <View style={styles.openBadge}>
               <Text style={styles.openBadgeText}>Open</Text>
             </View>
@@ -180,7 +185,7 @@ export default function DiscoverScreen() {
 
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 34 : insets.bottom;
-  const isDesktopWeb = Platform.OS === "web" && width >= 1180;
+  const isDesktopWeb = Platform.OS === "web" && width >= 1024;
   const desktopWidth = Math.min(width - 40, 1120);
 
   const unreadCount = NOTIFICATIONS.filter((n) => !n.read).length;

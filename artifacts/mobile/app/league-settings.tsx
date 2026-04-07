@@ -6,6 +6,8 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  Platform,
+  useWindowDimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -38,6 +40,9 @@ export default function LeagueSettingsScreen() {
   const router = useRouter();
   const { activeLeague, addLeague, removeLeague, setActiveLeague } = useLeague();
   const colors = useLeagueColors();
+  const { width } = useWindowDimensions();
+  const isDesktopWeb = Platform.OS === 'web' && width >= 1024;
+  const desktopWidth = Math.min(width - 40, 1080);
 
   const canEdit = !!activeLeague && (activeLeague.role === 'owner' || activeLeague.role === 'admin');
   const canDelete = !!activeLeague && activeLeague.role === 'owner';
@@ -127,7 +132,21 @@ export default function LeagueSettingsScreen() {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.base }]} contentContainerStyle={styles.content}>
+    <>
+    {isDesktopWeb ? (
+      <>
+        <View pointerEvents="none" style={styles.desktopGlowPrimary} />
+        <View pointerEvents="none" style={styles.desktopGlowSecondary} />
+      </>
+    ) : null}
+    <ScrollView
+      style={[
+        styles.container,
+        { backgroundColor: colors.base },
+        isDesktopWeb ? [styles.desktopScroll, { maxWidth: desktopWidth }] : undefined,
+      ]}
+      contentContainerStyle={styles.content}
+    >
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={[styles.iconButton, { borderColor: colors.separator }]}>
           <Ionicons name="arrow-back" size={22} color={colors.text} />
@@ -365,11 +384,34 @@ export default function LeagueSettingsScreen() {
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  desktopScroll: {
+    width: '100%',
+    alignSelf: 'center',
+  },
+  desktopGlowPrimary: {
+    position: 'absolute',
+    top: 120,
+    left: -120,
+    width: 340,
+    height: 340,
+    borderRadius: 170,
+    backgroundColor: 'rgba(45, 90, 39, 0.14)',
+  },
+  desktopGlowSecondary: {
+    position: 'absolute',
+    bottom: 120,
+    right: -120,
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: 'rgba(232, 169, 58, 0.08)',
+  },
   content: {
     paddingHorizontal: 16,
     paddingTop: 56,

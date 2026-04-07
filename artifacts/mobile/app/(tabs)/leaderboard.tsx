@@ -14,6 +14,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/constants/colors";
 import { POTM_ENTRIES, PotmEntry, PLAYERS, isEloPublic, getFairnessScore, Player } from "@/constants/mock";
+import { useAuth } from "@/context/AuthContext";
 
 const CITIES = ["Bangkok", "Bali"];
 
@@ -183,7 +184,10 @@ const CATEGORY_OPTIONS: { id: CommunityCategory; label: string; icon: string }[]
 export default function LeaderboardScreen() {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
-  const myCity = PLAYERS[0].basedIn ?? "Bangkok";
+  const { user } = useAuth();
+  const currentUser = user ?? PLAYERS.find((player) => player.isCurrentUser) ?? PLAYERS[0];
+  const currentUserId = currentUser.id;
+  const myCity = currentUser.basedIn ?? "Bangkok";
   const [city, setCity] = useState(CITIES.findIndex((c) => c === myCity) === -1 ? 0 : CITIES.findIndex((c) => c === myCity));
   const [category, setCategory] = useState<CommunityCategory>("elo");
   const [showDropdown, setShowDropdown] = useState(false);
@@ -191,28 +195,33 @@ export default function LeaderboardScreen() {
   const [showFairnessFormula, setShowFairnessFormula] = useState(false);
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 34 : insets.bottom;
-  const isDesktopWeb = Platform.OS === "web" && width >= 1180;
+  const isDesktopWeb = Platform.OS === "web" && width >= 1024;
   const desktopWidth = Math.min(width - 40, 1040);
 
   const now = new Date();
   const month = now.toLocaleString("default", { month: "long" }).toUpperCase();
   const year = now.getFullYear();
+  const selectedCityName = CITIES[city] ?? myCity;
+  const cityPlayers = PLAYERS.filter((player) => player.basedIn === selectedCityName);
+  const cityEntries = POTM_ENTRIES.filter((entry) => entry.player.basedIn === selectedCityName);
 
   // ELO sorted entries for "Ranking"
-  const eloSortedEntries = [...POTM_ENTRIES]
+  const eloSortedEntries = [...cityEntries]
     .sort((a, b) => b.player.eloRating - a.player.eloRating)
     .map((e, i) => ({ ...e, rank: i + 1 }));
 
   // BOTM sorted entries
-  const botmSortedEntries = [...POTM_ENTRIES].sort((a, b) => b.potmScore - a.potmScore);
+  const botmSortedEntries = [...cityEntries]
+    .sort((a, b) => b.potmScore - a.potmScore)
+    .map((e, i) => ({ ...e, rank: i + 1 }));
 
   // ELO Gainers this month
-  const eloGainers = [...PLAYERS]
+  const eloGainers = [...cityPlayers]
     .filter((p) => p.eloGainThisMonth !== undefined && p.eloGainThisMonth > 0)
     .sort((a, b) => (b.eloGainThisMonth ?? 0) - (a.eloGainThisMonth ?? 0));
 
   // Fairness sorted players
-  const fairnessSorted = [...PLAYERS]
+  const fairnessSorted = [...cityPlayers]
     .map((p) => ({ player: p, score: getFairnessScore(p) }))
     .sort((a, b) => b.score - a.score);
 
@@ -227,6 +236,12 @@ export default function LeaderboardScreen() {
   const displayEntries = getDisplayEntries();
   const top3 = displayEntries.slice(0, 3);
   const rest = displayEntries.slice(3);
+  const hasCategoryData =
+    category === "fairness"
+      ? fairnessSorted.length > 0
+      : category === "gotm"
+        ? true
+        : displayEntries.length > 0;
 
   return (
     <View style={[styles.container, { paddingTop: topPadding }]}>
@@ -242,7 +257,7 @@ export default function LeaderboardScreen() {
         contentContainerStyle={[styles.listContent, { paddingBottom: bottomPadding + 90 }]}
       >
         <View style={styles.topBar}>
-          <Text style={styles.cityLabel}>BANGKOK</Text>
+          <Text style={styles.cityLabel}>{selectedCityName.toUpperCase()}</Text>
           <Text style={styles.logoText}>BALLR</Text>
           <Pressable style={styles.bellBtn} onPress={() => router.push("/notifications")}>
             <Ionicons name="notifications-outline" size={20} color={Colors.muted} />
@@ -310,8 +325,18 @@ export default function LeaderboardScreen() {
           ))}
         </View>
 
+        {!hasCategoryData && (
+          <View style={styles.emptyCategoryCard}>
+            <Ionicons name="location-outline" size={32} color={Colors.muted} />
+            <Text style={styles.emptyCategoryTitle}>No rankings yet in {selectedCityName}</Text>
+            <Text style={styles.emptyCategoryCopy}>
+              Switch city or keep building the local player base to unlock this board.
+            </Text>
+          </View>
+        )}
+
         {/* ===== ELO RANKING VIEW ===== */}
-        {category === "elo" && (
+        {category === "elo" && hasCategoryData && (
           <>
             {/* All-time ELO Rankings */}
             <View style={styles.listHeader}>
@@ -327,7 +352,7 @@ export default function LeaderboardScreen() {
             </View>
 
             {rest.map((item) => (
-              <RankRow key={item.player.id} entry={item} isCurrentUser={item.player.id === "p0"} scoreLabel={String(item.player.eloRating)} />
+              <RankRow key={item.player.id} entry={item} isCurrentUser={item.player.id === currentUserId} scoreLabel={String(item.player.eloRating)} />
             ))}
 
             {/* Biggest ELO Gainers This Month */}
@@ -349,7 +374,7 @@ export default function LeaderboardScreen() {
               return (
                 <Pressable
                   key={player.id}
-                  style={[styles.rankRow, player.id === "p0" && styles.rankRowCurrent]}
+                  style={[styles.rankRow, player.id === currentUserId && styles.rankRowCurrent]}
                   onPress={() => router.push({ pathname: "/player/[id]", params: { id: player.id } })}
                 >
                   <Text style={[styles.rankNum, { color: i < 3 ? Colors.amber : Colors.muted }]}>
@@ -359,7 +384,7 @@ export default function LeaderboardScreen() {
                     <Text style={styles.rankAvatarText}>{initials}</Text>
                   </View>
                   <View style={styles.rankInfo}>
-                    <Text style={styles.rankName}>{player.name}{player.id === "p0" ? " (You)" : ""}</Text>
+                    <Text style={styles.rankName}>{player.name}{player.id === currentUserId ? " (You)" : ""}</Text>
                     <Text style={styles.rankSub}>{player.eloRating} elo · {player.gamesPlayed} games</Text>
                   </View>
                   <Text style={[styles.rankScore, { color: Colors.accent }]}>+{player.eloGainThisMonth}</Text>
@@ -375,13 +400,13 @@ export default function LeaderboardScreen() {
             </View>
 
             {botmSortedEntries.slice(0, 5).map((item) => (
-              <RankRow key={`botm-${item.player.id}`} entry={item} isCurrentUser={item.player.id === "p0"} />
+              <RankRow key={`botm-${item.player.id}`} entry={item} isCurrentUser={item.player.id === currentUserId} />
             ))}
           </>
         )}
 
         {/* ===== BALLER OF THE MONTH VIEW ===== */}
-        {category === "botm" && (
+        {category === "botm" && hasCategoryData && (
           <>
             <Pressable
               style={styles.formulaToggle}
@@ -447,13 +472,13 @@ export default function LeaderboardScreen() {
             </View>
 
             {rest.map((item) => (
-              <RankRow key={item.player.id} entry={item} isCurrentUser={item.player.id === "p0"} />
+              <RankRow key={item.player.id} entry={item} isCurrentUser={item.player.id === currentUserId} />
             ))}
           </>
         )}
 
         {/* ===== FAIRNESS AWARD VIEW ===== */}
-        {category === "fairness" && (
+        {category === "fairness" && hasCategoryData && (
           <>
             {/* Fix 4: Expandable fairness formula */}
             <Pressable
@@ -623,6 +648,32 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 3,
     marginBottom: 24,
+  },
+  emptyCategoryCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    marginHorizontal: 16,
+    marginBottom: 24,
+    paddingVertical: 28,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    gap: 10,
+    borderWidth: 1,
+    borderColor: Colors.separator,
+  },
+  emptyCategoryTitle: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 16,
+    color: Colors.text,
+    textAlign: "center",
+  },
+  emptyCategoryCopy: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 12,
+    color: Colors.muted,
+    textAlign: "center",
+    lineHeight: 18,
+    maxWidth: 280,
   },
   cityTab: { flex: 1, paddingVertical: 8, borderRadius: 8, alignItems: "center" },
   cityTabActive: { backgroundColor: Colors.primary },

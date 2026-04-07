@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -30,8 +31,11 @@ type AdminTab = "venues" | "reports" | "users";
 
 export default function AdminPanelScreen() {
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 34 : insets.bottom;
+  const isDesktopWeb = Platform.OS === "web" && width >= 1024;
+  const desktopWidth = Math.min(width - 40, 1040);
   const [tab, setTab] = useState<AdminTab>("venues");
   const [editingVenue, setEditingVenue] = useState<string | null>(null);
 
@@ -40,6 +44,13 @@ export default function AdminPanelScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: topPadding }]}>
+      {isDesktopWeb ? (
+        <>
+          <View pointerEvents="none" style={styles.desktopGlowPrimary} />
+          <View pointerEvents="none" style={styles.desktopGlowSecondary} />
+        </>
+      ) : null}
+      <View style={isDesktopWeb ? [styles.desktopShell, { maxWidth: desktopWidth }] : undefined}>
       <View style={styles.navBar}>
         <Pressable style={styles.navBtn} onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={20} color={Colors.text} />
@@ -78,6 +89,7 @@ export default function AdminPanelScreen() {
       </View>
 
       <ScrollView
+        style={isDesktopWeb ? styles.desktopScroll : undefined}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ padding: 16, paddingBottom: bottomPadding + 30, gap: 12 }}
       >
@@ -239,12 +251,39 @@ export default function AdminPanelScreen() {
           </>
         )}
       </ScrollView>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.base },
+  desktopShell: {
+    width: "100%",
+    alignSelf: "center",
+    flex: 1,
+  },
+  desktopScroll: {
+    width: "100%",
+  },
+  desktopGlowPrimary: {
+    position: "absolute",
+    top: 120,
+    left: -120,
+    width: 340,
+    height: 340,
+    borderRadius: 170,
+    backgroundColor: "rgba(45, 90, 39, 0.14)",
+  },
+  desktopGlowSecondary: {
+    position: "absolute",
+    bottom: 120,
+    right: -120,
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: "rgba(232, 169, 58, 0.08)",
+  },
   navBar: {
     flexDirection: "row",
     alignItems: "center",

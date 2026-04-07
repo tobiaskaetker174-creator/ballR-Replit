@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  useWindowDimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -138,6 +139,9 @@ function toLeague(data: (typeof DEMO_LEAGUES)[number]): League {
 export default function JoinLeagueScreen() {
   const router = useRouter();
   const { addLeague, setActiveLeague } = useLeague();
+  const { width } = useWindowDimensions();
+  const isDesktopWeb = Platform.OS === 'web' && width >= 1024;
+  const desktopWidth = Math.min(width - 40, 1080);
   const [cityFilter, setCityFilter] = useState('All');
   const [inviteCode, setInviteCode] = useState('');
   const [error, setError] = useState('');
@@ -182,7 +186,17 @@ export default function JoinLeagueScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+      {isDesktopWeb ? (
+        <>
+          <View pointerEvents="none" style={styles.desktopGlowPrimary} />
+          <View pointerEvents="none" style={styles.desktopGlowSecondary} />
+        </>
+      ) : null}
+      <ScrollView
+        style={isDesktopWeb ? [styles.desktopScroll, { maxWidth: desktopWidth }] : undefined}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.iconButton}>
             <Ionicons name="arrow-back" size={22} color={Colors.text} />
@@ -337,6 +351,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.base,
+  },
+  desktopScroll: {
+    width: '100%',
+    alignSelf: 'center',
+  },
+  desktopGlowPrimary: {
+    position: 'absolute',
+    top: 120,
+    left: -120,
+    width: 340,
+    height: 340,
+    borderRadius: 170,
+    backgroundColor: 'rgba(45, 90, 39, 0.14)',
+  },
+  desktopGlowSecondary: {
+    position: 'absolute',
+    bottom: 120,
+    right: -120,
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: 'rgba(91, 143, 232, 0.08)',
   },
   scrollContent: {
     paddingHorizontal: 16,

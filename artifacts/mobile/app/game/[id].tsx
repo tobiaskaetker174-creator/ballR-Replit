@@ -146,7 +146,8 @@ export default function GameDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user } = useAuth();
+  const currentUser = user ?? PLAYERS.find((player) => player.isCurrentUser) ?? PLAYERS[0];
   const [isJoined, setIsJoined] = useState(MY_GAMES_IDS.has(id ?? ""));
   const [showPayment, setShowPayment] = useState(false);
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
@@ -156,7 +157,7 @@ export default function GameDetailScreen() {
   const game = ALL_GAMES.find((g) => g.id === id);
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 34 : insets.bottom;
-  const isDesktopWeb = Platform.OS === "web" && width >= 1180;
+  const isDesktopWeb = Platform.OS === "web" && width >= 1024;
   const desktopWidth = Math.min(width - 40, 1120);
 
   if (!game) {
@@ -172,7 +173,7 @@ export default function GameDetailScreen() {
   const skillColor = getSkillColor(game.skillLevel);
   const isFull = game.status === "full" || game.currentPlayers >= game.maxPlayers;
   const fillPct = (game.currentPlayers / game.maxPlayers) * 100;
-  const isOrganizer = game.organizer.id === "p0";
+  const isOrganizer = game.organizer.id === currentUser.id;
   const blueTeam = game.bookings.filter((b) => b.teamAssignment === "blue");
   const redTeam = game.bookings.filter((b) => b.teamAssignment === "red");
   const unassigned = game.bookings.filter((b) => b.teamAssignment === "none");
@@ -272,14 +273,14 @@ export default function GameDetailScreen() {
 
         {(() => {
           const bookingPlayers = game.bookings.map((b) => b.player);
-          const myElo = PLAYERS[0].eloRating;
+          const myElo = currentUser.eloRating;
           const allElos = bookingPlayers.map((p) => p.eloRating);
           if (allElos.length === 0) return null;
           const minElo = Math.min(...allElos);
           const maxElo = Math.max(...allElos);
           const range = maxElo - minElo || 1;
           const myPct = Math.max(0, Math.min(1, (myElo - minElo) / range));
-          const amIIn = bookingPlayers.some((p) => p.id === "p0");
+          const amIIn = bookingPlayers.some((p) => p.id === currentUser.id);
           if (!amIIn) return null;
           return (
             <View style={styles.inGameEloCard}>
