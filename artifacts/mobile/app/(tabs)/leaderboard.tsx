@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -181,6 +182,7 @@ const CATEGORY_OPTIONS: { id: CommunityCategory; label: string; icon: string }[]
 
 export default function LeaderboardScreen() {
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const myCity = PLAYERS[0].basedIn ?? "Bangkok";
   const [city, setCity] = useState(CITIES.findIndex((c) => c === myCity) === -1 ? 0 : CITIES.findIndex((c) => c === myCity));
   const [category, setCategory] = useState<CommunityCategory>("elo");
@@ -189,6 +191,8 @@ export default function LeaderboardScreen() {
   const [showFairnessFormula, setShowFairnessFormula] = useState(false);
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 34 : insets.bottom;
+  const isDesktopWeb = Platform.OS === "web" && width >= 1180;
+  const desktopWidth = Math.min(width - 40, 1040);
 
   const now = new Date();
   const month = now.toLocaleString("default", { month: "long" }).toUpperCase();
@@ -226,7 +230,14 @@ export default function LeaderboardScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: topPadding }]}>
+      {isDesktopWeb ? (
+        <>
+          <View pointerEvents="none" style={styles.desktopGlowPrimary} />
+          <View pointerEvents="none" style={styles.desktopGlowSecondary} />
+        </>
+      ) : null}
       <ScrollView
+        style={isDesktopWeb ? [styles.desktopScroll, { maxWidth: desktopWidth }] : undefined}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.listContent, { paddingBottom: bottomPadding + 90 }]}
       >
@@ -529,6 +540,28 @@ export default function LeaderboardScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.base },
+  desktopScroll: {
+    width: "100%",
+    alignSelf: "center",
+  },
+  desktopGlowPrimary: {
+    position: "absolute",
+    top: 120,
+    left: -120,
+    width: 340,
+    height: 340,
+    borderRadius: 170,
+    backgroundColor: "rgba(45, 90, 39, 0.16)",
+  },
+  desktopGlowSecondary: {
+    position: "absolute",
+    top: 260,
+    right: -120,
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: "rgba(155, 111, 212, 0.07)",
+  },
   topBar: {
     flexDirection: "row",
     alignItems: "center",
@@ -559,6 +592,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.separator,
     overflow: "hidden",
+    ...(Platform.OS === "web"
+      ? {
+          shadowColor: Colors.base,
+          shadowOpacity: 0.18,
+          shadowRadius: 16,
+          shadowOffset: { width: 0, height: 10 },
+        }
+      : {}),
   },
   dropdownItem: {
     flexDirection: "row",
@@ -674,6 +715,16 @@ const styles = StyleSheet.create({
     padding: 11,
     marginBottom: 7,
     gap: 10,
+    ...(Platform.OS === "web"
+      ? {
+          borderWidth: 1,
+          borderColor: Colors.separator,
+          shadowColor: Colors.base,
+          shadowOpacity: 0.14,
+          shadowRadius: 12,
+          shadowOffset: { width: 0, height: 8 },
+        }
+      : {}),
   },
   rankRowCurrent: {
     borderWidth: 1,

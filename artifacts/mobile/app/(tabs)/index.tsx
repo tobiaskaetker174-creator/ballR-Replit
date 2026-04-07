@@ -11,6 +11,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -151,6 +152,7 @@ function CompactGameCard({ game }: { game: Game }) {
 
 export default function DiscoverScreen() {
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const [selectedCity, setSelectedCity] = useState<string>("all");
   const [selectedSkill, setSelectedSkill] = useState<string>("all");
   const [selectedDate, setSelectedDate] = useState<DateFilter>("all");
@@ -178,13 +180,22 @@ export default function DiscoverScreen() {
 
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 34 : insets.bottom;
+  const isDesktopWeb = Platform.OS === "web" && width >= 1180;
+  const desktopWidth = Math.min(width - 40, 1120);
 
   const unreadCount = NOTIFICATIONS.filter((n) => !n.read).length;
   const featuredGame = GAMES[0];
 
   return (
     <View style={styles.container}>
+      {isDesktopWeb ? (
+        <>
+          <View pointerEvents="none" style={styles.desktopGlowPrimary} />
+          <View pointerEvents="none" style={styles.desktopGlowSecondary} />
+        </>
+      ) : null}
       <FlatList
+        style={isDesktopWeb ? [styles.desktopList, { maxWidth: desktopWidth }] : undefined}
         data={filteredGames}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <CompactGameCard game={item} />}
@@ -419,6 +430,28 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.base,
   },
+  desktopList: {
+    width: "100%",
+    alignSelf: "center",
+  },
+  desktopGlowPrimary: {
+    position: "absolute",
+    top: 110,
+    left: -120,
+    width: 360,
+    height: 360,
+    borderRadius: 180,
+    backgroundColor: "rgba(45, 90, 39, 0.16)",
+  },
+  desktopGlowSecondary: {
+    position: "absolute",
+    top: 240,
+    right: -120,
+    width: 320,
+    height: 320,
+    borderRadius: 160,
+    backgroundColor: "rgba(91, 143, 232, 0.08)",
+  },
   topBar: {
     flexDirection: "row",
     alignItems: "center",
@@ -488,6 +521,14 @@ const styles = StyleSheet.create({
     padding: 16,
     borderWidth: 1,
     borderColor: `${Colors.accent}22`,
+    ...(Platform.OS === "web"
+      ? {
+          shadowColor: Colors.base,
+          shadowOpacity: 0.22,
+          shadowRadius: 22,
+          shadowOffset: { width: 0, height: 14 },
+        }
+      : {}),
   },
   marketplaceEyebrow: {
     fontFamily: "Inter_700Bold",
@@ -521,6 +562,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.separator,
     minHeight: 144,
+    ...(Platform.OS === "web"
+      ? {
+          shadowColor: Colors.base,
+          shadowOpacity: 0.2,
+          shadowRadius: 18,
+          shadowOffset: { width: 0, height: 12 },
+        }
+      : {}),
   },
   marketplaceActionIcon: {
     width: 36,
@@ -559,6 +608,16 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: "hidden",
     height: 200,
+    ...(Platform.OS === "web"
+      ? {
+          borderWidth: 1,
+          borderColor: Colors.separator,
+          shadowColor: Colors.base,
+          shadowOpacity: 0.22,
+          shadowRadius: 22,
+          shadowOffset: { width: 0, height: 14 },
+        }
+      : {}),
   },
   featuredImage: {
     width: "100%",
@@ -704,6 +763,12 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     padding: 14,
     gap: 8,
+    ...(Platform.OS === "web"
+      ? {
+          borderWidth: 1,
+          borderColor: Colors.separator,
+        }
+      : {}),
   },
   expandedFilterLabel: {
     fontFamily: "Inter_600SemiBold",
@@ -779,6 +844,16 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     padding: 14,
     gap: 8,
+    ...(Platform.OS === "web"
+      ? {
+          borderWidth: 1,
+          borderColor: Colors.separator,
+          shadowColor: Colors.base,
+          shadowOpacity: 0.16,
+          shadowRadius: 14,
+          shadowOffset: { width: 0, height: 10 },
+        }
+      : {}),
   },
   compactCardTop: {
     flexDirection: "row",

@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -117,9 +118,12 @@ function EloRangeVisual({
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const { user, isLoggedIn, logout, updateProfile } = useAuth();
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 34 : insets.bottom;
+  const isDesktopWeb = Platform.OS === "web" && width >= 1180;
+  const desktopWidth = Math.min(width - 40, 980);
   const ME = user ?? PLAYERS[0];
   const [showReviews, setShowReviews] = useState(false);
   const [showEloInfo, setShowEloInfo] = useState(false);
@@ -139,8 +143,14 @@ export default function ProfileScreen() {
 
   return (
     <>
+    {isDesktopWeb ? (
+      <>
+        <View pointerEvents="none" style={styles.desktopGlowPrimary} />
+        <View pointerEvents="none" style={styles.desktopGlowSecondary} />
+      </>
+    ) : null}
     <ScrollView
-      style={styles.container}
+      style={isDesktopWeb ? [styles.container, styles.desktopScroll, { maxWidth: desktopWidth }] : styles.container}
       contentContainerStyle={{ paddingBottom: bottomPadding + 90 }}
       showsVerticalScrollIndicator={false}
     >
@@ -550,6 +560,28 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.base },
+  desktopScroll: {
+    width: "100%",
+    alignSelf: "center",
+  },
+  desktopGlowPrimary: {
+    position: "absolute",
+    top: 120,
+    left: -120,
+    width: 340,
+    height: 340,
+    borderRadius: 170,
+    backgroundColor: "rgba(45, 90, 39, 0.16)",
+  },
+  desktopGlowSecondary: {
+    position: "absolute",
+    top: 300,
+    right: -120,
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: "rgba(74, 191, 176, 0.08)",
+  },
   header: { paddingHorizontal: 16, paddingBottom: 8 },
   headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   cityLabel: { fontFamily: "Inter_600SemiBold", fontSize: 11, color: Colors.muted, letterSpacing: 1.5 },
@@ -652,6 +684,16 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingVertical: 16,
     marginBottom: 16,
+    ...(Platform.OS === "web"
+      ? {
+          borderWidth: 1,
+          borderColor: Colors.separator,
+          shadowColor: Colors.base,
+          shadowOpacity: 0.16,
+          shadowRadius: 14,
+          shadowOffset: { width: 0, height: 10 },
+        }
+      : {}),
   },
   statBox: { flex: 1, alignItems: "center", gap: 2 },
   statBoxValue: { fontFamily: "Inter_700Bold", fontSize: 20, color: Colors.accent },
@@ -688,6 +730,16 @@ const styles = StyleSheet.create({
     padding: 14,
     marginBottom: 16,
     gap: 8,
+    ...(Platform.OS === "web"
+      ? {
+          borderWidth: 1,
+          borderColor: Colors.separator,
+          shadowColor: Colors.base,
+          shadowOpacity: 0.16,
+          shadowRadius: 14,
+          shadowOffset: { width: 0, height: 10 },
+        }
+      : {}),
   },
   eloRangeTitleRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   eloRangeTitle: { fontFamily: "Inter_600SemiBold", fontSize: 9, color: Colors.muted, letterSpacing: 1.5 },

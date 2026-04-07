@@ -11,6 +11,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -21,6 +22,7 @@ type Mode = "login" | "signup";
 
 export default function AuthScreen() {
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const { login, signup } = useAuth();
   const [mode, setMode] = useState<Mode>("login");
   const [name, setName] = useState("");
@@ -58,26 +60,39 @@ export default function AuthScreen() {
   };
 
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
+  const isDesktopWeb = Platform.OS === "web" && width >= 1100;
+  const desktopShellWidth = Math.min(width - 48, 1040);
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      {isDesktopWeb ? (
+        <>
+          <View pointerEvents="none" style={styles.desktopGlowPrimary} />
+          <View pointerEvents="none" style={styles.desktopGlowSecondary} />
+        </>
+      ) : null}
       <ScrollView
-        contentContainerStyle={[styles.scroll, { paddingTop: topPadding + 20 }]}
+        contentContainerStyle={[
+          styles.scroll,
+          { paddingTop: topPadding + 20 },
+          isDesktopWeb && styles.desktopScroll,
+        ]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.logo}>
+        <View style={isDesktopWeb ? [styles.desktopShell, { maxWidth: desktopShellWidth }] : undefined}>
+        <View style={[styles.logo, isDesktopWeb && styles.desktopLogo]}>
           <View style={styles.logoBall}>
             <Text style={styles.logoBallIcon}>⚽</Text>
           </View>
           <Text style={styles.logoText}>BALLR</Text>
-          <Text style={styles.logoSub}>Pickup football, perfected.</Text>
+          <Text style={[styles.logoSub, isDesktopWeb && styles.desktopLogoSub]}>Pickup football, perfected.</Text>
         </View>
 
-        <View style={styles.card}>
+        <View style={[styles.card, isDesktopWeb && styles.desktopCard]}>
           <View style={styles.modeTabs}>
             {(["login", "signup"] as Mode[]).map((m) => (
               <Pressable
@@ -190,6 +205,7 @@ export default function AuthScreen() {
         >
           <Text style={styles.guestBtnText}>Continue as guest →</Text>
         </Pressable>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -204,10 +220,39 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingBottom: 40,
   },
+  desktopScroll: {
+    flexGrow: 1,
+    justifyContent: "center",
+  },
+  desktopShell: {
+    width: "100%",
+    alignSelf: "center",
+  },
+  desktopGlowPrimary: {
+    position: "absolute",
+    top: 72,
+    left: -80,
+    width: 320,
+    height: 320,
+    borderRadius: 160,
+    backgroundColor: "rgba(45, 90, 39, 0.18)",
+  },
+  desktopGlowSecondary: {
+    position: "absolute",
+    right: -120,
+    bottom: 64,
+    width: 360,
+    height: 360,
+    borderRadius: 180,
+    backgroundColor: "rgba(91, 143, 232, 0.08)",
+  },
   logo: {
     alignItems: "center",
     marginBottom: 32,
     gap: 6,
+  },
+  desktopLogo: {
+    marginBottom: 36,
   },
   logoBall: {
     width: 70,
@@ -234,12 +279,27 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: Colors.muted,
   },
+  desktopLogoSub: {
+    maxWidth: 320,
+    textAlign: "center",
+  },
   card: {
     backgroundColor: Colors.surface,
     borderRadius: 20,
     padding: 22,
     gap: 16,
     marginBottom: 20,
+  },
+  desktopCard: {
+    width: "100%",
+    maxWidth: 540,
+    alignSelf: "center",
+    borderWidth: 1,
+    borderColor: Colors.separator,
+    shadowColor: Colors.base,
+    shadowOpacity: 0.3,
+    shadowRadius: 28,
+    shadowOffset: { width: 0, height: 16 },
   },
   modeTabs: {
     flexDirection: "row",

@@ -7,6 +7,7 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -145,10 +146,13 @@ function GameCard({ game, isJoined, isCompleted }: { game: Game; isJoined: boole
 
 export default function MyGamesScreen() {
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const { isLoggedIn } = useAuth();
   const [activeTab, setActiveTab] = useState(0);
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 34 : insets.bottom;
+  const isDesktopWeb = Platform.OS === "web" && width >= 1180;
+  const desktopWidth = Math.min(width - 40, 1040);
 
   const unreadCount = NOTIFICATIONS.filter((n) => !n.read).length;
   const myGames = GAMES.filter((g) => MY_GAME_IDS.includes(g.id));
@@ -160,24 +164,32 @@ export default function MyGamesScreen() {
   if (!isLoggedIn) {
     return (
       <View style={[styles.container, { paddingTop: topPadding }]}>
-        <View style={styles.topBar}>
-          <Text style={styles.cityLabel}>BANGKOK</Text>
-          <Text style={styles.logoText}>BALLR</Text>
-          <View style={styles.bellBtn} />
-        </View>
-        <View style={styles.authGate}>
-          <Ionicons name="calendar-outline" size={52} color={Colors.muted} style={{ marginBottom: 8 }} />
-          <Text style={styles.authGateTitle}>Your Games</Text>
-          <Text style={styles.authGateDesc}>
-            Log in to view your upcoming and past matches, rate teammates, and chat with your squad.
-          </Text>
-          <Pressable
-            style={styles.authGateBtn}
-            onPress={() => router.push("/auth")}
-          >
-            <Ionicons name="person-outline" size={16} color={Colors.text} />
-            <Text style={styles.authGateBtnText}>Log In to BallR</Text>
-          </Pressable>
+        {isDesktopWeb ? (
+          <>
+            <View pointerEvents="none" style={styles.desktopGlowPrimary} />
+            <View pointerEvents="none" style={styles.desktopGlowSecondary} />
+          </>
+        ) : null}
+        <View style={isDesktopWeb ? [styles.desktopShell, { maxWidth: desktopWidth }] : undefined}>
+          <View style={styles.topBar}>
+            <Text style={styles.cityLabel}>BANGKOK</Text>
+            <Text style={styles.logoText}>BALLR</Text>
+            <View style={styles.bellBtn} />
+          </View>
+          <View style={[styles.authGate, isDesktopWeb && styles.desktopAuthGate]}>
+            <Ionicons name="calendar-outline" size={52} color={Colors.muted} style={{ marginBottom: 8 }} />
+            <Text style={styles.authGateTitle}>Your Games</Text>
+            <Text style={styles.authGateDesc}>
+              Log in to view your upcoming and past matches, rate teammates, and chat with your squad.
+            </Text>
+            <Pressable
+              style={styles.authGateBtn}
+              onPress={() => router.push("/auth")}
+            >
+              <Ionicons name="person-outline" size={16} color={Colors.text} />
+              <Text style={styles.authGateBtnText}>Log In to BallR</Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     );
@@ -185,6 +197,13 @@ export default function MyGamesScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: topPadding }]}>
+      {isDesktopWeb ? (
+        <>
+          <View pointerEvents="none" style={styles.desktopGlowPrimary} />
+          <View pointerEvents="none" style={styles.desktopGlowSecondary} />
+        </>
+      ) : null}
+      <View style={isDesktopWeb ? [styles.desktopShell, { maxWidth: desktopWidth }] : undefined}>
       <View style={styles.topBar}>
         <Text style={styles.cityLabel}>BANGKOK</Text>
         <Text style={styles.logoText}>BALLR</Text>
@@ -228,6 +247,7 @@ export default function MyGamesScreen() {
       </View>
 
       <FlatList
+        style={isDesktopWeb ? styles.desktopList : undefined}
         data={activeGames}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
@@ -268,12 +288,38 @@ export default function MyGamesScreen() {
           </View>
         }
       />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.base },
+  desktopShell: {
+    width: "100%",
+    alignSelf: "center",
+  },
+  desktopList: {
+    width: "100%",
+  },
+  desktopGlowPrimary: {
+    position: "absolute",
+    top: 110,
+    left: -120,
+    width: 340,
+    height: 340,
+    borderRadius: 170,
+    backgroundColor: "rgba(45, 90, 39, 0.14)",
+  },
+  desktopGlowSecondary: {
+    position: "absolute",
+    right: -110,
+    bottom: 120,
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: "rgba(91, 143, 232, 0.07)",
+  },
   topBar: {
     flexDirection: "row",
     alignItems: "center",
@@ -313,6 +359,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 40,
     gap: 14,
+  },
+  desktopAuthGate: {
+    maxWidth: 620,
+    alignSelf: "center",
+    backgroundColor: Colors.surface,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: Colors.separator,
+    paddingVertical: 48,
+    paddingHorizontal: 48,
+    marginTop: 40,
   },
   authGateTitle: { fontFamily: "Inter_700Bold", fontSize: 22, color: Colors.text, textAlign: "center" },
   authGateDesc: {
@@ -426,6 +483,16 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     overflow: "hidden",
     marginBottom: 10,
+    ...(Platform.OS === "web"
+      ? {
+          borderWidth: 1,
+          borderColor: Colors.separator,
+          shadowColor: Colors.base,
+          shadowOpacity: 0.16,
+          shadowRadius: 14,
+          shadowOffset: { width: 0, height: 10 },
+        }
+      : {}),
   },
   accentBar: { width: 3 },
   cardBody: { flex: 1, padding: 13, gap: 7 },
