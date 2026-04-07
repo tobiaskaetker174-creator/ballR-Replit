@@ -152,9 +152,8 @@ export default function GameDetailScreen() {
   const [showCarpoolModal, setShowCarpoolModal] = useState(false);
 
   const game = ALL_GAMES.find((g) => g.id === id);
-  const isWeb = Platform.OS === "web";
-  const topPadding = isWeb ? 67 : insets.top;
-  const bottomPadding = isWeb ? 34 : insets.bottom;
+  const topPadding = Platform.OS === "web" ? 67 : insets.top;
+  const bottomPadding = Platform.OS === "web" ? 34 : insets.bottom;
 
   if (!game) {
     return (
@@ -176,7 +175,7 @@ export default function GameDetailScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: topPadding }]}>
-      <View style={[styles.navBar, isWeb && styles.webNavBar]}>
+      <View style={styles.navBar}>
         <Pressable
           onPress={() => router.back()}
           style={({ pressed }) => [styles.navBtn, pressed && { opacity: 0.7 }]}
@@ -195,13 +194,9 @@ export default function GameDetailScreen() {
       <ScrollView
         style={styles.scroll}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={[
-          { paddingBottom: bottomPadding + 90 },
-          isWeb && styles.webScrollContent,
-        ]}
+        contentContainerStyle={{ paddingBottom: bottomPadding + 90 }}
       >
-        <View style={[styles.contentFrame, isWeb && styles.contentFrameWeb]}>
-        <View style={[styles.heroContainer, isWeb && styles.webHeroContainer]}>
+        <View style={styles.heroContainer}>
           <Image
             source={game.venue.imageUrl ? { uri: game.venue.imageUrl } : require("../../assets/images/venue_pitch.jpg")}
             style={styles.heroImage}
@@ -223,7 +218,7 @@ export default function GameDetailScreen() {
           </View>
         </View>
 
-        <View style={[styles.infoStrip, isWeb && styles.webInfoStrip]}>
+        <View style={styles.infoStrip}>
           <View style={styles.infoStripCell}>
             <Ionicons name="time-outline" size={14} color={Colors.accent} />
             <Text style={styles.infoStripLabel}>TIME</Text>
@@ -243,7 +238,7 @@ export default function GameDetailScreen() {
           </View>
         </View>
 
-        <View style={[styles.eloStrip, isWeb && styles.webEloStrip]}>
+        <View style={styles.eloStrip}>
           <View style={styles.eloStripRow}>
             <Text style={styles.eloStripLabel}>ELO RANGE</Text>
             <Text style={styles.eloStripNum}>⚡ {game.minElo}–{game.maxElo} · Avg {game.avgElo}</Text>
@@ -529,10 +524,9 @@ export default function GameDetailScreen() {
             </Pressable>
           </View>
         )}
-        </View>
       </ScrollView>
 
-      <View style={[styles.bottomBar, isWeb && styles.webBottomBar, { paddingBottom: Math.max(bottomPadding, 12) + 8 }]}>
+      <View style={[styles.bottomBar, { paddingBottom: Math.max(bottomPadding, 12) + 8 }]}>
         {isJoined ? (
           <View style={styles.joinedBar}>
             <View style={styles.joinedBadge}>
@@ -799,11 +793,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 8,
   },
-  webNavBar: {
-    width: "100%",
-    maxWidth: 1320,
-    alignSelf: "center",
-  },
   navBtn: {
     width: 36,
     height: 36,
@@ -821,9 +810,6 @@ const styles = StyleSheet.create({
     letterSpacing: 3,
   },
   scroll: { flex: 1 },
-  webScrollContent: { alignItems: "center" },
-  contentFrame: { width: "100%" },
-  contentFrameWeb: { maxWidth: 1320 },
   notFound: { flex: 1, alignItems: "center", justifyContent: "center" },
   notFoundText: { fontFamily: "Inter_600SemiBold", fontSize: 16, color: Colors.muted },
   heroContainer: {
@@ -832,10 +818,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     height: 180,
     marginBottom: 14,
-  },
-  webHeroContainer: {
-    height: 280,
-    borderRadius: 24,
   },
   heroImage: { width: "100%", height: "100%" },
   heroGradient: { position: "absolute", inset: 0 },
@@ -875,9 +857,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     overflow: "hidden",
   },
-  webInfoStrip: {
-    paddingVertical: 8,
-  },
   infoStripCell: { flex: 1, alignItems: "center", paddingVertical: 14, gap: 3 },
   infoStripLabel: {
     fontFamily: "Inter_500Medium",
@@ -895,9 +874,6 @@ const styles = StyleSheet.create({
     padding: 14,
     gap: 6,
     marginBottom: 12,
-  },
-  webEloStrip: {
-    padding: 18,
   },
   eloStripRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   eloStripLabel: {
@@ -1036,11 +1012,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
     borderTopWidth: 1,
     borderTopColor: Colors.separator,
-  },
-  webBottomBar: {
-    width: "100%",
-    maxWidth: 1320,
-    alignSelf: "center",
   },
   bookBtn: {
     backgroundColor: Colors.primary,
