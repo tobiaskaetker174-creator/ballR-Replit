@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -38,6 +39,7 @@ export default function LeagueSettingsScreen() {
   const router = useRouter();
   const { activeLeague, addLeague, removeLeague, setActiveLeague } = useLeague();
   const colors = useLeagueColors();
+  const isWeb = Platform.OS === 'web';
 
   const canEdit = !!activeLeague && (activeLeague.role === 'owner' || activeLeague.role === 'admin');
   const canDelete = !!activeLeague && activeLeague.role === 'owner';
@@ -127,7 +129,10 @@ export default function LeagueSettingsScreen() {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.base }]} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={[styles.container, { backgroundColor: colors.base }]}
+      contentContainerStyle={[styles.content, isWeb && styles.webContent]}
+    >
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={[styles.iconButton, { borderColor: colors.separator }]}>
           <Ionicons name="arrow-back" size={22} color={colors.text} />
@@ -172,197 +177,205 @@ export default function LeagueSettingsScreen() {
         </View>
       </View>
 
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>Marketplace profile</Text>
-        <View style={styles.field}>
-          <Text style={[styles.label, { color: colors.text }]}>League name</Text>
-          <TextInput
-            value={name}
-            onChangeText={setName}
-            style={[styles.input, { backgroundColor: colors.surface, color: colors.text, borderColor: colors.separator }]}
-            placeholderTextColor={colors.muted}
-          />
+      <View style={[styles.webGrid, isWeb && styles.webGridActive]}>
+        <View style={styles.webMainColumn}>
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Marketplace profile</Text>
+            <View style={styles.field}>
+              <Text style={[styles.label, { color: colors.text }]}>League name</Text>
+              <TextInput
+                value={name}
+                onChangeText={setName}
+                style={[styles.input, { backgroundColor: colors.surface, color: colors.text, borderColor: colors.separator }]}
+                placeholderTextColor={colors.muted}
+              />
+            </View>
+
+            <View style={styles.field}>
+              <Text style={[styles.label, { color: colors.text }]}>City</Text>
+              <TextInput
+                value={city}
+                onChangeText={setCity}
+                style={[styles.input, { backgroundColor: colors.surface, color: colors.text, borderColor: colors.separator }]}
+                placeholderTextColor={colors.muted}
+              />
+            </View>
+
+            <View style={styles.field}>
+              <Text style={[styles.label, { color: colors.text }]}>Description</Text>
+              <TextInput
+                value={description}
+                onChangeText={setDescription}
+                multiline
+                numberOfLines={3}
+                style={[
+                  styles.input,
+                  styles.textArea,
+                  { backgroundColor: colors.surface, color: colors.text, borderColor: colors.separator },
+                ]}
+                placeholderTextColor={colors.muted}
+              />
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Visibility and access</Text>
+            <View style={[styles.visibilityGrid, isWeb && styles.visibilityGridWeb]}>
+              <TouchableOpacity
+                style={[
+                  styles.visibilityCard,
+                  { backgroundColor: colors.surface, borderColor: colors.separator },
+                  visibility === 'public' && { borderColor: colors.accent, backgroundColor: colors.primary + '28' },
+                  isWeb && styles.visibilityCardWeb,
+                ]}
+                onPress={() => setVisibility('public')}
+              >
+                <Ionicons name="globe-outline" size={20} color={visibility === 'public' ? colors.accent : colors.muted} />
+                <Text style={[styles.visibilityTitle, { color: colors.text }]}>Public</Text>
+                <Text style={[styles.visibilityCopy, { color: colors.muted }]}>
+                  Listed in discovery, searchable by city and sport.
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.visibilityCard,
+                  { backgroundColor: colors.surface, borderColor: colors.separator },
+                  visibility === 'private' && { borderColor: Colors.amber, backgroundColor: Colors.amber + '18' },
+                  isWeb && styles.visibilityCardWeb,
+                ]}
+                onPress={() => setVisibility('private')}
+              >
+                <Ionicons name="lock-closed-outline" size={20} color={visibility === 'private' ? Colors.amber : colors.muted} />
+                <Text style={[styles.visibilityTitle, { color: colors.text }]}>Private</Text>
+                <Text style={[styles.visibilityCopy, { color: colors.muted }]}>
+                  Hidden from discovery, join only via invite code.
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={[styles.codeRow, { backgroundColor: colors.surface, borderColor: colors.separator }]}>
+              <View style={styles.rowText}>
+                <Text style={[styles.rowTitle, { color: colors.text }]}>Invite code</Text>
+                <Text style={[styles.rowCopy, { color: colors.muted }]}>
+                  Share this for direct joins and private access.
+                </Text>
+              </View>
+              <TextInput
+                value={inviteCode}
+                onChangeText={(value) => setInviteCode(value.toUpperCase())}
+                style={[styles.codeInput, { backgroundColor: colors.base, color: colors.accent, borderColor: colors.separator }]}
+                autoCapitalize="characters"
+              />
+            </View>
+
+            <TouchableOpacity
+              style={[styles.secondaryButton, { borderColor: colors.separator, backgroundColor: colors.surface }]}
+              onPress={handleRotateCode}
+            >
+              <Ionicons name="refresh-outline" size={16} color={colors.text} />
+              <Text style={[styles.secondaryButtonText, { color: colors.text }]}>Rotate code</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Competition settings</Text>
+            <View style={[styles.codeRow, { backgroundColor: colors.surface, borderColor: colors.separator }]}>
+              <View style={styles.rowText}>
+                <Text style={[styles.rowTitle, { color: colors.text }]}>Sport</Text>
+                <Text style={[styles.rowCopy, { color: colors.muted }]}>This controls the marketplace category.</Text>
+              </View>
+              <View style={styles.sportRow}>
+                {SPORT_OPTIONS.map((item) => {
+                  const active = sport === item;
+                  return (
+                    <TouchableOpacity
+                      key={item}
+                      style={[
+                        styles.sportChip,
+                        { borderColor: colors.separator, backgroundColor: colors.base },
+                        active && { borderColor: colors.accent, backgroundColor: colors.accent },
+                      ]}
+                      onPress={() => setSport(item)}
+                    >
+                      <Text style={[styles.sportChipText, active && styles.sportChipTextActive]}>{item}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+
+            <View style={[styles.codeRow, { backgroundColor: colors.surface, borderColor: colors.separator }]}>
+              <View style={styles.rowText}>
+                <Text style={[styles.rowTitle, { color: colors.text }]}>Players per team</Text>
+                <Text style={[styles.rowCopy, { color: colors.muted }]}>Used for lineup planning and match balance.</Text>
+              </View>
+              <TextInput
+                value={maxPlayers}
+                onChangeText={setMaxPlayers}
+                keyboardType="numeric"
+                style={[styles.sizeInput, { backgroundColor: colors.base, color: colors.text, borderColor: colors.separator }]}
+              />
+            </View>
+
+            <View style={[styles.codeRow, { backgroundColor: colors.surface, borderColor: colors.separator }]}>
+              <View style={styles.rowText}>
+                <Text style={[styles.rowTitle, { color: colors.text }]}>ELO tracking</Text>
+                <Text style={[styles.rowCopy, { color: colors.muted }]}>Keep rating history and matchmaking consistent.</Text>
+              </View>
+              <TouchableOpacity
+                style={[styles.switch, eloEnabled && styles.switchActive, { backgroundColor: eloEnabled ? listingTone + '40' : colors.overlay }]}
+                onPress={() => setEloEnabled((current) => !current)}
+              >
+                <View style={[styles.switchDot, eloEnabled && styles.switchDotActive, { backgroundColor: eloEnabled ? listingTone : colors.muted }]} />
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
 
-        <View style={styles.field}>
-          <Text style={[styles.label, { color: colors.text }]}>City</Text>
-          <TextInput
-            value={city}
-            onChangeText={setCity}
-            style={[styles.input, { backgroundColor: colors.surface, color: colors.text, borderColor: colors.separator }]}
-            placeholderTextColor={colors.muted}
-          />
-        </View>
-
-        <View style={styles.field}>
-          <Text style={[styles.label, { color: colors.text }]}>Description</Text>
-          <TextInput
-            value={description}
-            onChangeText={setDescription}
-            multiline
-            numberOfLines={3}
-            style={[
-              styles.input,
-              styles.textArea,
-              { backgroundColor: colors.surface, color: colors.text, borderColor: colors.separator },
-            ]}
-            placeholderTextColor={colors.muted}
-          />
-        </View>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>Visibility and access</Text>
-        <View style={styles.visibilityGrid}>
-          <TouchableOpacity
-            style={[
-              styles.visibilityCard,
-              { backgroundColor: colors.surface, borderColor: colors.separator },
-              visibility === 'public' && { borderColor: colors.accent, backgroundColor: colors.primary + '28' },
-            ]}
-            onPress={() => setVisibility('public')}
-          >
-            <Ionicons name="globe-outline" size={20} color={visibility === 'public' ? colors.accent : colors.muted} />
-            <Text style={[styles.visibilityTitle, { color: colors.text }]}>Public</Text>
-            <Text style={[styles.visibilityCopy, { color: colors.muted }]}>
-              Listed in discovery, searchable by city and sport.
+        <View style={[styles.webSideColumn, isWeb && styles.webSideColumnActive]}>
+          <View style={[styles.previewCard, { backgroundColor: colors.surface, borderColor: colors.separator }]}>
+            <View style={styles.previewTopRow}>
+              <Text style={[styles.previewLabel, { color: colors.muted }]}>Listing preview</Text>
+              <View style={[styles.previewBadge, { borderColor: colors.separator, backgroundColor: colors.base }]}>
+                <Text style={[styles.previewBadgeText, { color: colors.text }]}>
+                  {visibility === 'public' ? 'Listed' : 'Invite only'}
+                </Text>
+              </View>
+            </View>
+            <Text style={[styles.previewTitle, { color: colors.text }]}>{name || activeLeague.name}</Text>
+            <Text style={[styles.previewCopy, { color: colors.muted }]}>
+              {city} / {sport} / {previewCode}
             </Text>
+          </View>
+
+          <TouchableOpacity
+            style={[styles.primaryButton, { backgroundColor: colors.accent }]}
+            onPress={handleSave}
+          >
+            <Text style={styles.primaryButtonText}>{saving ? 'Saving...' : 'Save changes'}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[
-              styles.visibilityCard,
-              { backgroundColor: colors.surface, borderColor: colors.separator },
-              visibility === 'private' && { borderColor: Colors.amber, backgroundColor: Colors.amber + '18' },
-            ]}
-            onPress={() => setVisibility('private')}
-          >
-            <Ionicons name="lock-closed-outline" size={20} color={visibility === 'private' ? Colors.amber : colors.muted} />
-            <Text style={[styles.visibilityTitle, { color: colors.text }]}>Private</Text>
-            <Text style={[styles.visibilityCopy, { color: colors.muted }]}>
-              Hidden from discovery, join only via invite code.
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={[styles.codeRow, { backgroundColor: colors.surface, borderColor: colors.separator }]}>
-          <View style={styles.rowText}>
-            <Text style={[styles.rowTitle, { color: colors.text }]}>Invite code</Text>
-            <Text style={[styles.rowCopy, { color: colors.muted }]}>
-              Share this for direct joins and private access.
-            </Text>
-          </View>
-          <TextInput
-            value={inviteCode}
-            onChangeText={(value) => setInviteCode(value.toUpperCase())}
-            style={[styles.codeInput, { backgroundColor: colors.base, color: colors.accent, borderColor: colors.separator }]}
-            autoCapitalize="characters"
-          />
-        </View>
-
-        <TouchableOpacity
-          style={[styles.secondaryButton, { borderColor: colors.separator, backgroundColor: colors.surface }]}
-          onPress={handleRotateCode}
-        >
-          <Ionicons name="refresh-outline" size={16} color={colors.text} />
-          <Text style={[styles.secondaryButtonText, { color: colors.text }]}>Rotate code</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>Competition settings</Text>
-        <View style={[styles.codeRow, { backgroundColor: colors.surface, borderColor: colors.separator }]}>
-          <View style={styles.rowText}>
-            <Text style={[styles.rowTitle, { color: colors.text }]}>Sport</Text>
-            <Text style={[styles.rowCopy, { color: colors.muted }]}>This controls the marketplace category.</Text>
-          </View>
-          <View style={styles.sportRow}>
-            {SPORT_OPTIONS.map((item) => {
-              const active = sport === item;
-              return (
-                <TouchableOpacity
-                  key={item}
-                  style={[
-                    styles.sportChip,
-                    { borderColor: colors.separator, backgroundColor: colors.base },
-                    active && { borderColor: colors.accent, backgroundColor: colors.accent },
-                  ]}
-                  onPress={() => setSport(item)}
-                >
-                  <Text style={[styles.sportChipText, active && styles.sportChipTextActive]}>{item}</Text>
-                </TouchableOpacity>
-              );
-            })}
+          <View style={[styles.dangerZone, { borderColor: Colors.red + '45', backgroundColor: colors.surface }]}>
+            <View style={styles.rowText}>
+              <Text style={[styles.dangerTitle, { color: Colors.red }]}>Danger zone</Text>
+              <Text style={[styles.rowCopy, { color: colors.muted }]}>
+                {canDelete
+                  ? 'Delete the league from your local marketplace store.'
+                  : 'Only owners can delete the league.'}
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={[styles.dangerButton, { borderColor: Colors.red + '55' }]}
+              onPress={handleDelete}
+              disabled={!canDelete}
+            >
+              <Text style={styles.dangerButtonText}>
+                {canDelete && deleteArmed ? 'Confirm delete' : 'Delete league'}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
-
-        <View style={[styles.codeRow, { backgroundColor: colors.surface, borderColor: colors.separator }]}>
-          <View style={styles.rowText}>
-            <Text style={[styles.rowTitle, { color: colors.text }]}>Players per team</Text>
-            <Text style={[styles.rowCopy, { color: colors.muted }]}>Used for lineup planning and match balance.</Text>
-          </View>
-          <TextInput
-            value={maxPlayers}
-            onChangeText={setMaxPlayers}
-            keyboardType="numeric"
-            style={[styles.sizeInput, { backgroundColor: colors.base, color: colors.text, borderColor: colors.separator }]}
-          />
-        </View>
-
-        <View style={[styles.codeRow, { backgroundColor: colors.surface, borderColor: colors.separator }]}>
-          <View style={styles.rowText}>
-            <Text style={[styles.rowTitle, { color: colors.text }]}>ELO tracking</Text>
-            <Text style={[styles.rowCopy, { color: colors.muted }]}>Keep rating history and matchmaking consistent.</Text>
-          </View>
-          <TouchableOpacity
-            style={[styles.switch, eloEnabled && styles.switchActive, { backgroundColor: eloEnabled ? listingTone + '40' : colors.overlay }]}
-            onPress={() => setEloEnabled((current) => !current)}
-          >
-            <View style={[styles.switchDot, eloEnabled && styles.switchDotActive, { backgroundColor: eloEnabled ? listingTone : colors.muted }]} />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <View style={[styles.previewCard, { backgroundColor: colors.surface, borderColor: colors.separator }]}>
-        <View style={styles.previewTopRow}>
-          <Text style={[styles.previewLabel, { color: colors.muted }]}>Listing preview</Text>
-          <View style={[styles.previewBadge, { borderColor: colors.separator, backgroundColor: colors.base }]}>
-            <Text style={[styles.previewBadgeText, { color: colors.text }]}>
-              {visibility === 'public' ? 'Listed' : 'Invite only'}
-            </Text>
-          </View>
-        </View>
-        <Text style={[styles.previewTitle, { color: colors.text }]}>{name || activeLeague.name}</Text>
-        <Text style={[styles.previewCopy, { color: colors.muted }]}>
-          {city} / {sport} / {previewCode}
-        </Text>
-      </View>
-
-      <TouchableOpacity
-        style={[styles.primaryButton, { backgroundColor: colors.accent }]}
-        onPress={handleSave}
-      >
-        <Text style={styles.primaryButtonText}>{saving ? 'Saving...' : 'Save changes'}</Text>
-      </TouchableOpacity>
-
-      <View style={[styles.dangerZone, { borderColor: Colors.red + '45', backgroundColor: colors.surface }]}>
-        <View style={styles.rowText}>
-          <Text style={[styles.dangerTitle, { color: Colors.red }]}>Danger zone</Text>
-          <Text style={[styles.rowCopy, { color: colors.muted }]}>
-            {canDelete
-              ? 'Delete the league from your local marketplace store.'
-              : 'Only owners can delete the league.'}
-          </Text>
-        </View>
-        <TouchableOpacity
-          style={[styles.dangerButton, { borderColor: Colors.red + '55' }]}
-          onPress={handleDelete}
-          disabled={!canDelete}
-        >
-          <Text style={styles.dangerButtonText}>
-            {canDelete && deleteArmed ? 'Confirm delete' : 'Delete league'}
-          </Text>
-        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -375,6 +388,29 @@ const styles = StyleSheet.create({
     paddingTop: 56,
     paddingBottom: 40,
     gap: 16,
+  },
+  webContent: {
+    maxWidth: 1280,
+    width: '100%',
+    alignSelf: 'center',
+  },
+  webGrid: {
+    gap: 16,
+  },
+  webGridActive: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 24,
+  },
+  webMainColumn: {
+    flex: 1,
+    gap: 16,
+  },
+  webSideColumn: {
+    gap: 16,
+  },
+  webSideColumnActive: {
+    width: 360,
   },
   emptyState: {
     flex: 1,
@@ -495,11 +531,17 @@ const styles = StyleSheet.create({
   visibilityGrid: {
     gap: 12,
   },
+  visibilityGridWeb: {
+    flexDirection: 'row',
+  },
   visibilityCard: {
     borderRadius: 20,
     borderWidth: 1,
     padding: 16,
     gap: 8,
+  },
+  visibilityCardWeb: {
+    flex: 1,
   },
   visibilityTitle: {
     fontSize: 15,
