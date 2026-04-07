@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/constants/colors";
+import { WebAppShell } from "@/components/WebAppShell";
 import {
   GAMES,
   NOTIFICATIONS,
@@ -73,6 +74,121 @@ const MARKETPLACE_ACTIONS = [
     route: "/join-league",
   },
 ];
+
+function WebMetricCard({
+  label,
+  value,
+  sublabel,
+}: {
+  label: string;
+  value: string;
+  sublabel: string;
+}) {
+  return (
+    <View style={styles.webMetricCard}>
+      <Text style={styles.webMetricLabel}>{label}</Text>
+      <Text style={styles.webMetricValue}>{value}</Text>
+      <Text style={styles.webMetricSub}>{sublabel}</Text>
+    </View>
+  );
+}
+
+function WebFilterChip({
+  label,
+  active,
+  onPress,
+  icon,
+}: {
+  label: string;
+  active: boolean;
+  onPress: () => void;
+  icon?: keyof typeof Ionicons.glyphMap;
+}) {
+  return (
+    <Pressable
+      style={({ pressed }) => [
+        styles.webFilterChip,
+        active && styles.webFilterChipActive,
+        pressed && { opacity: 0.86 },
+      ]}
+      onPress={onPress}
+    >
+      {icon ? (
+        <Ionicons
+          name={icon}
+          size={13}
+          color={active ? Colors.text : Colors.muted}
+        />
+      ) : null}
+      <Text style={[styles.webFilterChipText, active && styles.webFilterChipTextActive]}>
+        {label}
+      </Text>
+    </Pressable>
+  );
+}
+
+function WebGameCard({ game }: { game: Game }) {
+  const skillColor = getSkillColor(game.skillLevel);
+  const fillPct = Math.min(game.currentPlayers / game.maxPlayers, 1);
+
+  return (
+    <Pressable
+      style={({ pressed }) => [styles.webGameCard, pressed && { opacity: 0.92 }]}
+      onPress={() => router.push({ pathname: "/game/[id]", params: { id: game.id } })}
+    >
+      <View style={styles.webGameTop}>
+        <View style={styles.webGameTitleBlock}>
+          <Text style={styles.webGameVenue}>{game.venue.name}</Text>
+          <Text style={styles.webGameMeta}>
+            {game.venue.address.split(",")[0]} · {formatGameTime(game.gameTime)}
+          </Text>
+        </View>
+        <View style={[styles.webSkillChip, { backgroundColor: `${skillColor}22` }]}>
+          <Text style={[styles.webSkillChipText, { color: skillColor }]}>
+            {getSkillLabel(game.skillLevel)}
+          </Text>
+        </View>
+      </View>
+
+      <Text style={styles.webGameDescription}>
+        {game.description ?? "Well-organized pickup match with balanced teams and verified players."}
+      </Text>
+
+      <View style={styles.webStatsRow}>
+        <View style={styles.webStatPill}>
+          <Ionicons name="people-outline" size={14} color={Colors.accent} />
+          <Text style={styles.webStatPillText}>
+            {game.currentPlayers}/{game.maxPlayers} players
+          </Text>
+        </View>
+        <View style={styles.webStatPill}>
+          <Ionicons name="flash-outline" size={14} color={Colors.accent} />
+          <Text style={styles.webStatPillText}>Avg ELO {game.avgElo}</Text>
+        </View>
+        <View style={styles.webStatPill}>
+          <Ionicons name="cash-outline" size={14} color={Colors.accent} />
+          <Text style={styles.webStatPillText}>{formatPrice(game.pricePerPlayer, game.cityId)}</Text>
+        </View>
+      </View>
+
+      <View style={styles.webFillTrack}>
+        <View style={[styles.webFillBar, { width: `${fillPct * 100}%` as any }]} />
+      </View>
+
+      <View style={styles.webGameFooter}>
+        <Text style={styles.webGameFooterText}>
+          Hosted by {game.organizer.name} · {game.cityId.toUpperCase()}
+        </Text>
+        <Pressable
+          style={({ pressed }) => [styles.webJoinButton, pressed && { opacity: 0.88 }]}
+          onPress={() => router.push({ pathname: "/game/[id]", params: { id: game.id } })}
+        >
+          <Text style={styles.webJoinButtonText}>Open Match</Text>
+        </Pressable>
+      </View>
+    </Pressable>
+  );
+}
 
 function isDateMatch(gameTime: string, filter: DateFilter): boolean {
   const now = new Date();
@@ -181,6 +297,172 @@ export default function DiscoverScreen() {
 
   const unreadCount = NOTIFICATIONS.filter((n) => !n.read).length;
   const featuredGame = GAMES[0];
+  const todayGames = GAMES.filter((game) => isDateMatch(game.gameTime, "today")).length;
+  const activeCities = new Set(GAMES.map((game) => game.cityId)).size;
+  const avgPrice =
+    Math.round(GAMES.reduce((sum, game) => sum + game.pricePerPlayer, 0) / GAMES.length) || 0;
+
+  if (Platform.OS === "web") {
+    const aside = (
+      <>
+        <View style={styles.webSideCard}>
+          <Text style={styles.webSideLabel}>Featured Match</Text>
+          <Text style={styles.webSideTitle}>{featuredGame.venue.name}</Text>
+          <Text style={styles.webSideBody}>
+            {formatGameTime(featuredGame.gameTime)} · {featuredGame.currentPlayers}/{featuredGame.maxPlayers} locked in.
+          </Text>
+          <Pressable
+            style={({ pressed }) => [styles.webSidePrimary, pressed && { opacity: 0.9 }]}
+            onPress={() => router.push({ pathname: "/game/[id]", params: { id: featuredGame.id } })}
+          >
+            <Text style={styles.webSidePrimaryText}>View featured game</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.webSideCard}>
+          <Text style={styles.webSideLabel}>Marketplace</Text>
+          <View style={styles.webActionStack}>
+            {MARKETPLACE_ACTIONS.map((action) => (
+              <Pressable
+                key={action.id}
+                style={({ pressed }) => [styles.webAsideAction, pressed && { opacity: 0.88 }]}
+                onPress={() => router.push(action.route as any)}
+              >
+                <View style={styles.webAsideActionIcon}>
+                  <Ionicons name={action.icon} size={16} color={Colors.accent} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.webAsideActionTitle}>{action.title}</Text>
+                  <Text style={styles.webAsideActionBody}>{action.description}</Text>
+                </View>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+
+        <View style={styles.webSideCard}>
+          <Text style={styles.webSideLabel}>Notifications</Text>
+          {NOTIFICATIONS.slice(0, 3).map((item) => (
+            <View key={item.id} style={styles.webNoticeItem}>
+              <Text style={styles.webNoticeTitle}>{item.title}</Text>
+              <Text style={styles.webNoticeBody}>{item.body}</Text>
+            </View>
+          ))}
+          <Text style={styles.webNoticeFooter}>{unreadCount} unread updates</Text>
+        </View>
+      </>
+    );
+
+    return (
+      <WebAppShell
+        currentTab="discover"
+        title="Open Games Dashboard"
+        subtitle="Same BallR product logic as the mobile app, but stretched into a desktop control room for browsing matches, joining faster, and managing leagues."
+        primaryActionLabel="Create League"
+        primaryActionRoute="/create-league"
+        aside={aside}
+      >
+        <View style={styles.webMetricGrid}>
+          <WebMetricCard label="Open matches" value={String(filteredGames.length)} sublabel="Available under your filters" />
+          <WebMetricCard label="Today" value={String(todayGames)} sublabel="Kickoffs in the next hours" />
+          <WebMetricCard label="Cities live" value={String(activeCities)} sublabel="Bangkok and Bali active" />
+          <WebMetricCard label="Avg price" value={formatPrice(avgPrice, "bangkok")} sublabel="Typical seat price" />
+        </View>
+
+        <View style={styles.webHeroCard}>
+          <View style={styles.webHeroTop}>
+            <View style={styles.webHeroText}>
+              <Text style={styles.webHeroEyebrow}>Desktop Discover</Text>
+              <Text style={styles.webHeroTitle}>Scan the full week, not just the next card in the feed.</Text>
+              <Text style={styles.webHeroBody}>
+                We kept the exact same filters and match dataset from the mobile app, then spread them into a board you can actually work from on a laptop.
+              </Text>
+            </View>
+            <View style={styles.webHeroPill}>
+              <Ionicons name="football-outline" size={16} color={Colors.accent} />
+              <Text style={styles.webHeroPillText}>Featured {featuredGame.venue.name}</Text>
+            </View>
+          </View>
+          <View style={styles.webFilterSection}>
+            <Text style={styles.webFilterSectionLabel}>City</Text>
+            <View style={styles.webFilterRow}>
+              {CITIES.map((city) => (
+                <WebFilterChip
+                  key={city.id}
+                  label={city.label}
+                  icon={city.id === "all" ? "globe-outline" : "location-outline"}
+                  active={selectedCity === city.id}
+                  onPress={() => setSelectedCity(city.id)}
+                />
+              ))}
+            </View>
+            <Text style={styles.webFilterSectionLabel}>Skill</Text>
+            <View style={styles.webFilterRow}>
+              {SKILL_FILTERS.map((skill) => (
+                <WebFilterChip
+                  key={skill.id}
+                  label={skill.label}
+                  active={selectedSkill === skill.id}
+                  onPress={() => setSelectedSkill(skill.id)}
+                />
+              ))}
+            </View>
+            <Text style={styles.webFilterSectionLabel}>Date</Text>
+            <View style={styles.webFilterRow}>
+              {DATE_FILTERS.map((date) => (
+                <WebFilterChip
+                  key={date.id}
+                  label={date.label}
+                  icon={date.icon as keyof typeof Ionicons.glyphMap}
+                  active={selectedDate === date.id}
+                  onPress={() => setSelectedDate(date.id)}
+                />
+              ))}
+            </View>
+            <Text style={styles.webFilterSectionLabel}>ELO Range</Text>
+            <View style={styles.webFilterRow}>
+              {ELO_FILTERS.map((elo) => (
+                <WebFilterChip
+                  key={elo.id}
+                  label={elo.label}
+                  active={selectedElo === elo.id}
+                  onPress={() => setSelectedElo(elo.id)}
+                />
+              ))}
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.webSectionHeader}>
+          <Text style={styles.webSectionTitle}>
+            {filteredGames.length} match{filteredGames.length === 1 ? "" : "es"} ready to open
+          </Text>
+          <Pressable
+            onPress={() => {
+              setSelectedCity("all");
+              setSelectedSkill("all");
+              setSelectedDate("all");
+              setSelectedElo("all");
+            }}
+          >
+            <Text style={styles.webResetLink}>Reset filters</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.webGameGrid}>
+          {filteredGames.length > 0 ? (
+            filteredGames.map((game) => <WebGameCard key={game.id} game={game} />)
+          ) : (
+            <View style={styles.webEmptyState}>
+              <Ionicons name="football-outline" size={40} color={Colors.muted} />
+              <Text style={styles.webEmptyTitle}>No games match this desktop filter set.</Text>
+              <Text style={styles.webEmptyBody}>Try widening the city, date, or ELO range.</Text>
+            </View>
+          )}
+        </View>
+      </WebAppShell>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -418,6 +700,367 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.base,
+  },
+  webMetricGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 16,
+  },
+  webMetricCard: {
+    flexGrow: 1,
+    minWidth: 210,
+    backgroundColor: Colors.surface,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: Colors.separator,
+    padding: 18,
+    gap: 8,
+  },
+  webMetricLabel: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 11,
+    letterSpacing: 1.6,
+    color: Colors.muted,
+    textTransform: "uppercase",
+  },
+  webMetricValue: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 30,
+    color: Colors.text,
+    letterSpacing: -1,
+  },
+  webMetricSub: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 13,
+    lineHeight: 18,
+    color: Colors.muted,
+  },
+  webHeroCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: Colors.separator,
+    padding: 22,
+    gap: 20,
+  },
+  webHeroTop: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    gap: 16,
+  },
+  webHeroText: {
+    flex: 1,
+    gap: 10,
+  },
+  webHeroEyebrow: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 11,
+    letterSpacing: 2,
+    color: Colors.accent,
+    textTransform: "uppercase",
+  },
+  webHeroTitle: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 28,
+    lineHeight: 34,
+    color: Colors.text,
+    letterSpacing: -0.9,
+  },
+  webHeroBody: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 14,
+    lineHeight: 22,
+    color: Colors.muted,
+    maxWidth: 760,
+  },
+  webHeroPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: Colors.base,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: Colors.separator,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  webHeroPillText: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 12,
+    color: Colors.text,
+  },
+  webFilterSection: {
+    gap: 10,
+  },
+  webFilterSectionLabel: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 11,
+    letterSpacing: 1.6,
+    color: Colors.muted,
+    textTransform: "uppercase",
+  },
+  webFilterRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+  },
+  webFilterChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 999,
+    backgroundColor: Colors.base,
+    borderWidth: 1,
+    borderColor: Colors.separator,
+  },
+  webFilterChipActive: {
+    backgroundColor: Colors.primary,
+    borderColor: `${Colors.accent}44`,
+  },
+  webFilterChipText: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 12,
+    color: Colors.muted,
+  },
+  webFilterChipTextActive: {
+    color: Colors.text,
+  },
+  webSectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 12,
+  },
+  webSectionTitle: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 20,
+    color: Colors.text,
+  },
+  webResetLink: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 13,
+    color: Colors.accent,
+  },
+  webGameGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 16,
+  },
+  webGameCard: {
+    flexGrow: 1,
+    minWidth: 320,
+    maxWidth: 520,
+    backgroundColor: Colors.surface,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: Colors.separator,
+    padding: 18,
+    gap: 14,
+  },
+  webGameTop: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    gap: 12,
+  },
+  webGameTitleBlock: {
+    flex: 1,
+    gap: 4,
+  },
+  webGameVenue: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 19,
+    color: Colors.text,
+  },
+  webGameMeta: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 12,
+    lineHeight: 18,
+    color: Colors.muted,
+  },
+  webSkillChip: {
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  webSkillChipText: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 11,
+  },
+  webGameDescription: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 13,
+    lineHeight: 20,
+    color: Colors.muted,
+  },
+  webStatsRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  webStatPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: Colors.base,
+    borderWidth: 1,
+    borderColor: Colors.separator,
+  },
+  webStatPillText: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 12,
+    color: Colors.text,
+  },
+  webFillTrack: {
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: Colors.overlay,
+    overflow: "hidden",
+  },
+  webFillBar: {
+    height: "100%",
+    borderRadius: 999,
+    backgroundColor: Colors.accent,
+  },
+  webGameFooter: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 12,
+  },
+  webGameFooterText: {
+    flex: 1,
+    fontFamily: "Inter_400Regular",
+    fontSize: 12,
+    color: Colors.muted,
+  },
+  webJoinButton: {
+    backgroundColor: Colors.accent,
+    borderRadius: 999,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  webJoinButtonText: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 12,
+    color: Colors.base,
+  },
+  webSideCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: Colors.separator,
+    padding: 18,
+    gap: 12,
+  },
+  webSideLabel: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 11,
+    letterSpacing: 1.6,
+    color: Colors.muted,
+    textTransform: "uppercase",
+  },
+  webSideTitle: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 20,
+    color: Colors.text,
+  },
+  webSideBody: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 13,
+    lineHeight: 19,
+    color: Colors.muted,
+  },
+  webSidePrimary: {
+    backgroundColor: Colors.accent,
+    borderRadius: 16,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  webSidePrimaryText: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 13,
+    color: Colors.base,
+  },
+  webActionStack: {
+    gap: 10,
+  },
+  webAsideAction: {
+    flexDirection: "row",
+    gap: 12,
+    backgroundColor: Colors.base,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: Colors.separator,
+    padding: 14,
+  },
+  webAsideActionIcon: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: `${Colors.accent}18`,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  webAsideActionTitle: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 13,
+    color: Colors.text,
+  },
+  webAsideActionBody: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 12,
+    lineHeight: 17,
+    color: Colors.muted,
+    marginTop: 4,
+  },
+  webNoticeItem: {
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.separator,
+    paddingBottom: 10,
+    gap: 4,
+  },
+  webNoticeTitle: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 13,
+    color: Colors.text,
+  },
+  webNoticeBody: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 12,
+    lineHeight: 18,
+    color: Colors.muted,
+  },
+  webNoticeFooter: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 12,
+    color: Colors.accent,
+  },
+  webEmptyState: {
+    width: "100%",
+    backgroundColor: Colors.surface,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: Colors.separator,
+    paddingVertical: 42,
+    alignItems: "center",
+    gap: 10,
+  },
+  webEmptyTitle: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 18,
+    color: Colors.text,
+  },
+  webEmptyBody: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 13,
+    color: Colors.muted,
   },
   topBar: {
     flexDirection: "row",
