@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -19,11 +20,14 @@ import { CHAT_MESSAGES, ChatMessage, GAMES, formatTimestamp } from "@/constants/
 export default function ChatScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const game = GAMES.find((g) => g.id === id);
   const flatRef = useRef<FlatList>(null);
 
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 20 : insets.bottom;
+  const isDesktopWeb = Platform.OS === "web" && width >= 1180;
+  const desktopWidth = Math.min(width - 40, 960);
 
   const initial = CHAT_MESSAGES[id ?? ""] ?? [];
   const [messages, setMessages] = useState<ChatMessage[]>(initial);
@@ -88,6 +92,13 @@ export default function ChatScreen() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={0}
     >
+      {isDesktopWeb ? (
+        <>
+          <View pointerEvents="none" style={styles.desktopGlowPrimary} />
+          <View pointerEvents="none" style={styles.desktopGlowSecondary} />
+        </>
+      ) : null}
+      <View style={isDesktopWeb ? [styles.desktopShell, { maxWidth: desktopWidth }] : undefined}>
       <View style={styles.header}>
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={20} color={Colors.text} />
@@ -100,6 +111,7 @@ export default function ChatScreen() {
       </View>
 
       <FlatList
+        style={isDesktopWeb ? styles.desktopList : undefined}
         ref={flatRef}
         data={messages}
         keyExtractor={(item) => item.id}
@@ -137,12 +149,48 @@ export default function ChatScreen() {
           <Ionicons name="send" size={18} color={Colors.text} />
         </Pressable>
       </View>
+      </View>
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.base },
+  desktopShell: {
+    width: "100%",
+    alignSelf: "center",
+    flex: 1,
+    backgroundColor: Platform.OS === "web" ? "rgba(32,31,30,0.42)" : "transparent",
+    ...(Platform.OS === "web"
+      ? {
+          borderWidth: 1,
+          borderColor: Colors.separator,
+          borderRadius: 26,
+          overflow: "hidden",
+        }
+      : {}),
+  },
+  desktopList: {
+    width: "100%",
+  },
+  desktopGlowPrimary: {
+    position: "absolute",
+    top: 120,
+    left: -120,
+    width: 320,
+    height: 320,
+    borderRadius: 160,
+    backgroundColor: "rgba(45, 90, 39, 0.14)",
+  },
+  desktopGlowSecondary: {
+    position: "absolute",
+    bottom: 120,
+    right: -120,
+    width: 280,
+    height: 280,
+    borderRadius: 140,
+    backgroundColor: "rgba(91, 143, 232, 0.08)",
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -221,6 +269,12 @@ const styles = StyleSheet.create({
     paddingVertical: 9,
     maxWidth: "75%",
     gap: 3,
+    ...(Platform.OS === "web"
+      ? {
+          borderWidth: 1,
+          borderColor: Colors.separator,
+        }
+      : {}),
   },
   bubbleMe: {
     backgroundColor: Colors.primary,

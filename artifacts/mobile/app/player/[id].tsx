@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -26,8 +27,11 @@ import {
 export default function PlayerProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 34 : insets.bottom;
+  const isDesktopWeb = Platform.OS === "web" && width >= 1180;
+  const desktopWidth = Math.min(width - 40, 980);
 
   const player = PLAYERS.find((p) => p.id === id);
 
@@ -87,6 +91,13 @@ export default function PlayerProfileScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: topPadding }]}>
+      {isDesktopWeb ? (
+        <>
+          <View pointerEvents="none" style={styles.desktopGlowPrimary} />
+          <View pointerEvents="none" style={styles.desktopGlowSecondary} />
+        </>
+      ) : null}
+      <View style={isDesktopWeb ? [styles.desktopShell, { maxWidth: desktopWidth }] : undefined}>
       <View style={styles.navBar}>
         <Pressable style={styles.navBtn} onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={20} color={Colors.text} />
@@ -104,6 +115,7 @@ export default function PlayerProfileScreen() {
       </View>
 
       <ScrollView
+        style={isDesktopWeb ? styles.desktopScroll : undefined}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: bottomPadding + 30 }}
       >
@@ -329,12 +341,39 @@ export default function PlayerProfileScreen() {
           </View>
         )}
       </ScrollView>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.base },
+  desktopShell: {
+    width: "100%",
+    alignSelf: "center",
+    flex: 1,
+  },
+  desktopScroll: {
+    width: "100%",
+  },
+  desktopGlowPrimary: {
+    position: "absolute",
+    top: 120,
+    left: -120,
+    width: 340,
+    height: 340,
+    borderRadius: 170,
+    backgroundColor: "rgba(45, 90, 39, 0.16)",
+  },
+  desktopGlowSecondary: {
+    position: "absolute",
+    top: 300,
+    right: -120,
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: "rgba(91, 143, 232, 0.07)",
+  },
   navBar: {
     flexDirection: "row",
     alignItems: "center",
@@ -409,6 +448,16 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingVertical: 16,
     marginBottom: 20,
+    ...(Platform.OS === "web"
+      ? {
+          borderWidth: 1,
+          borderColor: Colors.separator,
+          shadowColor: Colors.base,
+          shadowOpacity: 0.16,
+          shadowRadius: 14,
+          shadowOffset: { width: 0, height: 10 },
+        }
+      : {}),
   },
   statCell: { flex: 1, alignItems: "center", gap: 3 },
   statValue: { fontFamily: "Inter_700Bold", fontSize: 18, color: Colors.text },
@@ -423,7 +472,21 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   bioText: { fontFamily: "Inter_400Regular", fontSize: 13, color: Colors.muted, lineHeight: 20 },
-  infoCard: { backgroundColor: Colors.surface, borderRadius: 14, overflow: "hidden" },
+  infoCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 14,
+    overflow: "hidden",
+    ...(Platform.OS === "web"
+      ? {
+          borderWidth: 1,
+          borderColor: Colors.separator,
+          shadowColor: Colors.base,
+          shadowOpacity: 0.14,
+          shadowRadius: 12,
+          shadowOffset: { width: 0, height: 8 },
+        }
+      : {}),
+  },
   infoRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -454,6 +517,12 @@ const styles = StyleSheet.create({
     padding: 13,
     marginBottom: 8,
     gap: 8,
+    ...(Platform.OS === "web"
+      ? {
+          borderWidth: 1,
+          borderColor: Colors.separator,
+        }
+      : {}),
   },
   reviewHeader: { flexDirection: "row", alignItems: "center", gap: 10 },
   reviewAvatar: {
