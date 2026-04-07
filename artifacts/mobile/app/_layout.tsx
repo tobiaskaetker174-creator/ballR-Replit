@@ -17,7 +17,6 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Colors from "@/constants/colors";
 import { AuthProvider } from "@/context/AuthContext";
-import { LeagueProvider } from "@/context/LeagueContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -26,32 +25,27 @@ const queryClient = new QueryClient();
 function RootLayoutNav() {
   return (
     <AuthProvider>
-      <LeagueProvider>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: Colors.base },
-            animation: "slide_from_right",
-          }}
-        >
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="auth" options={{ headerShown: false, presentation: "modal" }} />
-          <Stack.Screen name="game/[id]" options={{ headerShown: false, presentation: "card" }} />
-          <Stack.Screen name="chat/[id]" options={{ headerShown: false, presentation: "card" }} />
-          <Stack.Screen name="rate/[id]" options={{ headerShown: false, presentation: "card" }} />
-          <Stack.Screen name="organizer/[id]" options={{ headerShown: false, presentation: "card" }} />
-          <Stack.Screen name="create-game" options={{ headerShown: false, presentation: "modal" }} />
-          <Stack.Screen name="create-league" options={{ headerShown: false, presentation: "modal" }} />
-          <Stack.Screen name="join-league" options={{ headerShown: false, presentation: "modal" }} />
-          <Stack.Screen name="league-settings" options={{ headerShown: false, presentation: "modal" }} />
-          <Stack.Screen name="notifications" options={{ headerShown: false, presentation: "modal" }} />
-          <Stack.Screen name="player/[id]" options={{ headerShown: false, presentation: "card" }} />
-          <Stack.Screen name="analytics" options={{ headerShown: false, presentation: "card" }} />
-          <Stack.Screen name="report/[id]" options={{ headerShown: false, presentation: "modal" }} />
-          <Stack.Screen name="reviews" options={{ headerShown: false, presentation: "card" }} />
-          <Stack.Screen name="admin" options={{ headerShown: false, presentation: "card" }} />
-        </Stack>
-      </LeagueProvider>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: Colors.base },
+          animation: "slide_from_right",
+        }}
+      >
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="auth" options={{ headerShown: false, presentation: "modal" }} />
+        <Stack.Screen name="game/[id]" options={{ headerShown: false, presentation: "card" }} />
+        <Stack.Screen name="chat/[id]" options={{ headerShown: false, presentation: "card" }} />
+        <Stack.Screen name="rate/[id]" options={{ headerShown: false, presentation: "card" }} />
+        <Stack.Screen name="organizer/[id]" options={{ headerShown: false, presentation: "card" }} />
+        <Stack.Screen name="create-game" options={{ headerShown: false, presentation: "modal" }} />
+        <Stack.Screen name="notifications" options={{ headerShown: false, presentation: "modal" }} />
+        <Stack.Screen name="player/[id]" options={{ headerShown: false, presentation: "card" }} />
+        <Stack.Screen name="analytics" options={{ headerShown: false, presentation: "card" }} />
+        <Stack.Screen name="report/[id]" options={{ headerShown: false, presentation: "modal" }} />
+        <Stack.Screen name="reviews" options={{ headerShown: false, presentation: "card" }} />
+        <Stack.Screen name="admin" options={{ headerShown: false, presentation: "card" }} />
+      </Stack>
     </AuthProvider>
   );
 }
