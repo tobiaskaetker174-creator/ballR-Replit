@@ -8,13 +8,11 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/constants/colors";
 import { POTM_ENTRIES, PotmEntry, PLAYERS, isEloPublic, getFairnessScore, Player } from "@/constants/mock";
-import { useAuth } from "@/context/AuthContext";
 
 const CITIES = ["Bangkok", "Bali"];
 
@@ -183,11 +181,7 @@ const CATEGORY_OPTIONS: { id: CommunityCategory; label: string; icon: string }[]
 
 export default function LeaderboardScreen() {
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
-  const { user } = useAuth();
-  const currentUser = user ?? PLAYERS.find((player) => player.isCurrentUser) ?? PLAYERS[0];
-  const currentUserId = currentUser.id;
-  const myCity = currentUser.basedIn ?? "Bangkok";
+  const myCity = PLAYERS[0].basedIn ?? "Bangkok";
   const [city, setCity] = useState(CITIES.findIndex((c) => c === myCity) === -1 ? 0 : CITIES.findIndex((c) => c === myCity));
   const [category, setCategory] = useState<CommunityCategory>("elo");
   const [showDropdown, setShowDropdown] = useState(false);
@@ -195,33 +189,26 @@ export default function LeaderboardScreen() {
   const [showFairnessFormula, setShowFairnessFormula] = useState(false);
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 34 : insets.bottom;
-  const isDesktopWeb = Platform.OS === "web" && width >= 1024;
-  const desktopWidth = Math.min(width - 40, 1040);
 
   const now = new Date();
   const month = now.toLocaleString("default", { month: "long" }).toUpperCase();
   const year = now.getFullYear();
-  const selectedCityName = CITIES[city] ?? myCity;
-  const cityPlayers = PLAYERS.filter((player) => player.basedIn === selectedCityName);
-  const cityEntries = POTM_ENTRIES.filter((entry) => entry.player.basedIn === selectedCityName);
 
   // ELO sorted entries for "Ranking"
-  const eloSortedEntries = [...cityEntries]
+  const eloSortedEntries = [...POTM_ENTRIES]
     .sort((a, b) => b.player.eloRating - a.player.eloRating)
     .map((e, i) => ({ ...e, rank: i + 1 }));
 
   // BOTM sorted entries
-  const botmSortedEntries = [...cityEntries]
-    .sort((a, b) => b.potmScore - a.potmScore)
-    .map((e, i) => ({ ...e, rank: i + 1 }));
+  const botmSortedEntries = [...POTM_ENTRIES].sort((a, b) => b.potmScore - a.potmScore);
 
   // ELO Gainers this month
-  const eloGainers = [...cityPlayers]
+  const eloGainers = [...PLAYERS]
     .filter((p) => p.eloGainThisMonth !== undefined && p.eloGainThisMonth > 0)
     .sort((a, b) => (b.eloGainThisMonth ?? 0) - (a.eloGainThisMonth ?? 0));
 
   // Fairness sorted players
-  const fairnessSorted = [...cityPlayers]
+  const fairnessSorted = [...PLAYERS]
     .map((p) => ({ player: p, score: getFairnessScore(p) }))
     .sort((a, b) => b.score - a.score);
 
@@ -236,28 +223,15 @@ export default function LeaderboardScreen() {
   const displayEntries = getDisplayEntries();
   const top3 = displayEntries.slice(0, 3);
   const rest = displayEntries.slice(3);
-  const hasCategoryData =
-    category === "fairness"
-      ? fairnessSorted.length > 0
-      : category === "gotm"
-        ? true
-        : displayEntries.length > 0;
 
   return (
     <View style={[styles.container, { paddingTop: topPadding }]}>
-      {isDesktopWeb ? (
-        <>
-          <View pointerEvents="none" style={styles.desktopGlowPrimary} />
-          <View pointerEvents="none" style={styles.desktopGlowSecondary} />
-        </>
-      ) : null}
       <ScrollView
-        style={isDesktopWeb ? [styles.desktopScroll, { maxWidth: desktopWidth }] : undefined}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.listContent, { paddingBottom: bottomPadding + 90 }]}
       >
         <View style={styles.topBar}>
-          <Text style={styles.cityLabel}>{selectedCityName.toUpperCase()}</Text>
+          <Text style={styles.cityLabel}>BANGKOK</Text>
           <Text style={styles.logoText}>BALLR</Text>
           <Pressable style={styles.bellBtn} onPress={() => router.push("/notifications")}>
             <Ionicons name="notifications-outline" size={20} color={Colors.muted} />
@@ -325,18 +299,8 @@ export default function LeaderboardScreen() {
           ))}
         </View>
 
-        {!hasCategoryData && (
-          <View style={styles.emptyCategoryCard}>
-            <Ionicons name="location-outline" size={32} color={Colors.muted} />
-            <Text style={styles.emptyCategoryTitle}>No rankings yet in {selectedCityName}</Text>
-            <Text style={styles.emptyCategoryCopy}>
-              Switch city or keep building the local player base to unlock this board.
-            </Text>
-          </View>
-        )}
-
         {/* ===== ELO RANKING VIEW ===== */}
-        {category === "elo" && hasCategoryData && (
+        {category === "elo" && (
           <>
             {/* All-time ELO Rankings */}
             <View style={styles.listHeader}>
@@ -352,7 +316,7 @@ export default function LeaderboardScreen() {
             </View>
 
             {rest.map((item) => (
-              <RankRow key={item.player.id} entry={item} isCurrentUser={item.player.id === currentUserId} scoreLabel={String(item.player.eloRating)} />
+              <RankRow key={item.player.id} entry={item} isCurrentUser={item.player.id === "p0"} scoreLabel={String(item.player.eloRating)} />
             ))}
 
             {/* Biggest ELO Gainers This Month */}
@@ -374,7 +338,7 @@ export default function LeaderboardScreen() {
               return (
                 <Pressable
                   key={player.id}
-                  style={[styles.rankRow, player.id === currentUserId && styles.rankRowCurrent]}
+                  style={[styles.rankRow, player.id === "p0" && styles.rankRowCurrent]}
                   onPress={() => router.push({ pathname: "/player/[id]", params: { id: player.id } })}
                 >
                   <Text style={[styles.rankNum, { color: i < 3 ? Colors.amber : Colors.muted }]}>
@@ -384,7 +348,7 @@ export default function LeaderboardScreen() {
                     <Text style={styles.rankAvatarText}>{initials}</Text>
                   </View>
                   <View style={styles.rankInfo}>
-                    <Text style={styles.rankName}>{player.name}{player.id === currentUserId ? " (You)" : ""}</Text>
+                    <Text style={styles.rankName}>{player.name}{player.id === "p0" ? " (You)" : ""}</Text>
                     <Text style={styles.rankSub}>{player.eloRating} elo · {player.gamesPlayed} games</Text>
                   </View>
                   <Text style={[styles.rankScore, { color: Colors.accent }]}>+{player.eloGainThisMonth}</Text>
@@ -400,13 +364,13 @@ export default function LeaderboardScreen() {
             </View>
 
             {botmSortedEntries.slice(0, 5).map((item) => (
-              <RankRow key={`botm-${item.player.id}`} entry={item} isCurrentUser={item.player.id === currentUserId} />
+              <RankRow key={`botm-${item.player.id}`} entry={item} isCurrentUser={item.player.id === "p0"} />
             ))}
           </>
         )}
 
         {/* ===== BALLER OF THE MONTH VIEW ===== */}
-        {category === "botm" && hasCategoryData && (
+        {category === "botm" && (
           <>
             <Pressable
               style={styles.formulaToggle}
@@ -472,13 +436,13 @@ export default function LeaderboardScreen() {
             </View>
 
             {rest.map((item) => (
-              <RankRow key={item.player.id} entry={item} isCurrentUser={item.player.id === currentUserId} />
+              <RankRow key={item.player.id} entry={item} isCurrentUser={item.player.id === "p0"} />
             ))}
           </>
         )}
 
         {/* ===== FAIRNESS AWARD VIEW ===== */}
-        {category === "fairness" && hasCategoryData && (
+        {category === "fairness" && (
           <>
             {/* Fix 4: Expandable fairness formula */}
             <Pressable
@@ -565,28 +529,6 @@ export default function LeaderboardScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.base },
-  desktopScroll: {
-    width: "100%",
-    alignSelf: "center",
-  },
-  desktopGlowPrimary: {
-    position: "absolute",
-    top: 120,
-    left: -120,
-    width: 340,
-    height: 340,
-    borderRadius: 170,
-    backgroundColor: "rgba(45, 90, 39, 0.16)",
-  },
-  desktopGlowSecondary: {
-    position: "absolute",
-    top: 260,
-    right: -120,
-    width: 300,
-    height: 300,
-    borderRadius: 150,
-    backgroundColor: "rgba(155, 111, 212, 0.07)",
-  },
   topBar: {
     flexDirection: "row",
     alignItems: "center",
@@ -617,14 +559,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.separator,
     overflow: "hidden",
-    ...(Platform.OS === "web"
-      ? {
-          shadowColor: Colors.base,
-          shadowOpacity: 0.18,
-          shadowRadius: 16,
-          shadowOffset: { width: 0, height: 10 },
-        }
-      : {}),
   },
   dropdownItem: {
     flexDirection: "row",
@@ -648,32 +582,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 3,
     marginBottom: 24,
-  },
-  emptyCategoryCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    marginHorizontal: 16,
-    marginBottom: 24,
-    paddingVertical: 28,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    gap: 10,
-    borderWidth: 1,
-    borderColor: Colors.separator,
-  },
-  emptyCategoryTitle: {
-    fontFamily: "Inter_700Bold",
-    fontSize: 16,
-    color: Colors.text,
-    textAlign: "center",
-  },
-  emptyCategoryCopy: {
-    fontFamily: "Inter_400Regular",
-    fontSize: 12,
-    color: Colors.muted,
-    textAlign: "center",
-    lineHeight: 18,
-    maxWidth: 280,
   },
   cityTab: { flex: 1, paddingVertical: 8, borderRadius: 8, alignItems: "center" },
   cityTabActive: { backgroundColor: Colors.primary },
@@ -766,16 +674,6 @@ const styles = StyleSheet.create({
     padding: 11,
     marginBottom: 7,
     gap: 10,
-    ...(Platform.OS === "web"
-      ? {
-          borderWidth: 1,
-          borderColor: Colors.separator,
-          shadowColor: Colors.base,
-          shadowOpacity: 0.14,
-          shadowRadius: 12,
-          shadowOffset: { width: 0, height: 8 },
-        }
-      : {}),
   },
   rankRowCurrent: {
     borderWidth: 1,

@@ -11,7 +11,6 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -67,11 +66,8 @@ function ChipSelect<T extends string>({
 
 export default function CreateGameScreen() {
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 20 : insets.bottom;
-  const isDesktopWeb = Platform.OS === "web" && width >= 1024;
-  const desktopWidth = Math.min(width - 40, 980);
 
   const [city, setCity] = useState("bangkok");
   const [venueId, setVenueId] = useState("v1");
@@ -114,13 +110,6 @@ export default function CreateGameScreen() {
       style={[styles.container, { paddingTop: topPadding }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      {isDesktopWeb ? (
-        <>
-          <View pointerEvents="none" style={styles.desktopGlowPrimary} />
-          <View pointerEvents="none" style={styles.desktopGlowSecondary} />
-        </>
-      ) : null}
-      <View style={isDesktopWeb ? [styles.desktopShell, { maxWidth: desktopWidth }] : undefined}>
       <View style={styles.header}>
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={20} color={Colors.text} />
@@ -130,7 +119,6 @@ export default function CreateGameScreen() {
       </View>
 
       <ScrollView
-        style={isDesktopWeb ? styles.desktopScroll : undefined}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.scroll, { paddingBottom: bottomPadding + 100 }]}
         keyboardShouldPersistTaps="handled"
@@ -292,7 +280,6 @@ export default function CreateGameScreen() {
           </View>
         </View>
       </ScrollView>
-      </View>
 
       <View style={[styles.footer, { paddingBottom: Math.max(bottomPadding, 12) + 8 }]}>
         <Pressable
@@ -316,26 +303,6 @@ export default function CreateGameScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.base },
-  desktopShell: { width: "100%", alignSelf: "center", flex: 1 },
-  desktopScroll: { width: "100%" },
-  desktopGlowPrimary: {
-    position: "absolute",
-    top: 110,
-    left: -120,
-    width: 320,
-    height: 320,
-    borderRadius: 160,
-    backgroundColor: "rgba(45, 90, 39, 0.14)",
-  },
-  desktopGlowSecondary: {
-    position: "absolute",
-    top: 320,
-    right: -120,
-    width: 280,
-    height: 280,
-    borderRadius: 140,
-    backgroundColor: "rgba(91, 143, 232, 0.08)",
-  },
   header: {
     flexDirection: "row",
     alignItems: "center",

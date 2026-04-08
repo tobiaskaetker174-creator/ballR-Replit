@@ -7,7 +7,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -16,11 +15,8 @@ import { PROFILE_REVIEWS, formatTimestamp } from "@/constants/mock";
 
 export default function ReviewsScreen() {
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 34 : insets.bottom;
-  const isDesktopWeb = Platform.OS === "web" && width >= 1024;
-  const desktopWidth = Math.min(width - 40, 900);
 
   const [tab, setTab] = useState<"pending" | "accepted">("pending");
 
@@ -31,13 +27,6 @@ export default function ReviewsScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: topPadding }]}>
-      {isDesktopWeb ? (
-        <>
-          <View pointerEvents="none" style={styles.desktopGlowPrimary} />
-          <View pointerEvents="none" style={styles.desktopGlowSecondary} />
-        </>
-      ) : null}
-      <View style={isDesktopWeb ? [styles.desktopShell, { maxWidth: desktopWidth }] : undefined}>
       <View style={styles.navBar}>
         <Pressable style={styles.navBtn} onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={20} color={Colors.text} />
@@ -75,7 +64,6 @@ export default function ReviewsScreen() {
       )}
 
       <ScrollView
-        style={isDesktopWeb ? styles.desktopScroll : undefined}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: bottomPadding + 30, gap: 10 }}
       >
@@ -136,39 +124,12 @@ export default function ReviewsScreen() {
           })
         )}
       </ScrollView>
-      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.base },
-  desktopShell: {
-    width: "100%",
-    alignSelf: "center",
-    flex: 1,
-  },
-  desktopScroll: {
-    width: "100%",
-  },
-  desktopGlowPrimary: {
-    position: "absolute",
-    top: 120,
-    left: -120,
-    width: 320,
-    height: 320,
-    borderRadius: 160,
-    backgroundColor: "rgba(45, 90, 39, 0.14)",
-  },
-  desktopGlowSecondary: {
-    position: "absolute",
-    bottom: 120,
-    right: -120,
-    width: 280,
-    height: 280,
-    borderRadius: 140,
-    backgroundColor: "rgba(232, 169, 58, 0.08)",
-  },
   navBar: {
     flexDirection: "row",
     alignItems: "center",
@@ -235,16 +196,6 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     padding: 14,
     gap: 10,
-    ...(Platform.OS === "web"
-      ? {
-          borderWidth: 1,
-          borderColor: Colors.separator,
-          shadowColor: Colors.base,
-          shadowOpacity: 0.12,
-          shadowRadius: 12,
-          shadowOffset: { width: 0, height: 8 },
-        }
-      : {}),
   },
   reviewHeader: { flexDirection: "row", alignItems: "center", gap: 10 },
   reviewAvatar: {

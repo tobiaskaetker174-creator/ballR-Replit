@@ -8,7 +8,6 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -26,11 +25,8 @@ const REPORT_REASONS = [
 export default function ReportPlayerScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 34 : insets.bottom;
-  const isDesktopWeb = Platform.OS === "web" && width >= 1024;
-  const desktopWidth = Math.min(width - 40, 860);
 
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [details, setDetails] = useState("");
@@ -49,13 +45,6 @@ export default function ReportPlayerScreen() {
   if (submitted) {
     return (
       <View style={[styles.container, { paddingTop: topPadding }]}>
-        {isDesktopWeb ? (
-          <>
-            <View pointerEvents="none" style={styles.desktopGlowPrimary} />
-            <View pointerEvents="none" style={styles.desktopGlowSecondary} />
-          </>
-        ) : null}
-        <View style={isDesktopWeb ? [styles.desktopShell, { maxWidth: desktopWidth }] : undefined}>
         <View style={styles.navBar}>
           <Pressable style={styles.navBtn} onPress={() => router.back()}>
             <Ionicons name="close" size={20} color={Colors.text} />
@@ -80,20 +69,12 @@ export default function ReportPlayerScreen() {
             <Text style={styles.doneBtnText}>Done</Text>
           </Pressable>
         </View>
-        </View>
       </View>
     );
   }
 
   return (
     <View style={[styles.container, { paddingTop: topPadding }]}>
-      {isDesktopWeb ? (
-        <>
-          <View pointerEvents="none" style={styles.desktopGlowPrimary} />
-          <View pointerEvents="none" style={styles.desktopGlowSecondary} />
-        </>
-      ) : null}
-      <View style={isDesktopWeb ? [styles.desktopShell, { maxWidth: desktopWidth }] : undefined}>
       <View style={styles.navBar}>
         <Pressable style={styles.navBtn} onPress={() => router.back()}>
           <Ionicons name="close" size={20} color={Colors.text} />
@@ -103,7 +84,6 @@ export default function ReportPlayerScreen() {
       </View>
 
       <ScrollView
-        style={isDesktopWeb ? styles.desktopScroll : undefined}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: bottomPadding + 30 }}
       >
@@ -187,39 +167,12 @@ export default function ReportPlayerScreen() {
           </Pressable>
         </View>
       </ScrollView>
-      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.base },
-  desktopShell: {
-    width: "100%",
-    alignSelf: "center",
-    flex: 1,
-  },
-  desktopScroll: {
-    width: "100%",
-  },
-  desktopGlowPrimary: {
-    position: "absolute",
-    top: 120,
-    left: -120,
-    width: 320,
-    height: 320,
-    borderRadius: 160,
-    backgroundColor: "rgba(45, 90, 39, 0.14)",
-  },
-  desktopGlowSecondary: {
-    position: "absolute",
-    bottom: 120,
-    right: -120,
-    width: 280,
-    height: 280,
-    borderRadius: 140,
-    backgroundColor: "rgba(224, 82, 82, 0.08)",
-  },
   navBar: {
     flexDirection: "row",
     alignItems: "center",

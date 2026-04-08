@@ -9,7 +9,7 @@ import {
   Feather,
 } from "@expo/vector-icons";
 import React from "react";
-import { Platform, StyleSheet, View, useWindowDimensions } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import Colors from "@/constants/colors";
 
 function NativeTabLayout() {
@@ -20,7 +20,7 @@ function NativeTabLayout() {
         <Label>Discover</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="my-games">
-        <Icon sf={{ default: "calendar", selected: "calendar" }} />
+        <Icon sf={{ default: "calendar", selected: "calendar.fill" }} />
         <Label>My Games</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="leaderboard">
@@ -36,11 +36,8 @@ function NativeTabLayout() {
 }
 
 function ClassicTabLayout() {
-  const { width } = useWindowDimensions();
   const isIOS = Platform.OS === "ios";
   const isWeb = Platform.OS === "web";
-  const isDesktopWeb = isWeb && width >= 1100;
-  const desktopTabWidth = Math.min(width - 48, 760);
 
   return (
     <Tabs
@@ -50,34 +47,11 @@ function ClassicTabLayout() {
         tabBarInactiveTintColor: Colors.muted,
         tabBarStyle: {
           position: "absolute",
-          backgroundColor: isIOS
-            ? "transparent"
-            : isDesktopWeb
-              ? "rgba(32, 31, 30, 0.92)"
-              : Colors.surface,
+          backgroundColor: isIOS ? "transparent" : Colors.surface,
           borderTopWidth: 1,
           borderTopColor: Colors.separator,
           elevation: 0,
-          ...(isWeb
-            ? isDesktopWeb
-              ? {
-                  left: "50%",
-                  bottom: 20,
-                  width: desktopTabWidth,
-                  height: 76,
-                  paddingTop: 8,
-                  paddingBottom: 10,
-                  borderWidth: 1,
-                  borderColor: Colors.separator,
-                  borderRadius: 28,
-                  transform: [{ translateX: -desktopTabWidth / 2 }],
-                  shadowColor: Colors.base,
-                  shadowOpacity: 0.35,
-                  shadowRadius: 28,
-                  shadowOffset: { width: 0, height: 18 },
-                }
-              : { height: 84 }
-            : {}),
+          ...(isWeb ? { height: 84 } : {}),
         },
         tabBarBackground: () =>
           isIOS ? (
@@ -88,16 +62,9 @@ function ClassicTabLayout() {
             />
           ) : isWeb ? (
             <View
-              style={[
-                StyleSheet.absoluteFill,
-                {
-                  backgroundColor: isDesktopWeb ? "rgba(32, 31, 30, 0.88)" : Colors.surface,
-                  borderRadius: isDesktopWeb ? 28 : 0,
-                },
-              ]}
+              style={[StyleSheet.absoluteFill, { backgroundColor: Colors.surface }]}
             />
           ) : null,
-        tabBarItemStyle: isDesktopWeb ? { paddingTop: 4 } : undefined,
         tabBarLabelStyle: {
           fontFamily: "Inter_500Medium",
           fontSize: 10,

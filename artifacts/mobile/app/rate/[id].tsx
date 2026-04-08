@@ -12,7 +12,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -115,11 +114,8 @@ function PlayerCard({
 export default function RateScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 20 : insets.bottom;
-  const isDesktopWeb = Platform.OS === "web" && width >= 1024;
-  const desktopWidth = Math.min(width - 40, 980);
 
   const [ratings, setRatings] = useState<PeerRating[]>(PENDING_RATINGS);
   const [submitting, setSubmitting] = useState(false);
@@ -165,13 +161,6 @@ export default function RateScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: topPadding }]}>
-      {isDesktopWeb ? (
-        <>
-          <View pointerEvents="none" style={styles.desktopGlowPrimary} />
-          <View pointerEvents="none" style={styles.desktopGlowSecondary} />
-        </>
-      ) : null}
-      <View style={isDesktopWeb ? [styles.desktopShell, { maxWidth: desktopWidth }] : undefined}>
       <View style={styles.header}>
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={20} color={Colors.text} />
@@ -190,7 +179,6 @@ export default function RateScreen() {
       </View>
 
       <ScrollView
-        style={isDesktopWeb ? styles.desktopScroll : undefined}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.list, { paddingBottom: bottomPadding + 100 }]}
       >
@@ -230,39 +218,12 @@ export default function RateScreen() {
           {!submitting && <Ionicons name="checkmark-circle" size={18} color={Colors.text} />}
         </Pressable>
       </View>
-      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.base },
-  desktopShell: {
-    width: "100%",
-    alignSelf: "center",
-    flex: 1,
-  },
-  desktopScroll: {
-    width: "100%",
-  },
-  desktopGlowPrimary: {
-    position: "absolute",
-    top: 120,
-    left: -120,
-    width: 320,
-    height: 320,
-    borderRadius: 160,
-    backgroundColor: "rgba(45, 90, 39, 0.14)",
-  },
-  desktopGlowSecondary: {
-    position: "absolute",
-    bottom: 120,
-    right: -120,
-    width: 280,
-    height: 280,
-    borderRadius: 140,
-    backgroundColor: "rgba(232, 169, 58, 0.08)",
-  },
   header: {
     flexDirection: "row",
     alignItems: "center",

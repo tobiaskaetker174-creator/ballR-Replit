@@ -12,7 +12,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -145,9 +144,7 @@ function PaymentModal({
 export default function GameDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
-  const { isLoggedIn, user } = useAuth();
-  const currentUser = user ?? PLAYERS.find((player) => player.isCurrentUser) ?? PLAYERS[0];
+  const { isLoggedIn } = useAuth();
   const [isJoined, setIsJoined] = useState(MY_GAMES_IDS.has(id ?? ""));
   const [showPayment, setShowPayment] = useState(false);
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
@@ -157,8 +154,6 @@ export default function GameDetailScreen() {
   const game = ALL_GAMES.find((g) => g.id === id);
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 34 : insets.bottom;
-  const isDesktopWeb = Platform.OS === "web" && width >= 1024;
-  const desktopWidth = Math.min(width - 40, 1120);
 
   if (!game) {
     return (
@@ -173,20 +168,13 @@ export default function GameDetailScreen() {
   const skillColor = getSkillColor(game.skillLevel);
   const isFull = game.status === "full" || game.currentPlayers >= game.maxPlayers;
   const fillPct = (game.currentPlayers / game.maxPlayers) * 100;
-  const isOrganizer = game.organizer.id === currentUser.id;
+  const isOrganizer = game.organizer.id === "p0";
   const blueTeam = game.bookings.filter((b) => b.teamAssignment === "blue");
   const redTeam = game.bookings.filter((b) => b.teamAssignment === "red");
   const unassigned = game.bookings.filter((b) => b.teamAssignment === "none");
 
   return (
     <View style={[styles.container, { paddingTop: topPadding }]}>
-      {isDesktopWeb ? (
-        <>
-          <View pointerEvents="none" style={styles.desktopGlowPrimary} />
-          <View pointerEvents="none" style={styles.desktopGlowSecondary} />
-        </>
-      ) : null}
-      <View style={isDesktopWeb ? [styles.desktopShell, { maxWidth: desktopWidth }] : undefined}>
       <View style={styles.navBar}>
         <Pressable
           onPress={() => router.back()}
@@ -204,7 +192,7 @@ export default function GameDetailScreen() {
       </View>
 
       <ScrollView
-        style={isDesktopWeb ? [styles.scroll, styles.desktopScroll] : styles.scroll}
+        style={styles.scroll}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: bottomPadding + 90 }}
       >
@@ -273,14 +261,14 @@ export default function GameDetailScreen() {
 
         {(() => {
           const bookingPlayers = game.bookings.map((b) => b.player);
-          const myElo = currentUser.eloRating;
+          const myElo = PLAYERS[0].eloRating;
           const allElos = bookingPlayers.map((p) => p.eloRating);
           if (allElos.length === 0) return null;
           const minElo = Math.min(...allElos);
           const maxElo = Math.max(...allElos);
           const range = maxElo - minElo || 1;
           const myPct = Math.max(0, Math.min(1, (myElo - minElo) / range));
-          const amIIn = bookingPlayers.some((p) => p.id === currentUser.id);
+          const amIIn = bookingPlayers.some((p) => p.id === "p0");
           if (!amIIn) return null;
           return (
             <View style={styles.inGameEloCard}>
@@ -577,7 +565,6 @@ export default function GameDetailScreen() {
           </Pressable>
         )}
       </View>
-      </View>
 
       <PaymentModal
         visible={showPayment}
@@ -800,32 +787,6 @@ export default function GameDetailScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.base },
-  desktopShell: {
-    width: "100%",
-    alignSelf: "center",
-    flex: 1,
-  },
-  desktopScroll: {
-    width: "100%",
-  },
-  desktopGlowPrimary: {
-    position: "absolute",
-    top: 110,
-    left: -140,
-    width: 360,
-    height: 360,
-    borderRadius: 180,
-    backgroundColor: "rgba(45, 90, 39, 0.14)",
-  },
-  desktopGlowSecondary: {
-    position: "absolute",
-    top: 280,
-    right: -140,
-    width: 320,
-    height: 320,
-    borderRadius: 160,
-    backgroundColor: "rgba(91, 143, 232, 0.08)",
-  },
   navBar: {
     flexDirection: "row",
     alignItems: "center",
@@ -857,16 +818,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     height: 180,
     marginBottom: 14,
-    ...(Platform.OS === "web"
-      ? {
-          borderWidth: 1,
-          borderColor: Colors.separator,
-          shadowColor: Colors.base,
-          shadowOpacity: 0.22,
-          shadowRadius: 18,
-          shadowOffset: { width: 0, height: 12 },
-        }
-      : {}),
   },
   heroImage: { width: "100%", height: "100%" },
   heroGradient: { position: "absolute", inset: 0 },
@@ -905,16 +856,6 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     marginBottom: 12,
     overflow: "hidden",
-    ...(Platform.OS === "web"
-      ? {
-          borderWidth: 1,
-          borderColor: Colors.separator,
-          shadowColor: Colors.base,
-          shadowOpacity: 0.14,
-          shadowRadius: 12,
-          shadowOffset: { width: 0, height: 8 },
-        }
-      : {}),
   },
   infoStripCell: { flex: 1, alignItems: "center", paddingVertical: 14, gap: 3 },
   infoStripLabel: {
@@ -933,16 +874,6 @@ const styles = StyleSheet.create({
     padding: 14,
     gap: 6,
     marginBottom: 12,
-    ...(Platform.OS === "web"
-      ? {
-          borderWidth: 1,
-          borderColor: Colors.separator,
-          shadowColor: Colors.base,
-          shadowOpacity: 0.14,
-          shadowRadius: 12,
-          shadowOffset: { width: 0, height: 8 },
-        }
-      : {}),
   },
   eloStripRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   eloStripLabel: {
@@ -971,16 +902,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 12,
     gap: 10,
-    ...(Platform.OS === "web"
-      ? {
-          borderWidth: 1,
-          borderColor: Colors.separator,
-          shadowColor: Colors.base,
-          shadowOpacity: 0.14,
-          shadowRadius: 12,
-          shadowOffset: { width: 0, height: 8 },
-        }
-      : {}),
   },
   orgAvatar: {
     width: 40,
@@ -1091,12 +1012,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
     borderTopWidth: 1,
     borderTopColor: Colors.separator,
-    ...(Platform.OS === "web"
-      ? {
-          borderTopWidth: 0,
-          backgroundColor: "transparent",
-        }
-      : {}),
   },
   bookBtn: {
     backgroundColor: Colors.primary,

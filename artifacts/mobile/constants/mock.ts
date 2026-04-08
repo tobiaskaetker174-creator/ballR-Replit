@@ -528,7 +528,7 @@ export const GAMES: Game[] = [
     gameTime: hoursFromNow(2),
     durationMinutes: 90,
     maxPlayers: 12,
-    currentPlayers: 9,
+    currentPlayers: 8,
     pricePerPlayer: 250,
     skillLevel: "intermediate",
     status: "upcoming",
@@ -540,7 +540,6 @@ export const GAMES: Game[] = [
     registrationCutoff: hoursFromNow(0),
     description: "Friendly competitive match. Intermediate level only.",
     bookings: [
-      { id: "b0", gameId: "g1", player: PLAYERS[0], teamAssignment: "none", paymentStatus: "paid" },
       { id: "b1", gameId: "g1", player: PLAYERS[1], teamAssignment: "blue", paymentStatus: "paid" },
       { id: "b2", gameId: "g1", player: PLAYERS[2], teamAssignment: "blue", paymentStatus: "paid" },
       { id: "b3", gameId: "g1", player: PLAYERS[3], teamAssignment: "blue", paymentStatus: "paid" },
@@ -605,13 +604,7 @@ export const GAMES: Game[] = [
     avgElo: 880,
     registrationCutoff: daysFromNow(1, 18),
     description: "Chill beginner-friendly session. All welcome!",
-    bookings: [
-      { id: "b12", gameId: "g3", player: PLAYERS[0], teamAssignment: "none", paymentStatus: "paid" },
-      { id: "b13", gameId: "g3", player: PLAYERS[2], teamAssignment: "none", paymentStatus: "paid" },
-      { id: "b14", gameId: "g3", player: PLAYERS[8], teamAssignment: "none", paymentStatus: "paid" },
-      { id: "b15", gameId: "g3", player: PLAYERS[9], teamAssignment: "none", paymentStatus: "paid" },
-      { id: "b16", gameId: "g3", player: PLAYERS[10], teamAssignment: "none", paymentStatus: "paid" },
-    ],
+    bookings: [],
   },
   {
     id: "g4",

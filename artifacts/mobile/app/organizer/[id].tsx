@@ -9,7 +9,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -21,11 +20,8 @@ type WinTeam = "blue" | "red" | "draw" | null;
 export default function OrganizerPanelScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 20 : insets.bottom;
-  const isDesktopWeb = Platform.OS === "web" && width >= 1024;
-  const desktopWidth = Math.min(width - 40, 1040);
 
   const game = GAMES.find((g) => g.id === id);
   const [winner, setWinner] = useState<WinTeam>(null);
@@ -36,18 +32,10 @@ export default function OrganizerPanelScreen() {
   if (!game) {
     return (
       <View style={[styles.container, { paddingTop: topPadding }]}>
-        {isDesktopWeb ? (
-          <>
-            <View pointerEvents="none" style={styles.desktopGlowPrimary} />
-            <View pointerEvents="none" style={styles.desktopGlowSecondary} />
-          </>
-        ) : null}
-        <View style={isDesktopWeb ? [styles.desktopShell, { maxWidth: desktopWidth }] : undefined}>
         <Pressable style={[styles.backBtn, { margin: 16 }]} onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={20} color={Colors.text} />
         </Pressable>
         <Text style={{ color: Colors.muted, textAlign: "center" }}>Game not found</Text>
-        </View>
       </View>
     );
   }
@@ -88,13 +76,6 @@ export default function OrganizerPanelScreen() {
   if (completed) {
     return (
       <View style={[styles.container, { paddingTop: topPadding }]}>
-        {isDesktopWeb ? (
-          <>
-            <View pointerEvents="none" style={styles.desktopGlowPrimary} />
-            <View pointerEvents="none" style={styles.desktopGlowSecondary} />
-          </>
-        ) : null}
-        <View style={isDesktopWeb ? [styles.desktopShell, { maxWidth: desktopWidth }] : undefined}>
         <View style={styles.doneState}>
           <Ionicons name="trophy" size={72} color={Colors.amber} />
           <Text style={styles.doneTitle}>Game Completed!</Text>
@@ -113,7 +94,6 @@ export default function OrganizerPanelScreen() {
             <Text style={styles.doneBtnText}>Back to My Games</Text>
           </Pressable>
         </View>
-        </View>
       </View>
     );
   }
@@ -126,13 +106,6 @@ export default function OrganizerPanelScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: topPadding }]}>
-      {isDesktopWeb ? (
-        <>
-          <View pointerEvents="none" style={styles.desktopGlowPrimary} />
-          <View pointerEvents="none" style={styles.desktopGlowSecondary} />
-        </>
-      ) : null}
-      <View style={isDesktopWeb ? [styles.desktopShell, { maxWidth: desktopWidth }] : undefined}>
       <View style={styles.header}>
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={20} color={Colors.text} />
@@ -148,7 +121,6 @@ export default function OrganizerPanelScreen() {
       </View>
 
       <ScrollView
-        style={isDesktopWeb ? styles.desktopScroll : undefined}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.scroll, { paddingBottom: bottomPadding + 100 }]}
       >
@@ -276,39 +248,12 @@ export default function OrganizerPanelScreen() {
           {!completing && <Ionicons name="flag" size={16} color={Colors.text} />}
         </Pressable>
       </View>
-      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.base },
-  desktopShell: {
-    width: "100%",
-    alignSelf: "center",
-    flex: 1,
-  },
-  desktopScroll: {
-    width: "100%",
-  },
-  desktopGlowPrimary: {
-    position: "absolute",
-    top: 120,
-    left: -120,
-    width: 340,
-    height: 340,
-    borderRadius: 170,
-    backgroundColor: "rgba(45, 90, 39, 0.14)",
-  },
-  desktopGlowSecondary: {
-    position: "absolute",
-    bottom: 120,
-    right: -120,
-    width: 300,
-    height: 300,
-    borderRadius: 150,
-    backgroundColor: "rgba(91, 143, 232, 0.08)",
-  },
   header: {
     flexDirection: "row",
     alignItems: "center",
