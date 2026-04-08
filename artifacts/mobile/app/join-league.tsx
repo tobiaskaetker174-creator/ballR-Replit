@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@/components/AppIcon';
 import Colors from '@/constants/colors';
 
 export default function JoinLeagueScreen() {
@@ -51,7 +51,7 @@ export default function JoinLeagueScreen() {
 
       <View style={styles.content}>
         <View style={styles.iconContainer}>
-          <Text style={styles.icon}>🔗</Text>
+          <Text style={styles.icon}>ðŸ”—</Text>
         </View>
 
         <Text style={styles.title}>Enter Invite Code</Text>
@@ -180,3 +180,4 @@ const styles = StyleSheet.create({
     maxWidth: 260,
   },
 });
+

@@ -1,4 +1,4 @@
-import { Ionicons, Feather } from "@expo/vector-icons";
+﻿import { Ionicons, Feather } from "@/components/AppIcon";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -13,11 +13,13 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/constants/colors";
+import { PlayerAvatar } from "@/components/PlayerAvatar";
 import {
   PLAYERS,
   ELO_HISTORY,
   NOTIFICATIONS,
   PROFILE_REVIEWS,
+  type Position,
   getEloLabel,
   getReliabilityColor,
   getReliabilityLabel,
@@ -39,15 +41,8 @@ const AVG_ELO = Math.round(PLAYERS.reduce((s, p) => s + p.eloRating, 0) / PLAYER
 const RANGE_MIN = 600;
 const RANGE_MAX = 1800;
 
-function BigAvatar({ name, size = 90 }: { name: string; size?: number }) {
-  const initials = name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
-  return (
-    <View style={[styles.bigAvatarOuter, { width: size + 8, height: size + 8, borderRadius: (size + 8) / 2 }]}>
-      <View style={[styles.bigAvatarInner, { width: size, height: size, borderRadius: size / 2 }]}>
-        <Text style={[styles.bigAvatarInitials, { fontSize: size * 0.36 }]}>{initials}</Text>
-      </View>
-    </View>
-  );
+function BigAvatar({ name, avatarUrl, size = 90 }: { name: string; avatarUrl?: string; size?: number }) {
+  return <PlayerAvatar name={name} avatarUrl={avatarUrl} size={size} borderColor={Colors.accent} />;
 }
 
 function StatBox({ label, value, sub, color }: { label: string; value: string; sub?: string; color?: string }) {
@@ -106,7 +101,7 @@ function EloRangeVisual({
 
       <View style={styles.eloRangeBottom}>
         <Text style={styles.eloRangeYouText}>
-          {aboveAvg ? "▲" : "▼"} {currentElo} ELO · {aboveAvg ? "Above" : "Below"} average
+          {aboveAvg ? "Up" : "Down"} {currentElo} ELO / {aboveAvg ? "Above" : "Below"} average
         </Text>
         <Text style={styles.eloRangePercent}>Your ELO is better than {percentile}% of players</Text>
       </View>
@@ -124,7 +119,7 @@ export default function ProfileScreen() {
   const [showEloInfo, setShowEloInfo] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [editBio, setEditBio] = useState(ME.bio ?? "");
-  const [editPositions, setEditPositions] = useState<string[]>([...ME.preferredPositions]);
+  const [editPositions, setEditPositions] = useState<Position[]>([...ME.preferredPositions]);
   const unreadCount = NOTIFICATIONS.filter((n) => !n.read).length;
 
   const eloPublic = isEloPublic(ME, PLAYERS);
@@ -160,7 +155,7 @@ export default function ProfileScreen() {
 
       <View style={styles.profileHero}>
         <View style={{ position: "relative" }}>
-          <BigAvatar name={ME.name} size={90} />
+          <BigAvatar name={ME.name} avatarUrl={ME.avatarUrl} size={90} />
           <Pressable style={styles.cameraBtn}>
             <Ionicons name="camera-outline" size={14} color={Colors.text} />
           </Pressable>
@@ -168,14 +163,14 @@ export default function ProfileScreen() {
         <Text style={styles.profileName}>{ME.name}</Text>
         <View style={styles.profileSubRow}>
           <Text style={styles.profileSub}>{ME.nationality}</Text>
-          <Text style={styles.profileSubDot}>·</Text>
+          <Text style={styles.profileSubDot}>/</Text>
           <Text style={styles.profileSub}>{ME.basedIn}</Text>
         </View>
 
         {ME.medal && (
           <View style={styles.medalBadge}>
             <Text style={styles.medalIcon}>
-              {ME.medal === "gold" ? "🥇" : ME.medal === "silver" ? "🥈" : "🥉"}
+              POTM
             </Text>
             <Text style={styles.medalText}>Baller of the Month</Text>
           </View>
@@ -190,7 +185,7 @@ export default function ProfileScreen() {
 
         <View style={[styles.eloChip, { backgroundColor: `${eloTier.color}22`, flexDirection: "row", alignItems: "center", gap: 6 }]}>
           <Text style={[styles.eloChipText, { color: eloTier.color }]}>
-            {ME.eloRating} ELO · {eloTier.tier} {eloTier.label}
+            {ME.eloRating} ELO / {eloTier.tier} {eloTier.label}
           </Text>
           {!eloPublic && (
             <Ionicons name="lock-closed" size={11} color={Colors.muted} />
@@ -202,7 +197,7 @@ export default function ProfileScreen() {
         <View style={styles.ballerScoreCard}>
           <View style={styles.ballerScoreLeft}>
             <Text style={styles.ballerScoreLabel}>BALLR SCORE</Text>
-            <Text style={styles.ballerScoreDesc}>Monthly composite rank — separate from ELO</Text>
+            <Text style={styles.ballerScoreDesc}>Monthly composite rank - separate from ELO</Text>
           </View>
           <View style={styles.ballerScoreRight}>
             <Text style={styles.ballerScoreValue}>{ME.ballerScore}</Text>
@@ -226,13 +221,13 @@ export default function ProfileScreen() {
         <StatBox
           label="GAMES PLAYED"
           value={`${ME.gamesPlayed}`}
-          sub={`${ME.gamesWon}W · ${ME.gamesLost}L · ${ME.gamesDrawn}D`}
+          sub={`${ME.gamesWon}W / ${ME.gamesLost}L / ${ME.gamesDrawn}D`}
         />
         <View style={styles.statDivider} />
         <StatBox
           label="WIN RATE"
           value={`${winRate}%`}
-          sub={ME.avgSportsmanshipRating.toFixed(1) + " ⭐ spirit"}
+        sub={ME.avgSportsmanshipRating.toFixed(1) + " spirit"}
         />
       </View>
 
@@ -289,7 +284,7 @@ export default function ProfileScreen() {
             <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
               <View style={[styles.reliabilityDot, { backgroundColor: reliabilityColor }]} />
               <Text style={[styles.infoRowValue, { color: reliabilityColor }]}>
-                {ME.reliabilityScore}% · {reliabilityLabel}
+                {ME.reliabilityScore}% / {reliabilityLabel}
               </Text>
             </View>
           </View>
@@ -410,11 +405,12 @@ export default function ProfileScreen() {
           {acceptedReviews.map((review) => (
             <View key={review.id} style={styles.reviewCard}>
               <View style={styles.reviewHeader}>
-                <View style={[styles.reviewAvatar, { backgroundColor: Colors.blue + "44" }]}>
-                  <Text style={styles.reviewAvatarText}>
-                    {review.author.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
-                  </Text>
-                </View>
+                <PlayerAvatar
+                  name={review.author.name}
+                  avatarUrl={review.author.avatarUrl}
+                  size={32}
+                  borderColor={Colors.blue + "55"}
+                />
                 <View style={{ flex: 1 }}>
                   <Text style={styles.reviewAuthor}>{review.author.name}</Text>
                   <Text style={styles.reviewTime}>{formatTimestamp(review.createdAt)}</Text>
@@ -468,7 +464,7 @@ export default function ProfileScreen() {
             style={styles.editBioInput}
             value={editBio}
             onChangeText={setEditBio}
-            placeholder="Add a short bio…"
+            placeholder="Add a short bio..."
             placeholderTextColor={Colors.muted}
             multiline
             numberOfLines={3}
@@ -476,7 +472,7 @@ export default function ProfileScreen() {
 
           <Text style={[styles.eloModalRowLabel, { marginTop: 14, marginBottom: 8 }]}>PREFERRED POSITIONS</Text>
           <View style={styles.editPositionsRow}>
-            {["GK", "DEF", "MID", "FWD"].map((pos) => {
+            {(["GK", "DEF", "MID", "FWD"] as Position[]).map((pos) => {
               const selected = editPositions.includes(pos);
               return (
                 <Pressable
@@ -526,7 +522,7 @@ export default function ProfileScreen() {
             { icon: "football-outline", label: "Calibration", value: `First ${CALIBRATION_GAMES} games are your calibration period. Play matches to unlock your public rating.` },
             { icon: "trending-up-outline", label: "Win vs stronger team", value: "+15 to +32 ELO depending on team strength gap." },
             { icon: "trending-down-outline", label: "Loss vs weaker team", value: "-15 to -32 ELO depending on team strength gap." },
-            { icon: "remove-outline", label: "Win vs equal team", value: "+20 ELO. Draw vs equal team: ±0 ELO." },
+            { icon: "remove-outline", label: "Win vs equal team", value: "+20 ELO. Draw vs equal team: +/-0 ELO." },
             { icon: "close-circle-outline", label: "No-show penalty", value: "-30 ELO per missed game." },
             { icon: "lock-closed-outline", label: "Privacy", value: "ELO is public only if you rank above the bottom 30% of all players. Below that, only you can see your score." },
           ].map((row, i) => (
@@ -606,7 +602,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: `${Colors.amber}44`,
   },
-  medalIcon: { fontSize: 16 },
+  medalIcon: { fontFamily: "Inter_700Bold", fontSize: 10, color: Colors.amber, letterSpacing: 0.5 },
   medalText: { fontFamily: "Inter_700Bold", fontSize: 11, color: Colors.amber },
   streakBadge: {
     flexDirection: "row",
@@ -949,3 +945,4 @@ const styles = StyleSheet.create({
   },
   editSaveBtnText: { fontFamily: "Inter_700Bold", fontSize: 13, color: Colors.text, letterSpacing: 1.5 },
 });
+

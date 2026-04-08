@@ -1,4 +1,4 @@
-import { Ionicons, Feather } from "@expo/vector-icons";
+﻿import { Ionicons, Feather } from "@/components/AppIcon";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React, { useState } from "react";
@@ -18,8 +18,8 @@ import Colors from "@/constants/colors";
 import { SkillLevel, VENUES_LIST, getSkillColor, getSkillLabel } from "@/constants/mock";
 
 const CITIES = [
-  { id: "bangkok", label: "Bangkok 🇹🇭" },
-  { id: "bali", label: "Bali 🇮🇩" },
+  { id: "bangkok", label: "Bangkok ðŸ‡¹ðŸ‡­" },
+  { id: "bali", label: "Bali ðŸ‡®ðŸ‡©" },
 ];
 
 const SKILL_OPTIONS: SkillLevel[] = ["beginner", "intermediate", "advanced", "mixed"];
@@ -99,7 +99,7 @@ export default function CreateGameScreen() {
     setSubmitting(false);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     Alert.alert(
-      "Game Created! 🎉",
+      "Game Created! ðŸŽ‰",
       "Your game has been posted. Players can now discover and join it.",
       [{ text: "View Games", onPress: () => router.replace("/(tabs)") }]
     );
@@ -142,7 +142,7 @@ export default function CreateGameScreen() {
               >
                 <View style={styles.venueInfo}>
                   <Text style={styles.venueName}>{v.name}</Text>
-                  <Text style={styles.venueAddr}>{v.address} · {v.surfaceType}</Text>
+                  <Text style={styles.venueAddr}>{v.address} Â· {v.surfaceType}</Text>
                 </View>
                 {venueId === v.id && <Ionicons name="checkmark-circle" size={20} color={Colors.accent} />}
               </Pressable>
@@ -196,7 +196,7 @@ export default function CreateGameScreen() {
         />
 
         <View style={styles.field}>
-          <Text style={styles.fieldLabel}>PRICE PER PLAYER ({city === "bangkok" ? "฿ THB" : "Rp IDR"})</Text>
+          <Text style={styles.fieldLabel}>PRICE PER PLAYER ({city === "bangkok" ? "à¸¿ THB" : "Rp IDR"})</Text>
           <View style={styles.inputRow}>
             <Ionicons name="cash-outline" size={14} color={Colors.muted} />
             <TextInput
@@ -248,7 +248,7 @@ export default function CreateGameScreen() {
           <Text style={styles.fieldLabel}>DESCRIPTION (optional)</Text>
           <TextInput
             style={styles.textArea}
-            placeholder="Add any notes for players — skill expectations, meetup point, gear needed..."
+            placeholder="Add any notes for players â€” skill expectations, meetup point, gear needed..."
             placeholderTextColor={Colors.muted}
             value={description}
             onChangeText={setDescription}
@@ -266,11 +266,11 @@ export default function CreateGameScreen() {
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Players</Text>
-            <Text style={styles.summaryValue}>{maxPlayers} max · {duration}min</Text>
+            <Text style={styles.summaryValue}>{maxPlayers} max Â· {duration}min</Text>
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Price</Text>
-            <Text style={styles.summaryValue}>{price ? (city === "bangkok" ? `฿${price}` : `Rp${price}`) : "--"}</Text>
+            <Text style={styles.summaryValue}>{price ? (city === "bangkok" ? `à¸¿${price}` : `Rp${price}`) : "--"}</Text>
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Level</Text>
@@ -483,3 +483,4 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
 });
+

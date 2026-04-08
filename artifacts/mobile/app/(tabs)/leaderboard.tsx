@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+﻿import { Ionicons } from "@/components/AppIcon";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/constants/colors";
+import { PlayerAvatar } from "@/components/PlayerAvatar";
 import { POTM_ENTRIES, PotmEntry, PLAYERS, isEloPublic, getFairnessScore, Player } from "@/constants/mock";
 
 const CITIES = ["Bangkok", "Bali"];
@@ -22,17 +23,6 @@ function PodiumBlock({ entry, rank }: { entry: PotmEntry; rank: number }) {
   const podiumColor = isFirst ? Colors.amber : isSecond ? Colors.muted : "#C4834A";
   const blockH = isFirst ? 80 : isSecond ? 55 : 44;
   const avatarSize = isFirst ? 60 : 46;
-
-  const initials = entry.player.name
-    .split(" ")
-    .map((n: string) => n[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-
-  const avatarColors = [Colors.primary, Colors.blue, Colors.teal];
-  const avatarBg = avatarColors[(rank - 1) % avatarColors.length];
-  const medalIcon = rank === 1 ? "🥇" : rank === 2 ? "🥈" : "🥉";
 
   return (
     <Pressable
@@ -45,24 +35,12 @@ function PodiumBlock({ entry, rank }: { entry: PotmEntry; rank: number }) {
             <Text style={styles.winnerBadgeText}>BALLER OF THE MONTH</Text>
           </View>
         )}
-        <Text style={styles.podiumMedal}>{medalIcon}</Text>
-        <View
-          style={[
-            styles.podiumAvatar,
-            {
-              width: avatarSize,
-              height: avatarSize,
-              borderRadius: avatarSize / 2,
-              backgroundColor: avatarBg,
-              borderWidth: isFirst ? 2 : 1,
-              borderColor: isFirst ? Colors.amber : "transparent",
-            },
-          ]}
-        >
-          <Text style={[styles.podiumAvatarInitials, { fontSize: avatarSize * 0.36 }]}>
-            {initials}
-          </Text>
-        </View>
+        <PlayerAvatar
+          name={entry.player.name}
+          avatarUrl={entry.player.avatarUrl}
+          size={avatarSize}
+          borderColor={isFirst ? Colors.amber : "transparent"}
+        />
         <Text style={styles.podiumName} numberOfLines={1}>
           {entry.player.name.split(" ")[0]}
         </Text>
@@ -91,17 +69,6 @@ function PodiumBlock({ entry, rank }: { entry: PotmEntry; rank: number }) {
 function RankRow({ entry, isCurrentUser, scoreLabel }: { entry: PotmEntry; isCurrentUser?: boolean; scoreLabel?: string }) {
   const topColors = [Colors.amber, Colors.muted, "#C4834A"];
   const rankColor = entry.rank <= 3 ? topColors[entry.rank - 1] : Colors.muted;
-  const medal = entry.rank === 1 ? "🥇" : entry.rank === 2 ? "🥈" : entry.rank === 3 ? "🥉" : null;
-
-  const initials = entry.player.name
-    .split(" ")
-    .map((n: string) => n[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-
-  const avatarColors = [Colors.primary, Colors.blue, Colors.teal, Colors.purple, Colors.amber];
-  const avatarBg = avatarColors[entry.rank % avatarColors.length];
 
   return (
     <Pressable
@@ -111,19 +78,14 @@ function RankRow({ entry, isCurrentUser, scoreLabel }: { entry: PotmEntry; isCur
       <Text style={[styles.rankNum, { color: rankColor }]}>
         {entry.rank < 10 ? `0${entry.rank}` : entry.rank}
       </Text>
-      <View style={[styles.rankAvatar, { backgroundColor: avatarBg }]}>
-        <Text style={styles.rankAvatarText}>{initials}</Text>
-      </View>
+      <PlayerAvatar name={entry.player.name} avatarUrl={entry.player.avatarUrl} size={36} />
       <View style={styles.rankInfo}>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-          <Text style={styles.rankName}>
-            {entry.player.name}
-            {isCurrentUser ? " (You)" : ""}
-          </Text>
-          {medal && <Text style={{ fontSize: 13 }}>{medal}</Text>}
-        </View>
+        <Text style={styles.rankName}>
+          {entry.player.name}
+          {isCurrentUser ? " (You)" : ""}
+        </Text>
         <Text style={styles.rankSub}>
-          {isEloPublic(entry.player, PLAYERS) ? `${entry.player.eloRating} elo · ` : ""}{entry.gamesPlayed} games · {entry.wins}W
+          {isEloPublic(entry.player, PLAYERS) ? `${entry.player.eloRating} elo  /  ` : ""}{entry.gamesPlayed} games  /  {entry.wins}W
         </Text>
       </View>
       <Text style={styles.rankElo}>{isEloPublic(entry.player, PLAYERS) ? entry.player.eloRating : "\u2014"}</Text>
@@ -133,15 +95,6 @@ function RankRow({ entry, isCurrentUser, scoreLabel }: { entry: PotmEntry; isCur
 }
 
 function FairnessPlayerRow({ player, rank, score }: { player: Player; rank: number; score: number }) {
-  const initials = player.name
-    .split(" ")
-    .map((n: string) => n[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-  const avatarColors = [Colors.primary, Colors.blue, Colors.teal, Colors.purple, Colors.amber];
-  const avatarBg = avatarColors[rank % avatarColors.length];
-  const medal = rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : null;
   const topColors = [Colors.amber, Colors.muted, "#C4834A"];
   const rankColor = rank <= 3 ? topColors[rank - 1] : Colors.muted;
 
@@ -153,16 +106,11 @@ function FairnessPlayerRow({ player, rank, score }: { player: Player; rank: numb
       <Text style={[styles.rankNum, { color: rankColor }]}>
         {rank < 10 ? `0${rank}` : rank}
       </Text>
-      <View style={[styles.rankAvatar, { backgroundColor: avatarBg }]}>
-        <Text style={styles.rankAvatarText}>{initials}</Text>
-      </View>
+      <PlayerAvatar name={player.name} avatarUrl={player.avatarUrl} size={36} />
       <View style={styles.rankInfo}>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-          <Text style={styles.rankName}>{player.name}</Text>
-          {medal && <Text style={{ fontSize: 13 }}>{medal}</Text>}
-        </View>
+        <Text style={styles.rankName}>{player.name}</Text>
         <Text style={styles.rankSub}>
-          {player.reliabilityScore}% reliable · {player.avgSportsmanshipRating.toFixed(1)} spirit
+          {player.reliabilityScore}% reliable  /  {player.avgSportsmanshipRating.toFixed(1)} spirit
         </Text>
       </View>
       <Text style={[styles.rankScore, { color: Colors.teal }]}>{score}</Text>
@@ -244,7 +192,7 @@ export default function LeaderboardScreen() {
             style={styles.dropdownBtn}
             onPress={() => setShowDropdown((v) => !v)}
           >
-            <Ionicons name={(selectedCategory?.icon ?? "list-outline") as keyof typeof Ionicons.glyphMap} size={18} color={Colors.accent} />
+            <Ionicons name={selectedCategory?.icon ?? "list-outline"} size={18} color={Colors.accent} />
             <Text style={styles.dropdownBtnText}>{selectedCategory?.label ?? "Select Category"}</Text>
             <Ionicons
               name={showDropdown ? "chevron-up" : "chevron-down"}
@@ -263,7 +211,7 @@ export default function LeaderboardScreen() {
                     setShowDropdown(false);
                   }}
                 >
-                  <Ionicons name={opt.icon as keyof typeof Ionicons.glyphMap} size={16} color={category === opt.id ? Colors.accent : Colors.muted} />
+                  <Ionicons name={opt.icon} size={16} color={category === opt.id ? Colors.accent : Colors.muted} />
                   <Text style={[styles.dropdownItemText, category === opt.id && styles.dropdownItemTextActive]}>
                     {opt.label}
                   </Text>
@@ -349,7 +297,7 @@ export default function LeaderboardScreen() {
                   </View>
                   <View style={styles.rankInfo}>
                     <Text style={styles.rankName}>{player.name}{player.id === "p0" ? " (You)" : ""}</Text>
-                    <Text style={styles.rankSub}>{player.eloRating} elo · {player.gamesPlayed} games</Text>
+                    <Text style={styles.rankSub}>{player.eloRating} elo  /  {player.gamesPlayed} games</Text>
                   </View>
                   <Text style={[styles.rankScore, { color: Colors.accent }]}>+{player.eloGainThisMonth}</Text>
                 </Pressable>
@@ -689,3 +637,4 @@ const styles = StyleSheet.create({
   rankElo: { fontFamily: "Inter_600SemiBold", fontSize: 12, color: Colors.text, minWidth: 35, textAlign: "right" },
   rankScore: { fontFamily: "Inter_700Bold", fontSize: 13, minWidth: 30, textAlign: "right" },
 });
+

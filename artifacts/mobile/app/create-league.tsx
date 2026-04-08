@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@/components/AppIcon';
 import Colors from '@/constants/colors';
 
 const COLOR_PRESETS = [
@@ -67,7 +67,7 @@ export default function CreateLeagueScreen() {
           </View>
           <View>
             <Text style={styles.previewName}>{name || 'Your League'}</Text>
-            <Text style={styles.previewMeta}>{city || 'City'} · football · {maxPlayers}v{maxPlayers}</Text>
+            <Text style={styles.previewMeta}>{city || 'City'} Â· football Â· {maxPlayers}v{maxPlayers}</Text>
           </View>
         </View>
       </View>
@@ -189,7 +189,7 @@ export default function CreateLeagueScreen() {
           disabled={!name.trim() || loading}
         >
           <Text style={[styles.createBtnText, { color: colors.primary }]}>
-            {loading ? 'Creating...' : '🏆 Create League'}
+            {loading ? 'Creating...' : 'ðŸ† Create League'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -284,3 +284,4 @@ const styles = StyleSheet.create({
   createBtnDisabled: { opacity: 0.5 },
   createBtnText: { fontSize: 16, fontWeight: '800' },
 });
+

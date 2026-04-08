@@ -1,4 +1,4 @@
-import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, Feather, MaterialCommunityIcons } from "@/components/AppIcon";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/constants/colors";
+import { PlayerAvatar } from "@/components/PlayerAvatar";
 import {
   ALL_GAMES,
   MY_GAMES_IDS,
@@ -77,7 +78,7 @@ function PaymentModal({
               <Ionicons name="football-outline" size={24} color={Colors.accent} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.modalGameName}>{game.venue.name}</Text>
-                <Text style={styles.modalGameTime}>{formatGameTime(game.gameTime)} · {game.durationMinutes}min</Text>
+                <Text style={styles.modalGameTime}>{formatGameTime(game.gameTime)}  /  {game.durationMinutes}min</Text>
               </View>
             </View>
             <View style={styles.modalBreakdown}>
@@ -87,7 +88,7 @@ function PaymentModal({
               </View>
               <View style={styles.modalRow}>
                 <Text style={styles.modalRowLabel}>Processing fee</Text>
-                <Text style={styles.modalRowValue}>{game.cityId === "bangkok" ? "฿0" : "Rp0"}</Text>
+                <Text style={styles.modalRowValue}>{game.cityId === "bangkok" ? "THB 0" : "Rp0"}</Text>
               </View>
               <View style={[styles.modalRow, styles.modalRowTotal]}>
                 <Text style={styles.modalRowTotalLabel}>Total</Text>
@@ -105,7 +106,7 @@ function PaymentModal({
               onPress={handlePay}
             >
               <Ionicons name="lock-closed" size={15} color={Colors.text} />
-              <Text style={styles.modalPayBtnText}>Pay {price} · Secure</Text>
+              <Text style={styles.modalPayBtnText}>Pay {price}  /  Secure</Text>
             </Pressable>
           </>
         )}
@@ -120,7 +121,7 @@ function PaymentModal({
         {step === "success" && (
           <View style={styles.successState}>
             <Ionicons name="checkmark-circle" size={72} color={Colors.accent} />
-            <Text style={styles.successTitle}>You're In! 🎉</Text>
+            <Text style={styles.successTitle}>You're In! </Text>
             <Text style={styles.successSub}>
               Your spot is confirmed for {game.venue.name}.{"\n"}
               Check your email for confirmation details.
@@ -241,7 +242,7 @@ export default function GameDetailScreen() {
         <View style={styles.eloStrip}>
           <View style={styles.eloStripRow}>
             <Text style={styles.eloStripLabel}>ELO RANGE</Text>
-            <Text style={styles.eloStripNum}>⚡ {game.minElo}–{game.maxElo} · Avg {game.avgElo}</Text>
+            <Text style={styles.eloStripNum}>ELO {game.minElo}-{game.maxElo}  /  Avg {game.avgElo}</Text>
           </View>
           <View style={styles.fillTrack}>
             <View
@@ -255,7 +256,7 @@ export default function GameDetailScreen() {
             />
           </View>
           <Text style={styles.eloStripCount}>
-            {game.maxPlayers - game.currentPlayers} spots remaining · Cutoff 2h before kick-off
+            {game.maxPlayers - game.currentPlayers} spots remaining  /  Cutoff 2h before kick-off
           </Text>
         </View>
 
@@ -275,7 +276,12 @@ export default function GameDetailScreen() {
               <Text style={styles.inGameEloTitle}>YOUR ELO IN THIS GAME</Text>
               <View style={styles.inGameEloBarOuter}>
                 <View style={styles.inGameEloBarFill} />
-                <View style={[styles.inGameEloMarker, { left: `${Math.max(0, Math.min(94, myPct * 100))}%` as `${number}%` }]} />
+                <View
+                  style={[
+                    styles.inGameEloMarker,
+                    { left: `${Math.max(0, Math.min(100, myPct * 100))}%` as `${number}%`, transform: [{ translateX: -8 }] },
+                  ]}
+                />
               </View>
               <View style={styles.inGameEloLabels}>
                 <Text style={styles.inGameEloMin}>Lowest {minElo}</Text>
@@ -295,15 +301,11 @@ export default function GameDetailScreen() {
             style={styles.organizerRow}
             onPress={() => router.push({ pathname: "/player/[id]", params: { id: game.organizer.id } })}
           >
-            <View style={[styles.orgAvatar, { backgroundColor: Colors.primary }]}>
-              <Text style={styles.orgAvatarText}>
-                {game.organizer.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
-              </Text>
-            </View>
+            <PlayerAvatar name={game.organizer.name} avatarUrl={game.organizer.avatarUrl} size={40} borderColor={Colors.accent} />
             <View style={styles.orgInfo}>
               <Text style={styles.orgName}>{game.organizer.name}</Text>
               <Text style={styles.orgMeta}>
-                {game.organizer.eloRating} Elo · {game.organizer.reliabilityScore}% reliable
+                {game.organizer.eloRating} Elo / {game.organizer.reliabilityScore}% reliable
               </Text>
             </View>
             {isOrganizer && (
@@ -323,7 +325,7 @@ export default function GameDetailScreen() {
             <Text style={styles.sectionTitle}>TEAMS</Text>
             <View style={styles.teamsRow}>
               <View style={[styles.teamCol, { borderTopColor: Colors.blue }]}>
-                <Text style={[styles.teamHeader, { color: Colors.blue }]}>Team Blue 🔵</Text>
+                <Text style={[styles.teamHeader, { color: Colors.blue }]}>Team Blue</Text>
                 <Text style={styles.teamAvgElo}>
                   Avg {Math.round(blueTeam.reduce((s, b) => s + b.player.eloRating, 0) / blueTeam.length)} Elo
                 </Text>
@@ -333,15 +335,11 @@ export default function GameDetailScreen() {
                     style={styles.teamPlayerRow}
                     onPress={() => router.push({ pathname: "/player/[id]", params: { id: b.player.id } })}
                   >
-                    <View style={[styles.miniAvatar, { backgroundColor: Colors.blue + "44" }]}>
-                      <Text style={styles.miniAvatarText}>
-                        {b.player.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
-                      </Text>
-                    </View>
+                    <PlayerAvatar name={b.player.name} avatarUrl={b.player.avatarUrl} size={22} borderColor={Colors.blue + "55"} />
                     <Text style={styles.teamPlayerName} numberOfLines={1}>{b.player.name}</Text>
                     {b.player.medal && (
                       <Text style={styles.medalIcon}>
-                        {b.player.medal === "gold" ? "🥇" : b.player.medal === "silver" ? "🥈" : "🥉"}
+                        {b.player.medal === "gold" ? "GOLD" : b.player.medal === "silver" ? "SILVER" : "BRONZE"}
                       </Text>
                     )}
                     <Ionicons name="chevron-forward" size={10} color={Colors.muted} />
@@ -349,7 +347,7 @@ export default function GameDetailScreen() {
                 ))}
               </View>
               <View style={[styles.teamCol, { borderTopColor: Colors.red }]}>
-                <Text style={[styles.teamHeader, { color: Colors.red }]}>Team Red 🔴</Text>
+                <Text style={[styles.teamHeader, { color: Colors.red }]}>Team Red</Text>
                 <Text style={styles.teamAvgElo}>
                   Avg {redTeam.length > 0 ? Math.round(redTeam.reduce((s, b) => s + b.player.eloRating, 0) / redTeam.length) : "--"} Elo
                 </Text>
@@ -359,15 +357,11 @@ export default function GameDetailScreen() {
                     style={styles.teamPlayerRow}
                     onPress={() => router.push({ pathname: "/player/[id]", params: { id: b.player.id } })}
                   >
-                    <View style={[styles.miniAvatar, { backgroundColor: Colors.red + "44" }]}>
-                      <Text style={styles.miniAvatarText}>
-                        {b.player.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
-                      </Text>
-                    </View>
+                    <PlayerAvatar name={b.player.name} avatarUrl={b.player.avatarUrl} size={22} borderColor={Colors.red + "55"} />
                     <Text style={styles.teamPlayerName} numberOfLines={1}>{b.player.name}</Text>
                     {b.player.medal && (
                       <Text style={styles.medalIcon}>
-                        {b.player.medal === "gold" ? "🥇" : b.player.medal === "silver" ? "🥈" : "🥉"}
+                        {b.player.medal === "gold" ? "GOLD" : b.player.medal === "silver" ? "SILVER" : "BRONZE"}
                       </Text>
                     )}
                     <Ionicons name="chevron-forward" size={10} color={Colors.muted} />
@@ -388,15 +382,11 @@ export default function GameDetailScreen() {
                   style={styles.playerRow}
                   onPress={() => router.push({ pathname: "/player/[id]", params: { id: b.player.id } })}
                 >
-                  <View style={[styles.playerAvatar, { backgroundColor: Colors.primary + "88" }]}>
-                    <Text style={styles.playerAvatarText}>
-                      {b.player.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
-                    </Text>
-                  </View>
+                  <PlayerAvatar name={b.player.name} avatarUrl={b.player.avatarUrl} size={30} borderColor={Colors.primary + "88"} />
                   <Text style={styles.playerName} numberOfLines={1}>{b.player.name}</Text>
                   {b.player.medal && (
                     <Text style={styles.medalIcon}>
-                      {b.player.medal === "gold" ? "🥇" : b.player.medal === "silver" ? "🥈" : "🥉"}
+                      {b.player.medal === "gold" ? "GOLD" : b.player.medal === "silver" ? "SILVER" : "BRONZE"}
                     </Text>
                   )}
                   <Text style={styles.playerElo}>{b.player.eloRating}</Text>
@@ -560,7 +550,7 @@ export default function GameDetailScreen() {
               setShowPayment(true);
             }}
           >
-            <Text style={styles.bookBtnText}>Book Now · {formatPrice(game.pricePerPlayer, game.cityId)}</Text>
+            <Text style={styles.bookBtnText}>Book Now  /  {formatPrice(game.pricePerPlayer, game.cityId)}</Text>
             <Feather name="arrow-right" size={16} color={Colors.text} />
           </Pressable>
         )}
@@ -608,7 +598,7 @@ export default function GameDetailScreen() {
             <View style={{ flex: 1 }} />
             {game?.aiAssignment && (
               <View style={styles.aiBalancePill}>
-                <Text style={styles.aiBalancePillText}>⚡ {game.aiAssignment.balanceScore}/100</Text>
+                <Text style={styles.aiBalancePillText}>ELO {game.aiAssignment.balanceScore}/100</Text>
               </View>
             )}
           </View>
@@ -669,8 +659,8 @@ export default function GameDetailScreen() {
                   </View>
                 </View>
                 <View style={styles.pitchTeamLabels}>
-                  <Text style={[styles.pitchTeamLabel, { color: Colors.blue }]}>🔵 Blue</Text>
-                  <Text style={[styles.pitchTeamLabel, { color: Colors.red }]}>Red 🔴</Text>
+                  <Text style={[styles.pitchTeamLabel, { color: Colors.blue }]}>BLUE Blue</Text>
+                  <Text style={[styles.pitchTeamLabel, { color: Colors.red }]}>Red RED</Text>
                 </View>
               </View>
 
@@ -744,11 +734,7 @@ export default function GameDetailScreen() {
               {game.carpoolOffers.map((offer, i) => (
                 <View key={i} style={styles.carpoolOfferCard}>
                   <View style={styles.carpoolOfferTop}>
-                    <View style={[styles.carpoolDriverAvatar, { backgroundColor: Colors.teal + "44" }]}>
-                      <Text style={[styles.carpoolDriverInitials, { color: Colors.teal }]}>
-                        {offer.driverName.split(" ").map((n) => n[0]).join("").slice(0, 2)}
-                      </Text>
-                    </View>
+                    <PlayerAvatar name={offer.driverName} size={36} borderColor={Colors.teal + "55"} />
                     <View style={{ flex: 1 }}>
                       <Text style={styles.carpoolDriverName}>{offer.driverName}</Text>
                       <Text style={styles.carpoolDeparture}>{offer.departure}</Text>
@@ -1300,7 +1286,7 @@ const styles = StyleSheet.create({
     color: Colors.muted,
     lineHeight: 16,
   },
-  medalIcon: { fontSize: 14 },
+  medalIcon: { fontFamily: "Inter_700Bold", fontSize: 10, color: Colors.amber, letterSpacing: 0.5 },
   inGameEloCard: {
     marginHorizontal: 16,
     marginBottom: 12,

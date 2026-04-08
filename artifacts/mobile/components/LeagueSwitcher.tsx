@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@/components/AppIcon';
 import { useLeague, League } from '@/context/LeagueContext';
 import Colors from '@/constants/colors';
 
@@ -26,7 +26,7 @@ export function LeagueSwitcher() {
 
   return (
     <>
-      {/* Trigger button — small pill in header */}
+      {/* Trigger button â€” small pill in header */}
       <TouchableOpacity
         onPress={() => setVisible(true)}
         style={[styles.trigger, { borderColor: activeLeague?.accent_color || Colors.accent }]}
@@ -47,7 +47,7 @@ export function LeagueSwitcher() {
         <Ionicons name="chevron-down" size={14} color={Colors.muted} />
       </TouchableOpacity>
 
-      {/* Switcher Modal — like Slack workspace switcher */}
+      {/* Switcher Modal â€” like Slack workspace switcher */}
       <Modal visible={visible} transparent animationType="slide">
         <TouchableOpacity
           style={styles.backdrop}
@@ -84,7 +84,7 @@ export function LeagueSwitcher() {
                   <View style={styles.rowContent}>
                     <Text style={styles.rowName}>{item.name}</Text>
                     <Text style={styles.rowMeta}>
-                      {item.city || 'No city'} · {item.sport} · {item.max_players_per_team}v{item.max_players_per_team}
+                      {item.city || 'No city'} Â· {item.sport} Â· {item.max_players_per_team}v{item.max_players_per_team}
                     </Text>
                   </View>
                   {activeLeague?.id === item.id && (
@@ -248,3 +248,4 @@ const styles = StyleSheet.create({
     color: Colors.accent,
   },
 });
+

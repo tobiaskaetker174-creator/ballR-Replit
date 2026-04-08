@@ -1,4 +1,4 @@
-import { Ionicons, Feather } from "@expo/vector-icons";
+﻿import { Ionicons, Feather } from "@/components/AppIcon";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
@@ -53,7 +53,7 @@ type EloFilter = "all" | "casual" | "mid" | "competitive" | "elite";
 const ELO_FILTERS: { id: EloFilter; label: string; range: [number, number] }[] = [
   { id: "all", label: "All Levels", range: [0, 9999] },
   { id: "casual", label: "Casual (<900)", range: [0, 899] },
-  { id: "mid", label: "Rec (900–1200)", range: [900, 1200] },
+  { id: "mid", label: "Rec (900-1200)", range: [900, 1200] },
   { id: "competitive", label: "Comp (1200+)", range: [1200, 9999] },
 ];
 
@@ -222,7 +222,7 @@ export default function DiscoverScreen() {
                     <Text style={styles.featuredVenue}>{featuredGame.venue.name}</Text>
                     <View style={styles.featuredMeta}>
                       <Text style={styles.featuredMetaText}>{formatGameTime(featuredGame.gameTime)}</Text>
-                      <Text style={styles.featuredMetaDot}>·</Text>
+                      <Text style={styles.featuredMetaDot}> / </Text>
                       <Text style={styles.featuredMetaText}>{featuredGame.currentPlayers}/{featuredGame.maxPlayers} players</Text>
                     </View>
                     <View style={styles.featuredPriceRow}>
@@ -773,3 +773,4 @@ const styles = StyleSheet.create({
     borderColor: `${Colors.accent}55`,
   },
 });
+

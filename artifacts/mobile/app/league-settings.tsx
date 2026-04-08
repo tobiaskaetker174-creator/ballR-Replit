@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,10 +9,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@/components/AppIcon';
 import { useLeague, useLeagueColors } from '@/context/LeagueContext';
 
-// League Settings screen — for owners/admins
+// League Settings screen â€” for owners/admins
 export default function LeagueSettingsScreen() {
   const router = useRouter();
   const { activeLeague } = useLeague();
@@ -225,3 +225,4 @@ const styles = StyleSheet.create({
   },
   dangerBtnText: { color: '#E05252', fontSize: 13, fontWeight: '700' },
 });
+

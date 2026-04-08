@@ -1,4 +1,4 @@
-import { Ionicons, Feather } from "@expo/vector-icons";
+import { Ionicons, Feather } from "@/components/AppIcon";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/constants/colors";
+import { PlayerAvatar } from "@/components/PlayerAvatar";
 import {
   PLAYERS,
   PROFILE_REVIEWS,
@@ -109,13 +110,11 @@ export default function PlayerProfileScreen() {
       >
         <View style={styles.heroSection}>
           <View style={styles.avatarOuter}>
-            <View style={styles.avatarInner}>
-              <Text style={styles.avatarInitials}>{initials}</Text>
-            </View>
+            <PlayerAvatar name={player.name} avatarUrl={player.avatarUrl} size={90} borderColor={Colors.accent} />
             {player.medal && (
               <View style={styles.medalBubble}>
-                <Text style={{ fontSize: 16 }}>
-                  {player.medal === "gold" ? "🥇" : player.medal === "silver" ? "🥈" : "🥉"}
+                <Text style={styles.medalBubbleText}>
+                  POTM
                 </Text>
               </View>
             )}
@@ -125,7 +124,7 @@ export default function PlayerProfileScreen() {
 
           <View style={styles.playerSubRow}>
             <Text style={styles.playerSub}>{player.nationality}</Text>
-            <Text style={styles.playerSubDot}>·</Text>
+            <Text style={styles.playerSubDot}> / </Text>
             <Text style={styles.playerSub}>{player.basedIn}</Text>
           </View>
 
@@ -140,7 +139,7 @@ export default function PlayerProfileScreen() {
             <>
               <View style={[styles.eloChip, { backgroundColor: `${eloTier.color}22` }]}>
                 <Text style={[styles.eloChipText, { color: eloTier.color }]}>
-                  {player.eloRating} ELO · {eloTier.tier} {eloTier.label}
+                  {player.eloRating} ELO  /  {eloTier.tier} {eloTier.label}
                 </Text>
               </View>
               <Text style={{ fontFamily: "Inter_400Regular", fontSize: 11, color: Colors.muted }}>
@@ -173,7 +172,7 @@ export default function PlayerProfileScreen() {
           <View style={styles.statDivider} />
           <View style={styles.statCell}>
             <Text style={styles.statValue}>{player.avgSportsmanshipRating.toFixed(1)}</Text>
-            <Text style={styles.statLabel}>SPIRIT ⭐</Text>
+            <Text style={styles.statLabel}>SPIRIT</Text>
           </View>
         </View>
 
@@ -198,7 +197,7 @@ export default function PlayerProfileScreen() {
               <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
                 <View style={[styles.dot, { backgroundColor: reliabilityColor }]} />
                 <Text style={[styles.infoValue, { color: reliabilityColor }]}>
-                  {player.reliabilityScore}% · {reliabilityLabel}
+                  {player.reliabilityScore}%  /  {reliabilityLabel}
                 </Text>
               </View>
             </View>
@@ -206,7 +205,7 @@ export default function PlayerProfileScreen() {
             <View style={styles.infoRow}>
               <Text style={styles.infoLabel}>RECORD</Text>
               <Text style={styles.infoValue}>
-                {player.gamesWon}W · {player.gamesLost}L · {player.gamesDrawn}D
+                {player.gamesWon}W  /  {player.gamesLost}L  /  {player.gamesDrawn}D
               </Text>
             </View>
             {player.favoriteTeam && (
@@ -256,11 +255,7 @@ export default function PlayerProfileScreen() {
             {reviews.map((review) => (
               <View key={review.id} style={styles.reviewCard}>
                 <View style={styles.reviewHeader}>
-                  <View style={styles.reviewAvatar}>
-                    <Text style={styles.reviewAvatarText}>
-                      {review.author.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
-                    </Text>
-                  </View>
+                  <PlayerAvatar name={review.author.name} avatarUrl={review.author.avatarUrl} size={32} borderColor={Colors.blue + "55"} />
                   <View style={{ flex: 1 }}>
                     <Text style={styles.reviewAuthor}>{review.author.name}</Text>
                     <Text style={styles.reviewTime}>{formatTimestamp(review.createdAt)}</Text>
@@ -382,6 +377,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 2,
   },
+  medalBubbleText: { fontFamily: "Inter_700Bold", fontSize: 10, color: Colors.amber, letterSpacing: 0.5, paddingHorizontal: 2 },
   playerName: { fontFamily: "Inter_700Bold", fontSize: 24, color: Colors.text, letterSpacing: -0.3 },
   playerSubRow: { flexDirection: "row", alignItems: "center", gap: 6 },
   playerSub: { fontFamily: "Inter_400Regular", fontSize: 13, color: Colors.muted },

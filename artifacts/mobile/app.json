@@ -17,7 +17,8 @@
       "supportsTablet": false
     },
     "android": {
-      "backgroundColor": "#141312"
+      "backgroundColor": "#141312",
+      "package": "com.ballr.mobile"
     },
     "web": {
       "favicon": "./assets/images/icon.png",
