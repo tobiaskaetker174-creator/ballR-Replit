@@ -176,235 +176,274 @@ export default function CreateLeagueScreen() {
           </View>
         </View>
 
-        <View style={styles.heroCard}>
-          <View style={styles.heroIcon}>
-            <Ionicons name="storefront-outline" size={28} color={Colors.accent} />
-          </View>
-          <Text style={styles.heroTitle}>Turn your crew into a BallR listing</Text>
-          <Text style={styles.heroCopy}>
-            Build a public league for city discovery or keep it private behind an invite code.
-            Either way, your league gets a clean marketplace profile.
-          </Text>
-          <View style={styles.heroStats}>
-            <View style={styles.statPill}>
-              <Ionicons name="location-outline" size={14} color={Colors.accent} />
-              <Text style={styles.statText}>City-based discovery</Text>
-            </View>
-            <View style={styles.statPill}>
-              <Ionicons name="key-outline" size={14} color={Colors.accent} />
-              <Text style={styles.statText}>Invite-code joins</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Marketplace visibility</Text>
-          <View style={styles.visibilityGrid}>
-            <TouchableOpacity
-              style={[
-                styles.visibilityCard,
-                visibility === 'public' && styles.visibilityCardActive,
-              ]}
-              onPress={() => setVisibility('public')}
-            >
-              <Ionicons
-                name="globe-outline"
-                size={20}
-                color={visibility === 'public' ? Colors.accent : Colors.muted}
-              />
-              <Text style={styles.visibilityTitle}>Public listing</Text>
-              <Text style={styles.visibilityCopy}>
-                Shows up in city discovery and search. Players can join from the marketplace.
+        <View style={isDesktopWeb ? styles.desktopColumns : undefined}>
+          <View style={isDesktopWeb ? styles.desktopMainColumn : undefined}>
+            <View style={styles.heroCard}>
+              <View style={styles.heroIcon}>
+                <Ionicons name="storefront-outline" size={28} color={Colors.accent} />
+              </View>
+              <Text style={styles.heroTitle}>Turn your crew into a BallR listing</Text>
+              <Text style={styles.heroCopy}>
+                Build a public league for city discovery or keep it private behind an invite code.
+                Either way, your league gets a clean marketplace profile.
               </Text>
-            </TouchableOpacity>
+              <View style={styles.heroStats}>
+                <View style={styles.statPill}>
+                  <Ionicons name="location-outline" size={14} color={Colors.accent} />
+                  <Text style={styles.statText}>City-based discovery</Text>
+                </View>
+                <View style={styles.statPill}>
+                  <Ionicons name="key-outline" size={14} color={Colors.accent} />
+                  <Text style={styles.statText}>Invite-code joins</Text>
+                </View>
+              </View>
+            </View>
 
-            <TouchableOpacity
-              style={[
-                styles.visibilityCard,
-                visibility === 'private' && styles.visibilityCardActive,
-              ]}
-              onPress={() => setVisibility('private')}
-            >
-              <Ionicons
-                name="lock-closed-outline"
-                size={20}
-                color={visibility === 'private' ? Colors.amber : Colors.muted}
-              />
-              <Text style={styles.visibilityTitle}>Private group</Text>
-              <Text style={styles.visibilityCopy}>
-                Hidden from discovery. Players join only with your invite code.
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>League details</Text>
-          <View style={styles.field}>
-            <Text style={styles.label}>League name</Text>
-            <TextInput
-              value={name}
-              onChangeText={(value) => {
-                setName(value);
-                setError('');
-              }}
-              placeholder="Bangkok Night Crew"
-              placeholderTextColor={Colors.muted}
-              style={styles.input}
-            />
-          </View>
-
-          <View style={styles.field}>
-            <Text style={styles.label}>City</Text>
-            <TextInput
-              value={city}
-              onChangeText={(value) => {
-                setCity(value);
-                setError('');
-              }}
-              placeholder="Bangkok"
-              placeholderTextColor={Colors.muted}
-              style={styles.input}
-            />
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
-              {CITY_OPTIONS.map((item) => (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Marketplace visibility</Text>
+              <View style={styles.visibilityGrid}>
                 <TouchableOpacity
-                  key={item}
-                  style={[styles.chip, city === item && styles.chipActive]}
-                  onPress={() => setCity(item)}
+                  style={[
+                    styles.visibilityCard,
+                    visibility === 'public' && styles.visibilityCardActive,
+                  ]}
+                  onPress={() => setVisibility('public')}
                 >
-                  <Text style={[styles.chipText, city === item && styles.chipTextActive]}>{item}</Text>
+                  <Ionicons
+                    name="globe-outline"
+                    size={20}
+                    color={visibility === 'public' ? Colors.accent : Colors.muted}
+                  />
+                  <Text style={styles.visibilityTitle}>Public listing</Text>
+                  <Text style={styles.visibilityCopy}>
+                    Shows up in city discovery and search. Players can join from the marketplace.
+                  </Text>
                 </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
 
-          <View style={styles.field}>
-            <Text style={styles.label}>Sport</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
-              {SPORT_OPTIONS.map((item) => (
                 <TouchableOpacity
-                  key={item}
-                  style={[styles.chip, sport === item && styles.chipActive]}
-                  onPress={() => setSport(item)}
+                  style={[
+                    styles.visibilityCard,
+                    visibility === 'private' && styles.visibilityCardActive,
+                  ]}
+                  onPress={() => setVisibility('private')}
                 >
-                  <Text style={[styles.chipText, sport === item && styles.chipTextActive]}>{item}</Text>
+                  <Ionicons
+                    name="lock-closed-outline"
+                    size={20}
+                    color={visibility === 'private' ? Colors.amber : Colors.muted}
+                  />
+                  <Text style={styles.visibilityTitle}>Private group</Text>
+                  <Text style={styles.visibilityCopy}>
+                    Hidden from discovery. Players join only with your invite code.
+                  </Text>
                 </TouchableOpacity>
-              ))}
-            </ScrollView>
+              </View>
+            </View>
+
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>League details</Text>
+              <View style={styles.field}>
+                <Text style={styles.label}>League name</Text>
+                <TextInput
+                  value={name}
+                  onChangeText={(value) => {
+                    setName(value);
+                    setError('');
+                  }}
+                  placeholder="Bangkok Night Crew"
+                  placeholderTextColor={Colors.muted}
+                  style={styles.input}
+                />
+              </View>
+
+              <View style={styles.field}>
+                <Text style={styles.label}>City</Text>
+                <TextInput
+                  value={city}
+                  onChangeText={(value) => {
+                    setCity(value);
+                    setError('');
+                  }}
+                  placeholder="Bangkok"
+                  placeholderTextColor={Colors.muted}
+                  style={styles.input}
+                />
+                {isDesktopWeb ? (
+                  <View style={styles.desktopChipGrid}>
+                    {CITY_OPTIONS.map((item) => (
+                      <TouchableOpacity
+                        key={item}
+                        style={[styles.chip, city === item && styles.chipActive]}
+                        onPress={() => setCity(item)}
+                      >
+                        <Text style={[styles.chipText, city === item && styles.chipTextActive]}>{item}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                ) : (
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
+                    {CITY_OPTIONS.map((item) => (
+                      <TouchableOpacity
+                        key={item}
+                        style={[styles.chip, city === item && styles.chipActive]}
+                        onPress={() => setCity(item)}
+                      >
+                        <Text style={[styles.chipText, city === item && styles.chipTextActive]}>{item}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                )}
+              </View>
+
+              <View style={styles.field}>
+                <Text style={styles.label}>Sport</Text>
+                {isDesktopWeb ? (
+                  <View style={styles.desktopChipGrid}>
+                    {SPORT_OPTIONS.map((item) => (
+                      <TouchableOpacity
+                        key={item}
+                        style={[styles.chip, sport === item && styles.chipActive]}
+                        onPress={() => setSport(item)}
+                      >
+                        <Text style={[styles.chipText, sport === item && styles.chipTextActive]}>{item}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                ) : (
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
+                    {SPORT_OPTIONS.map((item) => (
+                      <TouchableOpacity
+                        key={item}
+                        style={[styles.chip, sport === item && styles.chipActive]}
+                        onPress={() => setSport(item)}
+                      >
+                        <Text style={[styles.chipText, sport === item && styles.chipTextActive]}>{item}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                )}
+              </View>
+
+              <View style={styles.field}>
+                <Text style={styles.label}>Description</Text>
+                <TextInput
+                  value={description}
+                  onChangeText={setDescription}
+                  placeholder="A friendly weekly league for night games and social runs."
+                  placeholderTextColor={Colors.muted}
+                  style={[styles.input, styles.textArea]}
+                  multiline
+                  numberOfLines={4}
+                />
+              </View>
+            </View>
+
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Access and competition</Text>
+              <View style={styles.rowCard}>
+                <View style={styles.rowText}>
+                  <Text style={styles.rowTitle}>Invite code</Text>
+                  <Text style={styles.rowCopy}>
+                    {visibility === 'private'
+                      ? 'Required for entry. Share it with your group.'
+                      : 'Still useful for direct shares, even though the league is public.'}
+                  </Text>
+                </View>
+                <TextInput
+                  value={inviteCode}
+                  onChangeText={(value) => {
+                    setInviteCode(value.toUpperCase());
+                    setError('');
+                  }}
+                  placeholder="BKKBALL2026"
+                  placeholderTextColor={Colors.muted}
+                  style={styles.codeInput}
+                  autoCapitalize="characters"
+                />
+              </View>
+
+              <View style={styles.rowCard}>
+                <View style={styles.rowText}>
+                  <Text style={styles.rowTitle}>Team size</Text>
+                  <Text style={styles.rowCopy}>Used for match setup and roster planning.</Text>
+                </View>
+                <TextInput
+                  value={maxPlayers}
+                  onChangeText={setMaxPlayers}
+                  keyboardType="numeric"
+                  style={styles.sizeInput}
+                />
+              </View>
+
+              <View style={styles.rowCard}>
+                <View style={styles.rowText}>
+                  <Text style={styles.rowTitle}>ELO tracking</Text>
+                  <Text style={styles.rowCopy}>Track player progress and keep matchmaking balanced.</Text>
+                </View>
+                <TouchableOpacity
+                  style={[styles.switch, eloEnabled && styles.switchActive]}
+                  onPress={() => setEloEnabled((current) => !current)}
+                >
+                  <View style={[styles.switchDot, eloEnabled && styles.switchDotActive]} />
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
 
-          <View style={styles.field}>
-            <Text style={styles.label}>Description</Text>
-            <TextInput
-              value={description}
-              onChangeText={setDescription}
-              placeholder="A friendly weekly league for night games and social runs."
-              placeholderTextColor={Colors.muted}
-              style={[styles.input, styles.textArea]}
-              multiline
-              numberOfLines={4}
-            />
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Access and competition</Text>
-          <View style={styles.rowCard}>
-            <View style={styles.rowText}>
-              <Text style={styles.rowTitle}>Invite code</Text>
-              <Text style={styles.rowCopy}>
-                {visibility === 'private'
-                  ? 'Required for entry. Share it with your group.'
-                  : 'Still useful for direct shares, even though the league is public.'}
+          <View style={isDesktopWeb ? styles.desktopSideColumn : undefined}>
+            <View style={styles.previewCard}>
+              <View style={styles.previewTopRow}>
+                <Text style={styles.previewLabel}>Marketplace preview</Text>
+                <View style={styles.previewBadge}>
+                  <Text style={styles.previewBadgeText}>
+                    {visibility === 'public' ? 'Listed' : 'Invite only'}
+                  </Text>
+                </View>
+              </View>
+              <Text style={styles.previewTitle}>{name || 'Your new league'}</Text>
+              <Text style={styles.previewCopy}>
+                {city || 'Any city'} / {sport} / {previewCode}
               </Text>
+              <View style={styles.previewFooter}>
+                <View style={styles.previewPill}>
+                  <Ionicons name="people-outline" size={14} color={Colors.accent} />
+                  <Text style={styles.previewPillText}>{maxPlayers || '7'} per team</Text>
+                </View>
+                <View style={styles.previewPill}>
+                  <Ionicons
+                    name={visibility === 'public' ? 'radio-outline' : 'shield-checkmark-outline'}
+                    size={14}
+                    color={Colors.accent}
+                  />
+                  <Text style={styles.previewPillText}>
+                    {visibility === 'public' ? 'Public discovery' : 'Private access'}
+                  </Text>
+                </View>
+              </View>
             </View>
-            <TextInput
-              value={inviteCode}
-              onChangeText={(value) => {
-                setInviteCode(value.toUpperCase());
-                setError('');
-              }}
-              placeholder="BKKBALL2026"
-              placeholderTextColor={Colors.muted}
-              style={styles.codeInput}
-              autoCapitalize="characters"
-            />
-          </View>
 
-          <View style={styles.rowCard}>
-            <View style={styles.rowText}>
-              <Text style={styles.rowTitle}>Team size</Text>
-              <Text style={styles.rowCopy}>Used for match setup and roster planning.</Text>
+            <View style={styles.sideInfoCard}>
+              <Text style={styles.sideInfoTitle}>Before you publish</Text>
+              <Text style={styles.sideInfoCopy}>Make the listing public if you want it discoverable in city search. Keep it private if the invite code should stay inside your crew.</Text>
             </View>
-            <TextInput
-              value={maxPlayers}
-              onChangeText={setMaxPlayers}
-              keyboardType="numeric"
-              style={styles.sizeInput}
-            />
-          </View>
 
-          <View style={styles.rowCard}>
-            <View style={styles.rowText}>
-              <Text style={styles.rowTitle}>ELO tracking</Text>
-              <Text style={styles.rowCopy}>Track player progress and keep matchmaking balanced.</Text>
-            </View>
+            {error ? <Text style={styles.error}>{error}</Text> : null}
+
             <TouchableOpacity
-              style={[styles.switch, eloEnabled && styles.switchActive]}
-              onPress={() => setEloEnabled((current) => !current)}
+              style={[styles.publishButton, saving && styles.publishButtonDisabled]}
+              onPress={handlePublish}
+              disabled={saving}
             >
-              <View style={[styles.switchDot, eloEnabled && styles.switchDotActive]} />
+              <Text style={styles.publishButtonText}>
+                {saving ? 'Publishing...' : 'Publish League'}
+              </Text>
             </TouchableOpacity>
+
+            <Text style={styles.footerNote}>
+              Public leagues show up in city search. Private leagues stay hidden and only accept the code you share.
+            </Text>
           </View>
         </View>
-
-        <View style={styles.previewCard}>
-          <View style={styles.previewTopRow}>
-            <Text style={styles.previewLabel}>Marketplace preview</Text>
-            <View style={styles.previewBadge}>
-              <Text style={styles.previewBadgeText}>
-                {visibility === 'public' ? 'Listed' : 'Invite only'}
-              </Text>
-            </View>
-          </View>
-          <Text style={styles.previewTitle}>{name || 'Your new league'}</Text>
-          <Text style={styles.previewCopy}>
-            {city || 'Any city'} / {sport} / {previewCode}
-          </Text>
-          <View style={styles.previewFooter}>
-            <View style={styles.previewPill}>
-              <Ionicons name="people-outline" size={14} color={Colors.accent} />
-              <Text style={styles.previewPillText}>{maxPlayers || '7'} per team</Text>
-            </View>
-            <View style={styles.previewPill}>
-              <Ionicons
-                name={visibility === 'public' ? 'radio-outline' : 'shield-checkmark-outline'}
-                size={14}
-                color={Colors.accent}
-              />
-              <Text style={styles.previewPillText}>
-                {visibility === 'public' ? 'Public discovery' : 'Private access'}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-
-        <TouchableOpacity
-          style={[styles.publishButton, saving && styles.publishButtonDisabled]}
-          onPress={handlePublish}
-          disabled={saving}
-        >
-          <Text style={styles.publishButtonText}>
-            {saving ? 'Publishing...' : 'Publish League'}
-          </Text>
-        </TouchableOpacity>
-
-        <Text style={styles.footerNote}>
-          Public leagues show up in city search. Private leagues stay hidden and only accept the code you share.
-        </Text>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -441,6 +480,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 56,
     paddingBottom: 40,
+    gap: 16,
+  },
+  desktopColumns: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 20,
+  },
+  desktopMainColumn: {
+    flex: 1.15,
+    gap: 16,
+  },
+  desktopSideColumn: {
+    flex: 0.85,
     gap: 16,
   },
   header: {
@@ -600,6 +652,11 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingRight: 8,
   },
+  desktopChipGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
   chip: {
     borderRadius: 999,
     paddingHorizontal: 14,
@@ -756,6 +813,24 @@ const styles = StyleSheet.create({
     color: Colors.text,
     fontSize: 12,
     fontWeight: '700',
+  },
+  sideInfoCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: Colors.separator,
+    padding: 16,
+    gap: 8,
+  },
+  sideInfoTitle: {
+    color: Colors.text,
+    fontSize: 15,
+    fontWeight: '800',
+  },
+  sideInfoCopy: {
+    color: Colors.muted,
+    fontSize: 13,
+    lineHeight: 19,
   },
   error: {
     color: Colors.red,

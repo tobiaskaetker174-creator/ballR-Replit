@@ -147,6 +147,7 @@ export default function JoinLeagueScreen() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [selectedLeagueId, setSelectedLeagueId] = useState(DEMO_LEAGUES[0].id);
+  const selectedLeague = DEMO_LEAGUES.find((league) => league.id === selectedLeagueId) ?? DEMO_LEAGUES[0];
 
   const visibleLeagues = useMemo(() => {
     if (cityFilter === 'All') return DEMO_LEAGUES;
@@ -211,137 +212,177 @@ export default function JoinLeagueScreen() {
           </View>
         </View>
 
-        <View style={styles.heroCard}>
-          <View style={styles.heroIcon}>
-            <Ionicons name="location-outline" size={28} color={Colors.accent} />
-          </View>
-          <Text style={styles.heroTitle}>Find a public league or join a private one</Text>
-          <Text style={styles.heroCopy}>
-            Public leagues show up by city. Private leagues stay hidden and only accept a shared invite code.
-          </Text>
-          <View style={styles.heroStats}>
-            <View style={styles.statPill}>
-              <Ionicons name="globe-outline" size={14} color={Colors.accent} />
-              <Text style={styles.statText}>City discovery</Text>
+        <View style={isDesktopWeb ? styles.desktopColumns : undefined}>
+          <View style={isDesktopWeb ? styles.desktopMainColumn : undefined}>
+            <View style={styles.heroCard}>
+              <View style={styles.heroIcon}>
+                <Ionicons name="location-outline" size={28} color={Colors.accent} />
+              </View>
+              <Text style={styles.heroTitle}>Find a public league or join a private one</Text>
+              <Text style={styles.heroCopy}>
+                Public leagues show up by city. Private leagues stay hidden and only accept a shared invite code.
+              </Text>
+              <View style={styles.heroStats}>
+                <View style={styles.statPill}>
+                  <Ionicons name="globe-outline" size={14} color={Colors.accent} />
+                  <Text style={styles.statText}>City discovery</Text>
+                </View>
+                <View style={styles.statPill}>
+                  <Ionicons name="key-outline" size={14} color={Colors.accent} />
+                  <Text style={styles.statText}>Code access</Text>
+                </View>
+              </View>
             </View>
-            <View style={styles.statPill}>
-              <Ionicons name="key-outline" size={14} color={Colors.accent} />
-              <Text style={styles.statText}>Code access</Text>
-            </View>
-          </View>
-        </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Explore leagues</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
-            {CITY_OPTIONS.map((item) => (
-              <TouchableOpacity
-                key={item}
-                style={[styles.chip, cityFilter === item && styles.chipActive]}
-                onPress={() => setCityFilter(item)}
-              >
-                <Text style={[styles.chipText, cityFilter === item && styles.chipTextActive]}>{item}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-
-          <View style={styles.list}>
-            {visibleLeagues.map((league) => {
-              const active = selectedLeagueId === league.id;
-              return (
-                <TouchableOpacity
-                  key={league.id}
-                  style={[styles.leagueCard, active && styles.leagueCardActive]}
-                  onPress={() => setSelectedLeagueId(league.id)}
-                >
-                  <View style={styles.cardTopRow}>
-                    <View style={[styles.cardDot, { backgroundColor: league.accent_color }]} />
-                    <View style={styles.cardMeta}>
-                      <Text style={styles.cardTitle}>{league.name}</Text>
-                      <Text style={styles.cardSubtitle}>
-                        {league.city} / {league.sport}
-                      </Text>
-                    </View>
-                    <View style={styles.cardBadge}>
-                      <Text style={styles.cardBadgeText}>{league.visibility}</Text>
-                    </View>
-                  </View>
-                  <Text style={styles.cardCopy}>{league.description}</Text>
-                  <View style={styles.cardFooter}>
-                    <View style={styles.cardPill}>
-                      <Ionicons name="people-outline" size={14} color={Colors.accent} />
-                      <Text style={styles.cardPillText}>{league.member_count} players</Text>
-                    </View>
-                    <View style={styles.cardPill}>
-                      <Ionicons name={league.visibility === 'private' ? 'lock-closed-outline' : 'key-outline'} size={14} color={league.visibility === 'private' ? Colors.amber : Colors.accent} />
-                      <Text style={[styles.cardPillText, league.visibility === 'private' && { color: Colors.amber }]}>
-                        {league.visibility === 'private' ? 'Invite only' : league.invite_code}
-                      </Text>
-                    </View>
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Explore leagues</Text>
+              {isDesktopWeb ? (
+                <View style={styles.desktopChipGrid}>
+                  {CITY_OPTIONS.map((item) => (
                     <TouchableOpacity
-                      style={[styles.cardJoinBtn, league.visibility === 'private' && { backgroundColor: Colors.amber + '22', borderColor: Colors.amber }]}
-                      onPress={() => {
-                        if (league.visibility === 'private') {
-                          setInviteCode('');
-                        } else {
-                          joinLeague(league);
-                        }
-                      }}
-                      disabled={loading}
+                      key={item}
+                      style={[styles.chip, cityFilter === item && styles.chipActive]}
+                      onPress={() => setCityFilter(item)}
                     >
-                      <Text style={[styles.cardJoinText, league.visibility === 'private' && { color: Colors.amber }]}>
-                        {league.visibility === 'private' ? 'Use code' : 'Join'}
-                      </Text>
+                      <Text style={[styles.chipText, cityFilter === item && styles.chipTextActive]}>{item}</Text>
                     </TouchableOpacity>
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </View>
+                  ))}
+                </View>
+              ) : (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
+                  {CITY_OPTIONS.map((item) => (
+                    <TouchableOpacity
+                      key={item}
+                      style={[styles.chip, cityFilter === item && styles.chipActive]}
+                      onPress={() => setCityFilter(item)}
+                    >
+                      <Text style={[styles.chipText, cityFilter === item && styles.chipTextActive]}>{item}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              )}
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Join by invite code</Text>
-          <View style={styles.codeCard}>
-            <Text style={styles.codeCardCopy}>
-              Use this for private leagues or direct invites from the owner.
-            </Text>
-            <TextInput
-              value={inviteCode}
-              onChangeText={(text) => {
-                setInviteCode(text.toUpperCase());
-                setError('');
-              }}
-              placeholder="e.g. BKKBALL2026"
-              placeholderTextColor={Colors.muted}
-              style={styles.input}
-              autoCapitalize="characters"
-              maxLength={16}
-            />
-            <View style={styles.codeHintRow}>
-              <View style={styles.codeHintPill}>
-                <Text style={styles.codeHintText}>Private leagues stay hidden from discovery</Text>
-              </View>
-              <View style={styles.codeHintPill}>
-                <Text style={styles.codeHintText}>Try {DEMO_LEAGUES[0].invite_code}</Text>
+              <View style={styles.list}>
+                {visibleLeagues.map((league) => {
+                  const active = selectedLeagueId === league.id;
+                  return (
+                    <TouchableOpacity
+                      key={league.id}
+                      style={[styles.leagueCard, active && styles.leagueCardActive]}
+                      onPress={() => setSelectedLeagueId(league.id)}
+                    >
+                      <View style={styles.cardTopRow}>
+                        <View style={[styles.cardDot, { backgroundColor: league.accent_color }]} />
+                        <View style={styles.cardMeta}>
+                          <Text style={styles.cardTitle}>{league.name}</Text>
+                          <Text style={styles.cardSubtitle}>
+                            {league.city} / {league.sport}
+                          </Text>
+                        </View>
+                        <View style={styles.cardBadge}>
+                          <Text style={styles.cardBadgeText}>{league.visibility}</Text>
+                        </View>
+                      </View>
+                      <Text style={styles.cardCopy}>{league.description}</Text>
+                      <View style={styles.cardFooter}>
+                        <View style={styles.cardPill}>
+                          <Ionicons name="people-outline" size={14} color={Colors.accent} />
+                          <Text style={styles.cardPillText}>{league.member_count} players</Text>
+                        </View>
+                        <View style={styles.cardPill}>
+                          <Ionicons name={league.visibility === 'private' ? 'lock-closed-outline' : 'key-outline'} size={14} color={league.visibility === 'private' ? Colors.amber : Colors.accent} />
+                          <Text style={[styles.cardPillText, league.visibility === 'private' && { color: Colors.amber }]}>
+                            {league.visibility === 'private' ? 'Invite only' : league.invite_code}
+                          </Text>
+                        </View>
+                        <TouchableOpacity
+                          style={[styles.cardJoinBtn, league.visibility === 'private' && { backgroundColor: Colors.amber + '22', borderColor: Colors.amber }]}
+                          onPress={() => {
+                            if (league.visibility === 'private') {
+                              setInviteCode('');
+                              setSelectedLeagueId(league.id);
+                            } else {
+                              joinLeague(league);
+                            }
+                          }}
+                          disabled={loading}
+                        >
+                          <Text style={[styles.cardJoinText, league.visibility === 'private' && { color: Colors.amber }]}>
+                            {league.visibility === 'private' ? 'Use code' : 'Join'}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
             </View>
           </View>
+
+          <View style={isDesktopWeb ? styles.desktopSideColumn : undefined}>
+            <View style={styles.codeCard}>
+              <Text style={styles.sideEyebrow}>Selected league</Text>
+              <Text style={styles.sideTitle}>{selectedLeague.name}</Text>
+              <Text style={styles.sideMeta}>{selectedLeague.city} / {selectedLeague.sport}</Text>
+              <Text style={styles.codeCardCopy}>
+                {selectedLeague.description}
+              </Text>
+              <View style={styles.codeHintRow}>
+                <View style={styles.codeHintPill}>
+                  <Text style={styles.codeHintText}>{selectedLeague.member_count} players</Text>
+                </View>
+                <View style={styles.codeHintPill}>
+                  <Text style={styles.codeHintText}>
+                    {selectedLeague.visibility === 'private' ? 'Invite only' : selectedLeague.invite_code}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Join by invite code</Text>
+              <View style={styles.codeCard}>
+                <Text style={styles.codeCardCopy}>
+                  Use this for private leagues or direct invites from the owner.
+                </Text>
+                <TextInput
+                  value={inviteCode}
+                  onChangeText={(text) => {
+                    setInviteCode(text.toUpperCase());
+                    setError('');
+                  }}
+                  placeholder="e.g. BKKBALL2026"
+                  placeholderTextColor={Colors.muted}
+                  style={styles.input}
+                  autoCapitalize="characters"
+                  maxLength={16}
+                />
+                <View style={styles.codeHintRow}>
+                  <View style={styles.codeHintPill}>
+                    <Text style={styles.codeHintText}>Private leagues stay hidden from discovery</Text>
+                  </View>
+                  <View style={styles.codeHintPill}>
+                    <Text style={styles.codeHintText}>Try {selectedLeague.invite_code}</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+
+            {error ? <Text style={styles.error}>{error}</Text> : null}
+
+            <TouchableOpacity
+              style={[styles.joinBtn, loading && styles.joinBtnDisabled]}
+              onPress={handleJoinByCode}
+              disabled={loading || !inviteCode.trim()}
+            >
+              <Text style={styles.joinBtnText}>{loading ? 'Joining...' : 'Join with code'}</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.hint}>
+              If you already see a public league card above, you can join it directly. Private leagues need the code.
+            </Text>
+          </View>
         </View>
-
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-
-        <TouchableOpacity
-          style={[styles.joinBtn, loading && styles.joinBtnDisabled]}
-          onPress={handleJoinByCode}
-          disabled={loading || !inviteCode.trim()}
-        >
-          <Text style={styles.joinBtnText}>{loading ? 'Joining...' : 'Join with code'}</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.hint}>
-          If you already see a public league card above, you can join it directly. Private leagues need the code.
-        </Text>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -378,6 +419,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 56,
     paddingBottom: 40,
+    gap: 16,
+  },
+  desktopColumns: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 20,
+  },
+  desktopMainColumn: {
+    flex: 1.2,
+    gap: 16,
+  },
+  desktopSideColumn: {
+    flex: 0.8,
     gap: 16,
   },
   header: {
@@ -489,6 +543,11 @@ const styles = StyleSheet.create({
   chipRow: {
     gap: 8,
     paddingRight: 8,
+  },
+  desktopChipGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
   },
   chip: {
     borderRadius: 999,
@@ -614,6 +673,23 @@ const styles = StyleSheet.create({
     color: Colors.muted,
     fontSize: 13,
     lineHeight: 18,
+  },
+  sideEyebrow: {
+    color: Colors.accent,
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+  },
+  sideTitle: {
+    color: Colors.text,
+    fontSize: 20,
+    fontWeight: '800',
+  },
+  sideMeta: {
+    color: Colors.muted,
+    fontSize: 12,
+    fontWeight: '700',
   },
   input: {
     width: '100%',
