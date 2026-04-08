@@ -1,4 +1,4 @@
-import { Feather, Ionicons } from "@expo/vector-icons";
+﻿import { Feather, Ionicons } from "@/components/AppIcon";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React, { useState } from "react";
@@ -71,10 +71,14 @@ export default function AuthScreen() {
       >
         <View style={styles.logo}>
           <View style={styles.logoBall}>
-            <Text style={styles.logoBallIcon}>⚽</Text>
+            <Ionicons name="football-outline" size={30} color={Colors.text} />
           </View>
           <Text style={styles.logoText}>BALLR</Text>
           <Text style={styles.logoSub}>Pickup football, perfected.</Text>
+          <View style={styles.demoBadge}>
+            <Ionicons name="flash-outline" size={12} color={Colors.accent} />
+            <Text style={styles.demoBadgeText}>Demo account is preloaded on direct app open</Text>
+          </View>
         </View>
 
         <View style={styles.card}>
@@ -188,7 +192,7 @@ export default function AuthScreen() {
           style={styles.guestBtn}
           onPress={() => router.replace("/(tabs)")}
         >
-          <Text style={styles.guestBtnText}>Continue as guest →</Text>
+          <Text style={styles.guestBtnText}>Continue as guest</Text>
         </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -220,9 +224,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: Colors.accent,
   },
-  logoBallIcon: {
-    fontSize: 32,
-  },
   logoText: {
     fontFamily: "Inter_700Bold",
     fontSize: 32,
@@ -233,6 +234,23 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_400Regular",
     fontSize: 13,
     color: Colors.muted,
+  },
+  demoBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: `${Colors.primary}22`,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: `${Colors.accent}33`,
+    marginTop: 6,
+  },
+  demoBadgeText: {
+    fontFamily: "Inter_500Medium",
+    fontSize: 11,
+    color: Colors.accent,
   },
   card: {
     backgroundColor: Colors.surface,
@@ -354,3 +372,4 @@ const styles = StyleSheet.create({
     color: Colors.muted,
   },
 });
+

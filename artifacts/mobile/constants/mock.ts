@@ -260,6 +260,7 @@ export const PLAYERS: Player[] = [
   {
     id: "p0",
     name: "Maya",
+    avatarUrl: "https://i.pravatar.cc/160?img=47",
     nationality: "Thai",
     eloRating: 820,
     eloCalibrated: true,
@@ -287,6 +288,7 @@ export const PLAYERS: Player[] = [
   {
     id: "p1",
     name: "Amir Bilousov",
+    avatarUrl: "https://i.pravatar.cc/160?img=12",
     nationality: "Ukrainian",
     eloRating: 1640,
     eloCalibrated: true,
@@ -315,6 +317,7 @@ export const PLAYERS: Player[] = [
   {
     id: "p2",
     name: "Matt Wang",
+    avatarUrl: "https://i.pravatar.cc/160?img=15",
     nationality: "American",
     eloRating: 1475,
     eloCalibrated: true,
@@ -342,6 +345,7 @@ export const PLAYERS: Player[] = [
   {
     id: "p3",
     name: "Chad Pratt",
+    avatarUrl: "https://i.pravatar.cc/160?img=18",
     nationality: "British",
     eloRating: 1390,
     eloCalibrated: true,
@@ -362,6 +366,7 @@ export const PLAYERS: Player[] = [
   {
     id: "p4",
     name: "Ying P.",
+    avatarUrl: "https://i.pravatar.cc/160?img=32",
     nationality: "Thai",
     eloRating: 1372,
     eloCalibrated: true,
@@ -382,6 +387,7 @@ export const PLAYERS: Player[] = [
   {
     id: "p5",
     name: "Kassim K.",
+    avatarUrl: "https://i.pravatar.cc/160?img=14",
     nationality: "Senegalese",
     eloRating: 1383,
     eloCalibrated: true,
@@ -402,6 +408,7 @@ export const PLAYERS: Player[] = [
   {
     id: "p6",
     name: "Ronan K.",
+    avatarUrl: "https://i.pravatar.cc/160?img=20",
     nationality: "Irish",
     eloRating: 1345,
     eloCalibrated: true,
@@ -422,6 +429,7 @@ export const PLAYERS: Player[] = [
   {
     id: "p7",
     name: "Siraseth N.",
+    avatarUrl: "https://i.pravatar.cc/160?img=53",
     nationality: "Thai",
     eloRating: 1310,
     eloCalibrated: true,
@@ -442,6 +450,7 @@ export const PLAYERS: Player[] = [
   {
     id: "p8",
     name: "Manon V.",
+    avatarUrl: "https://i.pravatar.cc/160?img=5",
     nationality: "French",
     eloRating: 1120,
     eloCalibrated: true,
@@ -462,6 +471,7 @@ export const PLAYERS: Player[] = [
   {
     id: "p9",
     name: "Tanaka R.",
+    avatarUrl: "https://i.pravatar.cc/160?img=67",
     nationality: "Japanese",
     eloRating: 1095,
     eloCalibrated: true,
@@ -482,6 +492,7 @@ export const PLAYERS: Player[] = [
   {
     id: "p10",
     name: "Chris P.",
+    avatarUrl: "https://i.pravatar.cc/160?img=11",
     nationality: "Canadian",
     eloRating: 1060,
     eloCalibrated: true,
@@ -553,7 +564,7 @@ export const GAMES: Game[] = [
     aiAssignment: {
       teamBlue: ["Amir Bilousov", "Matt Wang", "Chad Pratt", "Ying P."],
       teamRed: ["Kassim K.", "Ronan K.", "Siraseth N.", "Manon V."],
-      reasoning: "Teams balanced by ELO average. Blue team avg: 1,245 · Red team avg: 1,210. Difference: 35 ELO — within acceptable balance threshold.",
+      reasoning: "Teams balanced by ELO average. Blue team avg: 1,245  /  Red team avg: 1,210. Difference: 35 ELO - within acceptable balance threshold.",
       balanceScore: 97,
     },
     carpoolOffers: [
@@ -755,17 +766,17 @@ function minsAgo(m: number): string {
 
 export const CHAT_MESSAGES: Record<string, ChatMessage[]> = {
   g1: [
-    { id: "m1", gameId: "g1", senderId: "system", senderName: "BallR", text: "Teams are balanced! Check your assignment above. 💪", timestamp: minsAgo(120), isSystem: true },
-    { id: "m2", gameId: "g1", senderId: "p1", senderName: "Amir", text: "Let's gooo! Blue team represent 🔵", timestamp: minsAgo(90) },
+    { id: "m1", gameId: "g1", senderId: "system", senderName: "BallR", text: "Teams are balanced. Check your assignment above.", timestamp: minsAgo(120), isSystem: true },
+    { id: "m2", gameId: "g1", senderId: "p1", senderName: "Amir", text: "Let's go. Blue team represent.", timestamp: minsAgo(90) },
     { id: "m3", gameId: "g1", senderId: "p2", senderName: "Matt", text: "Don't be late guys, field opens sharp at 12:36", timestamp: minsAgo(60) },
-    { id: "m4", gameId: "g1", senderId: "p5", senderName: "Kassim", text: "Red team is ready 🔴 watch out!", timestamp: minsAgo(45) },
+    { id: "m4", gameId: "g1", senderId: "p5", senderName: "Kassim", text: "Red team is ready. Watch out.", timestamp: minsAgo(45) },
     { id: "m5", gameId: "g1", senderId: "p3", senderName: "Chad", text: "Anyone know parking situation at Benjakitti?", timestamp: minsAgo(30) },
     { id: "m6", gameId: "g1", senderId: "p2", senderName: "Matt", text: "There's a paid parking on the north side, 30 baht/hr", timestamp: minsAgo(28) },
-    { id: "m7", gameId: "g1", senderId: "p3", senderName: "Chad", text: "Perfect thanks 🙏", timestamp: minsAgo(27) },
-    { id: "m8", gameId: "g1", senderId: "p4", senderName: "Ying", text: "See everyone soon! 🏃‍♀️⚽", timestamp: minsAgo(10) },
+    { id: "m7", gameId: "g1", senderId: "p3", senderName: "Chad", text: "Perfect, thanks.", timestamp: minsAgo(27) },
+    { id: "m8", gameId: "g1", senderId: "p4", senderName: "Ying", text: "See everyone soon.", timestamp: minsAgo(10) },
   ],
   g3: [
-    { id: "m9", gameId: "g3", senderId: "system", senderName: "BallR", text: "Game created! Players can now join. 🎉", timestamp: minsAgo(1440), isSystem: true },
+    { id: "m9", gameId: "g3", senderId: "system", senderName: "BallR", text: "Game created. Players can now join.", timestamp: minsAgo(1440), isSystem: true },
     { id: "m10", gameId: "g3", senderId: "p2", senderName: "Matt", text: "Hey everyone! Chill game tomorrow, all skill levels welcome.", timestamp: minsAgo(720) },
     { id: "m11", gameId: "g3", senderId: "p9", senderName: "Tanaka", text: "Looking forward to it! Is turf or grass?", timestamp: minsAgo(600) },
     { id: "m12", gameId: "g3", senderId: "p2", senderName: "Matt", text: "Turf pitch at Flick K-Village. Great surface!", timestamp: minsAgo(595) },
@@ -776,8 +787,8 @@ export const NOTIFICATIONS: Notification[] = [
   {
     id: "n1",
     type: "teams_ready",
-    title: "Teams Are Ready! 🔵",
-    body: "You're on Team Blue for Benjakitti Park · Today 12:36",
+    title: "Teams Are Ready",
+    body: "You're on Team Blue for Benjakitti Park / Today 12:36",
     timestamp: minsAgo(120),
     read: false,
     gameId: "g1",
@@ -785,8 +796,8 @@ export const NOTIFICATIONS: Notification[] = [
   {
     id: "n2",
     type: "game_confirmed",
-    title: "Booking Confirmed ✅",
-    body: "You've joined Flick Football K-Village · Tomorrow 20:00. ฿200 paid.",
+    title: "Booking Confirmed",
+    body: "You've joined Flick Football K-Village / Tomorrow 20:00. THB 200 paid.",
     timestamp: minsAgo(1440),
     read: false,
     gameId: "g3",
@@ -794,7 +805,7 @@ export const NOTIFICATIONS: Notification[] = [
   {
     id: "n3",
     type: "rating_reminder",
-    title: "Rate Your Teammates ⭐",
+    title: "Rate Your Teammates",
     body: "How did your team play at Benjakitti Park? Rate them before the window closes.",
     timestamp: minsAgo(4320),
     read: true,
@@ -803,7 +814,7 @@ export const NOTIFICATIONS: Notification[] = [
   {
     id: "n4",
     type: "potm",
-    title: "POTM Leaderboard Updated 🏆",
+    title: "POTM Leaderboard Updated",
     body: "Amir Bilousov leads Bangkok for March 2026. Check rankings!",
     timestamp: minsAgo(5760),
     read: true,
@@ -811,8 +822,8 @@ export const NOTIFICATIONS: Notification[] = [
   {
     id: "n5",
     type: "new_game",
-    title: "New Game Near You 📍",
-    body: "Matt Wang posted a beginner game at Benjakitti Park · Sat 18:00",
+    title: "New Game Near You",
+    body: "Matt Wang posted a beginner game at Benjakitti Park / Sat 18:00",
     timestamp: minsAgo(8640),
     read: true,
     gameId: "g6",
@@ -861,14 +872,14 @@ export function formatGameTime(isoString: string): string {
     hour12: false,
   });
 
-  if (isToday) return `Today · ${timeStr}`;
-  if (isTomorrow) return `Tomorrow · ${timeStr}`;
+  if (isToday) return `Today / ${timeStr}`;
+  if (isTomorrow) return `Tomorrow / ${timeStr}`;
 
   return gameDate.toLocaleDateString("en-US", {
     weekday: "short",
     month: "short",
     day: "numeric",
-  }) + ` · ${timeStr}`;
+  }) + ` / ${timeStr}`;
 }
 
 export function getSkillColor(level: SkillLevel): string {
@@ -890,12 +901,12 @@ export function getSkillLabel(level: SkillLevel): string {
 }
 
 export function getEloLabel(elo: number): { label: string; tier: string; color: string } {
-  if (elo < 700) return { label: "Novice", tier: "⚽", color: "#8C8782" };
-  if (elo < 900) return { label: "Beginner", tier: "🌱", color: "#A1D494" };
-  if (elo < 1100) return { label: "Recreational", tier: "⚡", color: "#4ABFB0" };
-  if (elo < 1300) return { label: "Competitive", tier: "🔥", color: "#E8A93A" };
-  if (elo < 1500) return { label: "Expert", tier: "💎", color: "#5B8FE8" };
-  return { label: "Elite", tier: "👑", color: "#E05252" };
+  if (elo < 700) return { label: "Novice", tier: "NVC", color: "#8C8782" };
+  if (elo < 900) return { label: "Beginner", tier: "BGN", color: "#A1D494" };
+  if (elo < 1100) return { label: "Recreational", tier: "REC", color: "#4ABFB0" };
+  if (elo < 1300) return { label: "Competitive", tier: "CMP", color: "#E8A93A" };
+  if (elo < 1500) return { label: "Expert", tier: "XPT", color: "#5B8FE8" };
+  return { label: "Elite", tier: "ELT", color: "#E05252" };
 }
 
 export function getReliabilityColor(score: number): string {
@@ -926,7 +937,7 @@ export function isEloPublic(player: Player, allPlayers: Player[]): boolean {
 
 export function formatPrice(price: number, cityId: string): string {
   if (cityId === "bali") return `Rp${(price / 1000).toFixed(0)}k`;
-  return `฿${price}`;
+  return `THB ${price}`;
 }
 
 export function getSurfaceIcon(surface: SurfaceType): string {

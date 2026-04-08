@@ -1,11 +1,13 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import Colors from "@/constants/colors";
 
 interface PlayerAvatarProps {
   name: string;
+  avatarUrl?: string;
   size?: number;
   color?: string;
+  borderColor?: string;
 }
 
 const AVATAR_COLORS = [
@@ -24,7 +26,13 @@ function getAvatarColor(name: string): string {
   return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
 }
 
-export function PlayerAvatar({ name, size = 36, color }: PlayerAvatarProps) {
+export function PlayerAvatar({
+  name,
+  avatarUrl,
+  size = 36,
+  color,
+  borderColor = "transparent",
+}: PlayerAvatarProps) {
   const initials = name
     .split(" ")
     .map((n) => n[0])
@@ -38,10 +46,24 @@ export function PlayerAvatar({ name, size = 36, color }: PlayerAvatarProps) {
     <View
       style={[
         styles.avatar,
-        { width: size, height: size, borderRadius: size / 2, backgroundColor: bg },
+        {
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          backgroundColor: bg,
+          borderColor,
+        },
       ]}
     >
-      <Text style={[styles.initials, { fontSize }]}>{initials}</Text>
+      {avatarUrl ? (
+        <Image
+          source={{ uri: avatarUrl }}
+          style={{ width: size, height: size, borderRadius: size / 2 }}
+          resizeMode="cover"
+        />
+      ) : (
+        <Text style={[styles.initials, { fontSize }]}>{initials}</Text>
+      )}
     </View>
   );
 }
@@ -50,6 +72,8 @@ const styles = StyleSheet.create({
   avatar: {
     alignItems: "center",
     justifyContent: "center",
+    overflow: "hidden",
+    borderWidth: 1.5,
   },
   initials: {
     fontFamily: "Inter_700Bold",

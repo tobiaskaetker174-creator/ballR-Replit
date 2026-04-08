@@ -1,4 +1,4 @@
-import { Feather } from "@expo/vector-icons";
+﻿import { Feather } from "@/components/AppIcon";
 import { reloadAppAsync } from "expo";
 import React, { useState } from "react";
 import {
@@ -284,3 +284,4 @@ const styles = StyleSheet.create({
     width: "100%",
   },
 });
+

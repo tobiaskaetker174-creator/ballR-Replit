@@ -129,7 +129,7 @@ function Calendar({
           return (
             <div
               data-slot="calendar"
-              ref={rootRef as React.Ref<HTMLDivElement>}
+              ref={rootRef}
               className={cn(className)}
               {...props}
             />
@@ -187,7 +187,7 @@ function CalendarDayButton({
 
   return (
     <Button
-      ref={ref as React.Ref<HTMLButtonElement>}
+      ref={ref}
       variant="ghost"
       size="icon"
       data-day={day.date.toLocaleDateString()}

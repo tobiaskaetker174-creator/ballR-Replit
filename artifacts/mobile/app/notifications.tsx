@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+﻿import { Ionicons } from "@/components/AppIcon";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -215,3 +215,4 @@ const styles = StyleSheet.create({
     color: Colors.muted,
   },
 });
+

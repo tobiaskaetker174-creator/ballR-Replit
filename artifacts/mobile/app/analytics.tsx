@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+﻿import { Ionicons } from "@/components/AppIcon";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/constants/colors";
+import { useAuth } from "@/context/AuthContext";
 import {
   PLAYERS,
   RIVALS,
@@ -21,8 +22,6 @@ import {
   isEloPublic,
   type Player,
 } from "@/constants/mock";
-
-const ME = PLAYERS[0];
 
 function StatCard({ icon, label, value, sub, color }: {
   icon: string; label: string; value: string; sub?: string; color?: string;
@@ -39,6 +38,8 @@ function StatCard({ icon, label, value, sub, color }: {
 
 export default function AnalyticsScreen() {
   const insets = useSafeAreaInsets();
+  const { user } = useAuth();
+  const ME = user ?? PLAYERS[0];
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 34 : insets.bottom;
   const [showRivalPicker, setShowRivalPicker] = useState(false);
@@ -64,8 +65,9 @@ export default function AnalyticsScreen() {
       </View>
 
       <ScrollView
+        style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: bottomPadding + 30, gap: 0 }}
+        contentContainerStyle={{ paddingBottom: bottomPadding + 120, gap: 0 }}
       >
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>PERFORMANCE OVERVIEW</Text>
@@ -74,7 +76,7 @@ export default function AnalyticsScreen() {
               icon="trophy-outline"
               label="WIN RATE"
               value={`${winRate}%`}
-              sub={`${ME.gamesWon}W · ${ME.gamesLost}L · ${ME.gamesDrawn}D`}
+              sub={`${ME.gamesWon}W / ${ME.gamesLost}L / ${ME.gamesDrawn}D`}
               color={Colors.accent}
             />
             <StatCard
@@ -124,7 +126,7 @@ export default function AnalyticsScreen() {
                   <View style={styles.botmStat}>
                     <Text style={styles.botmStatLabel}>Win streak</Text>
                     <Text style={[styles.botmStatValue, { color: Colors.amber }]}>
-                      🔥 {ME.winStreak} games
+                      Hot streak / {ME.winStreak} games
                     </Text>
                   </View>
                 )}
@@ -168,7 +170,7 @@ export default function AnalyticsScreen() {
                   <View style={{ flex: 1 }}>
                     <Text style={styles.rivalName}>{selectedRival.name}</Text>
                     <Text style={styles.rivalSub}>
-                      {isEloPublic(selectedRival, PLAYERS) ? `${selectedRival.eloRating} ELO · ` : ""}
+                      {isEloPublic(selectedRival, PLAYERS) ? `${selectedRival.eloRating} ELO / ` : ""}
                       {rivalData ? `${rivalData.timesPlayed} matches` : "Matched opponent"}
                     </Text>
                   </View>
@@ -203,7 +205,7 @@ export default function AnalyticsScreen() {
                 </View>
                 {rivalData && (
                   <Text style={styles.rivalTrend}>
-                    {rivalData.trending === "up" ? "↑ You are improving against them" : rivalData.trending === "down" ? "↓ They have the edge recently" : "→ Evenly matched recently"}
+                    {rivalData.trending === "up" ? "You are improving against them" : rivalData.trending === "down" ? "They have the edge recently" : "Evenly matched recently"}
                   </Text>
                 )}
               </View>
@@ -251,8 +253,8 @@ export default function AnalyticsScreen() {
                       <View style={{ flex: 1 }}>
                         <Text style={styles.pickerName}>{p.name}</Text>
                         <Text style={styles.pickerSub}>
-                          {isEloPublic(p, PLAYERS) ? `${p.eloRating} ELO · ` : ""}{p.gamesPlayed} games
-                          {inRivals ? " · Matched before" : ""}
+                          {isEloPublic(p, PLAYERS) ? `${p.eloRating} ELO / ` : ""}{p.gamesPlayed} games
+                          {inRivals ? " / Matched before" : ""}
                         </Text>
                       </View>
                       {isSelected && <Ionicons name="checkmark-circle" size={20} color={Colors.accent} />}
@@ -268,7 +270,7 @@ export default function AnalyticsScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>BEST TEAMMATES</Text>
           <Text style={styles.sectionDesc}>
-            Your most synergistic partners — players you win with the most.
+            Your most synergistic partners - players you win with the most.
           </Text>
           {BEST_TEAMMATES.length === 0 ? (
             <View style={styles.emptyCard}>
@@ -313,7 +315,7 @@ export default function AnalyticsScreen() {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>TOUGHEST OPPONENT</Text>
               <Text style={styles.sectionDesc}>
-                The rival you struggle against the most — lowest win rate head-to-head.
+                The rival you struggle against the most - lowest win rate head-to-head.
               </Text>
               <Pressable
                 style={styles.toughCard}
@@ -324,7 +326,7 @@ export default function AnalyticsScreen() {
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.teammateName}>{tp.name}</Text>
-                  <Text style={styles.teammateSub}>{toughest.timesPlayed} games played · {toughest.trending === "up" ? "📈" : toughest.trending === "down" ? "📉" : "➡️"} {toughest.trending}</Text>
+                  <Text style={styles.teammateSub}>{toughest.timesPlayed} games played / trend: {toughest.trending}</Text>
                 </View>
                 <View style={styles.teammateWin}>
                   <Text style={[styles.teammateWinPct, { color: Colors.red }]}>{toughest.winRate}%</Text>
@@ -593,3 +595,4 @@ const styles = StyleSheet.create({
   teammateWinPct: { fontFamily: "Inter_700Bold", fontSize: 18, color: Colors.accent },
   teammateWinLabel: { fontFamily: "Inter_400Regular", fontSize: 9, color: Colors.muted },
 });
+

@@ -1,0 +1,4 @@
+{
+  "buildCommand": "EXPO_PUBLIC_DOMAIN=ballr-final.vercel.app EXPO_PUBLIC_REPL_ID=ballr-final pnpm run build",
+  "outputDirectory": "static-build"
+}

@@ -1,4 +1,4 @@
-import { BlurView } from "expo-blur";
+﻿import { BlurView } from "expo-blur";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { Tabs } from "expo-router";
 import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
@@ -7,7 +7,7 @@ import {
   Ionicons,
   MaterialCommunityIcons,
   Feather,
-} from "@expo/vector-icons";
+} from "@/components/AppIcon";
 import React from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import Colors from "@/constants/colors";
@@ -130,3 +130,4 @@ export default function TabLayout() {
   }
   return <ClassicTabLayout />;
 }
+

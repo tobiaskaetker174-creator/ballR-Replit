@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@/components/AppIcon';
 import { useLeague, useLeagueColors } from '@/context/LeagueContext';
 
 // Placeholder component showing league-specific dashboard
@@ -18,7 +18,7 @@ export function LeagueDashboard() {
     return (
       <View style={[styles.container, { backgroundColor: colors.base }]}>
         <View style={styles.emptyState}>
-          <Text style={styles.emptyEmoji}>🏆</Text>
+          <Text style={styles.emptyEmoji}>ðŸ†</Text>
           <Text style={[styles.emptyTitle, { color: colors.text }]}>No League Selected</Text>
           <Text style={[styles.emptySubtext, { color: colors.muted }]}>
             Create a league or join one to get started
@@ -44,7 +44,7 @@ export function LeagueDashboard() {
           {activeLeague.name}
         </Text>
         <Text style={[styles.leagueMeta, { color: colors.muted }]}>
-          {activeLeague.city} · {activeLeague.sport} · {activeLeague.max_players_per_team}v{activeLeague.max_players_per_team}
+          {activeLeague.city} Â· {activeLeague.sport} Â· {activeLeague.max_players_per_team}v{activeLeague.max_players_per_team}
         </Text>
         {activeLeague.role === 'owner' && (
           <TouchableOpacity style={[styles.settingsBtn, { borderColor: colors.accent + '40' }]}>
@@ -72,7 +72,7 @@ export function LeagueDashboard() {
       {/* Standings Preview */}
       <View style={[styles.section, { backgroundColor: colors.surface }]}>
         <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>🏆 Standings</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>ðŸ† Standings</Text>
           <TouchableOpacity>
             <Text style={[styles.seeAll, { color: colors.accent }]}>See All</Text>
           </TouchableOpacity>
@@ -81,7 +81,7 @@ export function LeagueDashboard() {
         {[1, 2, 3].map((rank) => (
           <View key={rank} style={[styles.standingRow, { borderBottomColor: colors.separator }]}>
             <Text style={[styles.rank, { color: rank <= 3 ? colors.accent : colors.muted }]}>
-              {rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉'}
+              {rank === 1 ? 'ðŸ¥‡' : rank === 2 ? 'ðŸ¥ˆ' : 'ðŸ¥‰'}
             </Text>
             <View style={styles.standingInfo}>
               <Text style={[styles.standingName, { color: colors.text }]}>Player {rank}</Text>
@@ -96,7 +96,7 @@ export function LeagueDashboard() {
       {/* Upcoming Games */}
       <View style={[styles.section, { backgroundColor: colors.surface }]}>
         <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>📅 Upcoming</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>ðŸ“… Upcoming</Text>
           <TouchableOpacity>
             <Text style={[styles.seeAll, { color: colors.accent }]}>Schedule</Text>
           </TouchableOpacity>
@@ -221,3 +221,4 @@ const styles = StyleSheet.create({
   },
   shareBtnText: { fontSize: 13, fontWeight: '700' },
 });
+

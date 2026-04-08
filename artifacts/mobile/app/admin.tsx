@@ -1,4 +1,4 @@
-import { Ionicons, Feather } from "@expo/vector-icons";
+﻿import { Ionicons, Feather } from "@/components/AppIcon";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -139,7 +139,7 @@ export default function AdminPanelScreen() {
                       <Pressable style={styles.uploadBtn}>
                         <Text style={styles.uploadBtnText}>Choose File</Text>
                       </Pressable>
-                      <Text style={styles.uploadNote}>Max 5MB · Recommended: 1920×1080</Text>
+                      <Text style={styles.uploadNote}>Max 5MB Â· Recommended: 1920Ã—1080</Text>
                     </View>
                   )}
                 </View>
@@ -185,7 +185,7 @@ export default function AdminPanelScreen() {
                   </View>
                 </View>
                 <Text style={styles.reportMeta}>
-                  {report.reporter} reported {report.reported} · {report.date}
+                  {report.reporter} reported {report.reported} Â· {report.date}
                 </Text>
                 <View style={styles.reportActions}>
                   <Pressable style={[styles.reportActionBtn, { backgroundColor: `${Colors.red}22`, borderColor: `${Colors.red}44` }]}>
@@ -412,3 +412,4 @@ const styles = StyleSheet.create({
   },
   supabaseBtnText: { fontFamily: "Inter_600SemiBold", fontSize: 12, color: Colors.accent },
 });
+

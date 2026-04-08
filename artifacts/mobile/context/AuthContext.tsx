@@ -20,11 +20,12 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<Player | null>(null);
+  const demoUser = PLAYERS.find((player) => player.isCurrentUser) ?? PLAYERS[0];
+  const [user, setUser] = useState<Player | null>(demoUser);
 
   const login = async (email: string, _password: string) => {
     await new Promise((r) => setTimeout(r, 800));
-    setUser(PLAYERS[0]);
+    setUser(demoUser);
   };
 
   const signup = async (name: string, _email: string, _password: string) => {

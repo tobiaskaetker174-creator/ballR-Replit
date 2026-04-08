@@ -1,4 +1,4 @@
-import { Ionicons, Feather } from "@expo/vector-icons";
+﻿import { Ionicons, Feather } from "@/components/AppIcon";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -37,7 +37,7 @@ function RatingPromptCard({ game }: { game: Game }) {
       </View>
       <View style={{ flex: 1 }}>
         <Text style={styles.ratingPromptTitle}>Rate your teammates</Text>
-        <Text style={styles.ratingPromptSub}>{game.venue.name} · {formatGameTime(game.gameTime)}</Text>
+        <Text style={styles.ratingPromptSub}>{game.venue.name} / {formatGameTime(game.gameTime)}</Text>
       </View>
       <Feather name="arrow-right" size={16} color={Colors.amber} />
     </Pressable>
@@ -90,7 +90,7 @@ function GameCard({ game, isJoined, isCompleted }: { game: Game; isJoined: boole
               <Text style={[styles.cardStatText, {
                 color: game.winningTeam === "blue" ? Colors.blue : game.winningTeam === "draw" ? Colors.muted : Colors.red
               }]}>
-                {game.winningTeam === "blue" ? "Blue Won 🔵" : game.winningTeam === "red" ? "Red Won 🔴" : "Draw"}
+                {game.winningTeam === "blue" ? "Blue won" : game.winningTeam === "red" ? "Red won" : "Draw"}
               </Text>
             </>
           )}
@@ -507,3 +507,4 @@ const styles = StyleSheet.create({
   },
   discoverBtnText: { fontFamily: "Inter_700Bold", fontSize: 13, color: Colors.text },
 });
+

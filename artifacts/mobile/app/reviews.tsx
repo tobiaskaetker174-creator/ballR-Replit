@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+﻿import { Ionicons } from "@/components/AppIcon";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -216,3 +216,4 @@ const styles = StyleSheet.create({
   statusBadgeText: { fontFamily: "Inter_600SemiBold", fontSize: 10 },
   reviewText: { fontFamily: "Inter_400Regular", fontSize: 13, color: Colors.muted, lineHeight: 19 },
 });
+
