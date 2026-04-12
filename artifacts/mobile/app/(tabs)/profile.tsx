@@ -19,6 +19,7 @@ import {
   ELO_HISTORY,
   NOTIFICATIONS,
   PROFILE_REVIEWS,
+  type Position,
   getEloLabel,
   getReliabilityColor,
   getReliabilityLabel,
@@ -477,7 +478,7 @@ export default function ProfileScreen() {
 
           <Text style={[styles.eloModalRowLabel, { marginTop: 14, marginBottom: 8 }]}>PREFERRED POSITIONS</Text>
           <View style={styles.editPositionsRow}>
-            {["GK", "DEF", "MID", "FWD"].map((pos) => {
+            {(["GK", "DEF", "MID", "FWD"] as Position[]).map((pos) => {
               const selected = editPositions.includes(pos);
               return (
                 <Pressable
